@@ -5,6 +5,9 @@ class RoutePath {
 
   static const login = "/login";
 
+  /// WebView login page (fallback / double-insurance)
+  static const webLogin = "/web_login";
+
   static const account = "/account";
 
   static const novelDetail = "/novel_detail";

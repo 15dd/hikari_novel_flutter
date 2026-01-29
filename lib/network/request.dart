@@ -52,6 +52,26 @@ class Request {
 
   static String? get _cookie => LocalStorageService.instance.getCookie();
 
+  /// Clear in-memory cookie jar used by [dio].
+  ///
+  /// This does NOT touch the persisted cookie stored in [LocalStorageService].
+  static Future<void> clearCookieJar() async {
+    try {
+      _dioCookieJar.deleteAll();
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  /// Get cookies currently held in Dio cookie jar for a given URL.
+  static Future<List<Cookie>> getCookiesFor(String url) async {
+    try {
+      return await _dioCookieJar.loadForRequest(Uri.parse(url));
+    } catch (_) {
+      return <Cookie>[];
+    }
+  }
+
   ///获取通用数据（如其他网站的数据，即不用wenku8的cookie）
   /// - [url] 对应网站的url
   static Future<Resource> getCommonData(String url) async {
