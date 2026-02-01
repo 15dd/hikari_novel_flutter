@@ -9,7 +9,6 @@ import 'package:hikari_novel_flutter/router/app_sub_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../network/api.dart';
-import '../../service/local_storage_service.dart';
 
 class MyPage extends StatelessWidget {
   MyPage({super.key});
@@ -62,49 +61,7 @@ class MyPage extends StatelessWidget {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: FilledButton(
-                onPressed: () {
-                  controller.usernameController.text = LocalStorageService.instance.getUsername() ?? "";
-                  controller.passwordController.text = LocalStorageService.instance.getPassword() ?? "";
-                  Get.dialog(
-                    AlertDialog(
-                      title: Text("check_in".tr),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("check_in_tip".tr),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: controller.usernameController,
-                            decoration: InputDecoration(labelText: "用户名", border: OutlineInputBorder()),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: controller.passwordController,
-                            decoration: InputDecoration(labelText: "密码", border: OutlineInputBorder()),
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        TextButton(onPressed: Get.back, child: Text("cancel".tr)),
-                        TextButton(
-                          onPressed: () async {
-                            ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(content: Text(await controller.sign())));
-                            Get.back();
-                          },
-                          child: Text("confirm".tr),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Text("check_in".tr),
-              ),
-            ),
-            const SizedBox(width: 10),
+            )
           ],
         ),
       ),

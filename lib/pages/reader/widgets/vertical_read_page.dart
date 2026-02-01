@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../common/log.dart';
 import '../../../router/route_path.dart';
 import '../../../network/request.dart';
 
@@ -16,7 +15,16 @@ class VerticalReadPage extends StatefulWidget {
   final ScrollController controller;
   final Function(double position, double max) onScroll;
 
-  const VerticalReadPage(this.text, this.images, {required this.initPosition, required this.padding, required this.style, required this.controller, required this.onScroll, super.key});
+  const VerticalReadPage(
+    this.text,
+    this.images, {
+    required this.initPosition,
+    required this.padding,
+    required this.style,
+    required this.controller,
+    required this.onScroll,
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _VerticalReadPageState();
@@ -26,7 +34,7 @@ class _VerticalReadPageState extends State<VerticalReadPage> with WidgetsBinding
   String text = "";
   List<String> images = [];
 
-  TextStyle textStyle = const TextStyle();
+  TextStyle textStyle = TextStyle();
   EdgeInsets padding = EdgeInsets.zero;
 
   double position = 0;
@@ -39,6 +47,12 @@ class _VerticalReadPageState extends State<VerticalReadPage> with WidgetsBinding
     position = widget.initPosition.toDouble();
     _lastLayoutSig = _layoutSignature();
     WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.controller.jumpTo(widget.initPosition.toDouble());
+      widget.onScroll(widget.controller.offset, widget.controller.position.maxScrollExtent); //页面加载完成时，提醒保存进度
+    });
+
     resetPage();
   }
 
@@ -58,11 +72,6 @@ class _VerticalReadPageState extends State<VerticalReadPage> with WidgetsBinding
       setState(() {});
       return;
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.controller.jumpTo(widget.initPosition.toDouble());
-      widget.onScroll(widget.controller.offset, widget.controller.position.maxScrollExtent); //页面加载完成时，提醒保存进度
-    });
   }
 
   @override
@@ -74,7 +83,8 @@ class _VerticalReadPageState extends State<VerticalReadPage> with WidgetsBinding
     final newSig = _layoutSignature();
     if (newSig != _lastLayoutSig) {
       _lastLayoutSig = newSig;
-      if (widget.text != oldWidget.text && listEquals(widget.images, oldWidget.images)) { //判断章节是否切换
+      if (widget.text != oldWidget.text && listEquals(widget.images, oldWidget.images)) {
+        //判断章节是否切换
         setState(() {});
       }
       resetPage();
@@ -140,6 +150,7 @@ class _VerticalReadPageState extends State<VerticalReadPage> with WidgetsBinding
       s.height,
       s.letterSpacing,
       s.wordSpacing,
+      s.color?.toARGB32(),
       p.left,
       p.right,
       p.top,

@@ -249,7 +249,20 @@ class AppTranslations extends Translations {
       "bookshelf_number_selection": "第 @no 书架",
       "go_to_update": "前往更新",
       "new_version_available": "有新版本可用",
-      "no_new_version_available": "已经是最新版本了"
+      "no_new_version_available": "已经是最新版本了",
+      "mark_as_read": "标为已读",
+      "mark_as_unread": "标为未读",
+      "cloudflare_challenge_exception_tip": "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
+      "last_read": "上次阅读",
+      "keyword": "关键词",
+      "search": "搜索",
+      "search_mode": "搜索方式",
+      "search_by_title": "按标题名称搜索",
+      "search_by_author": "按作者名称搜索",
+      "search_history": "搜索历史",
+      "clear_all_history": "清除所有历史记录",
+      "content_of_search_is_empty": "搜索内容为空",
+      "jumped_to_other_page": "已跳转至另一页面"
     },
 
     "zh_TW": {
@@ -407,7 +420,7 @@ class AppTranslations extends Translations {
       "about": "關於",
       "logout": "登出",
       "check_in": "簽到",
-      "check_in_tip": "簽到介面來自第三方，請重新輸入 Wenku8 帳號與密碼",
+      "check_in_tip": "簽到介面來自第三方，請重新輸入Wenku8帳號與密碼",
       "confirm": "確定",
       "unable_to_open_external_browser": "無法開啟外部瀏覽器",
       "unread": "未讀",
@@ -461,12 +474,12 @@ class AppTranslations extends Translations {
       "no_font_file_tip": "字體檔案遺失，請重新選擇！",
       "100_percent_tip": "已經 100% 了",
       "only_one_page": "僅一頁",
-      "word_number_too_low_tip": "字數不得少於 7 個字",
+      "word_number_too_low_tip": "字數不得少於7個字",
       "reply_successfully": "回覆成功",
       "reply_failed": "回覆失敗",
       "reply": "回覆",
       "reply_content": "回覆內容",
-      "search_too_quickly_tip": "兩次搜尋間隔不得少於 5 秒",
+      "search_too_quickly_tip": "兩次搜尋間隔不得少於5秒",
       "user_information": "使用者資訊",
       "username": "使用者名稱",
       "level": "等級",
@@ -498,7 +511,20 @@ class AppTranslations extends Translations {
       "bookshelf_number_selection": "第 @no 書架",
       "go_to_update": "前往更新",
       "new_version_available": "有新版本可用",
-      "no_new_version_available": "已是最新版本"
+      "no_new_version_available": "已是最新版本",
+      "mark_as_read": "標為已讀",
+      "mark_as_unread": "標為未讀",
+      "cloudflare_challenge_exception_tip": "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
+      "last_read": "上次閱讀",
+      "keyword": "關鍵詞",
+      "search": "搜尋",
+      "search_mode": "搜尋方式",
+      "search_by_title": "按標題名稱搜尋",
+      "search_by_author": "按作者名稱搜尋",
+      "search_history": "搜尋歷史",
+      "clear_all_history": "清除所有歷史記錄",
+      "content_of_search_is_empty": "搜尋內容為空",
+      "jumped_to_other_page": "已跳轉至另一頁面"
     }
   };
 }

@@ -23,11 +23,15 @@ class BookshelfPage extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
+        if (controller.pageState.value == PageState.bookshelfSearch) {
+          controller.pageState.value = PageState.bookshelfContent;
+          return;
+        }
         if (controller.isSelectionMode.value) {
           currentTabController.exitSelectionMode();
-        } else {
-          Get.back();
+          return;
         }
+        Get.back();
       },
       child: Stack(
         children: [

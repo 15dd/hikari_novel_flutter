@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:enough_convert/enough_convert.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:hikari_novel_flutter/common/extension.dart';
@@ -10,13 +9,12 @@ import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/network/request.dart';
 
-import '../common/log.dart';
 import '../service/local_storage_service.dart';
 
 class Api {
   static Language get _language => LocalStorageService.instance.getLanguage();
 
-  static CharsetsType get _charsetsType {
+  static CharsetsType get charsetsType {
     if (_language == Language.followSystem) {
       if (Get.deviceLocale == Locale("zh", "CN")) {
         return CharsetsType.gbk;
@@ -42,7 +40,7 @@ class Api {
   /// - [index] 第几页
   static Future<Resource> getNovelByRanking({required String ranking, required int index}) {
     final String url = "${wenku8Node.node}/modules/article/toplist.php?sort=$ranking&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 根据分类获取小说列表
@@ -50,7 +48,7 @@ class Api {
   /// - [sort] 按什么排序
   /// - [index] 第几页
   static Future<Resource> getNovelByCategory({required String category, required String sort, required int index}) {
-    switch (_charsetsType) {
+    switch (charsetsType) {
       case CharsetsType.gbk:
         {
           category = GbkCodec().encode(category).map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join().trim();
@@ -61,35 +59,35 @@ class Api {
         }
     }
     String url = "${wenku8Node.node}/modules/article/tags.php?t=$category&v=$sort&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取小说信息
   /// - [aid] 小说的id
   static Future<Resource> getNovelDetail({required String aid}) {
     final String url = "${wenku8Node.node}/modules/article/articleinfo.php?id=$aid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取小说的章节目录
   /// - [aid] 小说的id
   static Future<Resource> getCatalogue({required String aid}) {
     final String url = "${wenku8Node.node}/modules/article/reader.php?aid=$aid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 加入书库
   /// - [aid] 小说的id
   static Future<Resource> addNovel({required String aid}) {
     final String url = "${wenku8Node.node}/modules/article/addbookcase.php?bid=$aid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 移出书库
   /// - [delid] 该书在书架中的id，即bid
   static Future<Resource> removeNovel({required String delid}) {
     final String url = "${wenku8Node.node}/modules/article/bookcase.php?delid=$delid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 从列表移出书库
@@ -98,7 +96,7 @@ class Api {
   static Future<Resource> removeNovelFromList({required List<String> list, required int classId}) {
     final String url = "${wenku8Node.node}/modules/article/bookcase.php";
     final Map<String, dynamic> params = {"checkid[]": list, "classlist": classId, "checkall": "checkall", "newclassid": -1, "classid": classId};
-    return Request.postForm(url, data: params, charsetsType: _charsetsType);
+    return Request.postForm(url, data: params, charsetsType: charsetsType);
   }
 
   /// 移动到其它书架
@@ -108,21 +106,21 @@ class Api {
   static Future<Resource> moveNovelToOther({required List<String> list, required int classId, required int newClassId}) {
     final String url = "${wenku8Node.node}/modules/article/bookcase.php";
     final Map<String, dynamic> params = {"checkid[]": list, "classlist": classId, "checkall": "checkall", "newclassid": newClassId, "classid": classId};
-    return Request.postForm(url, data: params, charsetsType: _charsetsType);
+    return Request.postForm(url, data: params, charsetsType: charsetsType);
   }
 
   /// 获取书架
   /// - [classId] 要获取的书架编号
   static Future<Resource> getBookshelf({required int classId}) {
     final String url = "${wenku8Node.node}/modules/article/bookcase.php?classid=$classId";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取其它用户收藏的书籍
   /// - [uid] 该用户的id
   static Future<Resource> getBookshelfFromUser({required String uid}) {
     final String url = "${wenku8Node.node}/userpage.php?uid=$uid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取评论区
@@ -130,7 +128,7 @@ class Api {
   /// - [index] 第几页
   static Future<Resource> getComment({required String aid, required int index}) {
     final String url = "${wenku8Node.node}/modules/article/reviews.php?aid=$aid&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取回复
@@ -138,27 +136,27 @@ class Api {
   /// - [index] 第几页
   static Future<Resource> getReply({required String rid, required int index}) {
     final String url = "${wenku8Node.node}/modules/article/reviewshow.php?rid=$rid&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取推荐页
   static Future<Resource> getRecommend() {
     final String url = "${wenku8Node.node}/index.php";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 为小说投票
   /// - [aid] 被投票的小说的id
   static Future<Resource> novelVote({required String aid}) {
     final String url = "${wenku8Node.node}/modules/article/uservote.php?id=$aid";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 根据标题搜索小说
   /// - [title] 标题关键字
   /// - [index] 第几页
   static Future<Resource> searchNovelByTitle({required String title, required int index}) {
-    switch (_charsetsType) {
+    switch (charsetsType) {
       //url编码
       case CharsetsType.gbk:
         title = GbkEncoder().convert(title).map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
@@ -166,14 +164,14 @@ class Api {
         title = Big5Encoder().convert(title).map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
     }
     final String url = "${wenku8Node.node}/modules/article/search.php?searchtype=articlename&searchkey=$title&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 根据作者搜索小说
   /// - [author] 作者关键字
   /// - [index] 第几页
   static Future<Resource> searchNovelByAuthor({required String author, required int index}) {
-    switch (_charsetsType) {
+    switch (charsetsType) {
       //url编码
       case CharsetsType.gbk:
         author = GbkEncoder().convert(author).map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
@@ -181,20 +179,20 @@ class Api {
         author = Big5Encoder().convert(author).map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
     }
     final String url = "${wenku8Node.node}/modules/article/search.php?searchtype=author&searchkey=$author&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取用户信息
   static Future<Resource> getUserInfo() {
     final String url = "${wenku8Node.node}/userdetail.php";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取已完结小说的列表
   /// - [index] 第几页
   static Future<Resource> getCompletionNovel({required int index}) {
     final String url = "${wenku8Node.node}/modules/article/articlelist.php?fullflag=1&page=$index";
-    return Request.get(url, charsetsType: _charsetsType);
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 发表书评
@@ -205,7 +203,7 @@ class Api {
     final String url = "${wenku8Node.node}/modules/article/reviews.php?aid=$aid";
 
     String submit;
-    switch (_charsetsType) {
+    switch (charsetsType) {
       case CharsetsType.gbk:
         submit = GbkEncoder().convert("发表书评").map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
         title = title.gbkUrlEncodingIfNotAscii();
@@ -219,7 +217,7 @@ class Api {
     submit = "+$submit+";
 
     final String params = "ptitle=$title&pcontent=$content&Submit=$submit";
-    return Request.postForm(url, data: params, charsetsType: _charsetsType);
+    return Request.postForm(url, data: params, charsetsType: charsetsType);
   }
 
   /// 发表回复
@@ -230,7 +228,7 @@ class Api {
     final String url = "${wenku8Node.node}/modules/article/reviewshow.php?rid=$rid&aid=$aid";
 
     String submit;
-    switch (_charsetsType) {
+    switch (charsetsType) {
       case CharsetsType.gbk:
         submit = GbkEncoder().convert("发表书评").map((b) => '%${b.toRadixString(16).padLeft(2, '0').toUpperCase()}').join();
         content = content.gbkUrlEncodingIfNotAscii();
@@ -243,36 +241,15 @@ class Api {
 
     final String params = "pcontent=$content&Submit=$submit";
 
-    return Request.postForm(url, data: params, charsetsType: _charsetsType);
+    return Request.postForm(url, data: params, charsetsType: charsetsType);
   }
 
   /// 获取小说章节内容
   /// - [aid] 小说id
   /// - [cid] 章节id
   static Future<Resource> getNovelContent({required String aid, required String cid}) {
-    final String request = "action=book&do=text&aid=$aid&cid=$cid";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
-  }
-
-  static Future<Response> getNovelContentResponse({required String aid, required String cid, required CancelToken cancelToken}) {
-    final String request = "action=book&do=text&aid=$aid&cid=$cid";
-    return Request.postFormToMewxWenku8Directly(request: request, charsetsType: _charsetsType, cancelToken: cancelToken);
-  }
-
-  /// 登录app.wenku8
-  /// - [username] 用户名
-  /// - [password] 密码
-  static Future<Resource> loginAppWenku8({required String username, required String password}) {
-    final String request = "action=login&username=$username&password=$password";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
-  }
-
-  /// 签到
-  /// - [username] 用户名
-  /// - [password] 密码
-  static Future<Resource> sign() {
-    final String request = "action=block&do=sign";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
+    final String url = "${Api.wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid";
+    return Request.get(url, charsetsType: charsetsType);
   }
 
   /// 获取Github上面的最新版本

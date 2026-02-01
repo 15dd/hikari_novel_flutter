@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/common/app_translations.dart';
 import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/common/util.dart';
+import 'package:hikari_novel_flutter/network/request.dart';
 import 'package:hikari_novel_flutter/router/app_pages.dart';
 import 'package:hikari_novel_flutter/router/route_path.dart';
 import 'package:hikari_novel_flutter/service/db_service.dart';
@@ -42,6 +43,7 @@ void main() async {
 
   _init();
   await Jiffy.setLocale(Util.getCurrentLocale().toString());
+  Request.initCookie(); //初始化cookie
 
   FlutterNativeSplash.remove();
 

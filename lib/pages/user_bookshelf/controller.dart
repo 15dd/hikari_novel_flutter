@@ -4,7 +4,6 @@ import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 
-import '../../common/log.dart';
 import '../../network/api.dart';
 
 class UserBookshelfController extends GetxController {

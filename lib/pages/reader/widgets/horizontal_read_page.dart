@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../common/log.dart';
 import '../../../network/request.dart';
 
 class HorizontalReadPage extends StatefulWidget {
@@ -440,6 +439,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
       s.height,
       s.letterSpacing,
       s.wordSpacing,
+      s.color?.toARGB32(),
       p.left,
       p.right,
       p.top,

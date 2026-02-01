@@ -4,4 +4,8 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config">
+    </application>
 </manifest>

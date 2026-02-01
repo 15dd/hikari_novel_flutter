@@ -54,8 +54,6 @@ class SearchHistoryEntity extends Table {
 /// 阅读历史记录
 /// - [cid] 章节号
 /// - [aid] 书号
-/// - [volume] 卷号
-/// - [chapter] 章节号
 /// - [readerMode] 阅读模式
 /// - [isDualPage] 是否双页
 /// - [location] 阅读位置
@@ -65,10 +63,6 @@ class ReadHistoryEntity extends Table {
   TextColumn get cid => text()();
 
   TextColumn get aid => text()();
-
-  IntColumn get volume => integer()();
-
-  IntColumn get chapter => integer()();
 
   IntColumn get readerMode => integer()();
 

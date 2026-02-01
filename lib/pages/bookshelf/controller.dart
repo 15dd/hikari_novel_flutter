@@ -8,7 +8,6 @@ import 'package:hikari_novel_flutter/network/parser.dart';
 import 'package:hikari_novel_flutter/pages/main/controller.dart';
 
 import '../../common/database/database.dart';
-import '../../common/log.dart';
 import '../../service/db_service.dart';
 
 class BookshelfController extends GetxController with GetTickerProviderStateMixin {

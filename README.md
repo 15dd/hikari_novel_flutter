@@ -6,7 +6,7 @@
 
 # Hikari Novel
 
-  <p align="center"><font>使用flutter构建的第三方轻小说文库客户端</font></p>
+  <p align="center"><font>使用Flutter构建的第三方轻小说文库客户端</font></p>
 
   <div>
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/15dd/hikari_novel_flutter?style=for-the-badge&color=%23408A23">
@@ -38,6 +38,17 @@
 
 ## 安装
 本项目不提供安装包，请参考下方`编译与调试`自行编译使用
+
+
+## 软件截图
+<div align="center">
+  <img src="./readme/1.jpg" width="30%"></img> <img src="./readme/2.jpg" width="30%"></img> <img src="./readme/3.jpg" width="30%">
+</div>
+
+
+## 分支介绍
+- `main` 主分支。发布版本用
+- `develop` 开发分支。想要提pr的人请拉取这个分支进行开发，然后提pr时也请merge到这个分支
 
 
 ## 编译与调试
@@ -73,5 +84,4 @@
 - [mikan_flutter](https://github.com/iota9star/mikan_flutter)
 - [pilipala](https://github.com/guozhigq/pilipala)
 - [PiliPalaX](https://github.com/orz12/PiliPalaX)
-- [light-novel-library_Wenku8_Android](https://github.com/MewX/light-novel-library_Wenku8_Android)
 - AI

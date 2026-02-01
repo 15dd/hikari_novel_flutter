@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -8,8 +9,10 @@ import 'package:hikari_novel_flutter/main.dart';
 import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 import 'package:hikari_novel_flutter/network/request.dart';
 import 'package:hikari_novel_flutter/router/route_path.dart';
+import 'package:hikari_novel_flutter/widgets/state_page.dart';
 
 import '../../common/database/database.dart';
+import '../../common/log.dart';
 import '../../models/resource.dart';
 import '../../network/api.dart';
 import '../../network/parser.dart';
@@ -47,12 +50,21 @@ class LoginController extends GetxController {
         (keyword) => getCookie.any((cookieItem) => cookieItem.name.contains(keyword)),
       ); //getCookie.any((cookieItem) => cookieItem.name == "jieqiUserInfo");
       if (hasCookie) {
-        String cookie = "jieqiUserInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiUserInfo").value};";
-        cookie += "jieqiVisitInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiVisitInfo").value}";
+        // String cookie = "jieqiUserInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiUserInfo").value};";
+        // cookie += "jieqiVisitInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiVisitInfo").value}";
+        Log.d(getCookie.map((c) => "${c.name}=${Uri.encodeComponent(c.value)}").join(";").toString());
+        //这里将cookie的value编译成url格式是为了避免报错
+        LocalStorageService.instance.setCookie(getCookie.map((c) => "${c.name}=${Uri.encodeComponent(c.value)}").join(";"));
+        Request.initCookie();
 
-        LocalStorageService.instance.setCookie(cookie);
-        await _getUserInfo();
-        await _refreshBookshelf();
+        try {
+          await _getUserInfo();
+          await _refreshBookshelf();
+        } catch (e) {
+          LocalStorageService.instance.setCookie(null); //清空cookie
+          Get.offAllNamed(RoutePath.welcome);
+          return;
+        }
 
         Get.offAllNamed(RoutePath.main);
       }
@@ -66,13 +78,8 @@ class LoginController extends GetxController {
         LocalStorageService.instance.setUserInfo(Parser.getUserInfo(data.data));
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(data.error.toString()),
-              actions: [TextButton(onPressed: () => Get.back(), child: Text("confirm".tr))],
-            ),
-          );
+          await showErrorDialog(data.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
+          throw data.error;
         }
     }
   }
@@ -101,13 +108,8 @@ class LoginController extends GetxController {
         }
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(result.error.toString()),
-              actions: [TextButton(onPressed: () => Get.back(), child: Text("confirm".tr))],
-            ),
-          );
+          await showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
+          throw result.error;
         }
     }
   }

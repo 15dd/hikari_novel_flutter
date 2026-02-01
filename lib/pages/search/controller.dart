@@ -10,6 +10,7 @@ import 'package:hikari_novel_flutter/router/app_sub_router.dart';
 import '../../common/database/database.dart';
 import '../../network/api.dart';
 import '../../service/db_service.dart';
+import '../../widgets/state_page.dart';
 
 class SearchController extends GetxController {
   SearchController({required this.author});
@@ -114,13 +115,7 @@ class SearchController extends GetxController {
             errorMsg = result.error;
             pageState.value = PageState.error;
           } else {
-            Get.dialog(
-              AlertDialog(
-                title: Text("error".tr),
-                content: Text(result.error.toString()),
-                actions: [TextButton(onPressed: () => Get.back(), child: Text("confirm".tr))],
-              ),
-            );
+            showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
           }
           if (_index > 0) {
             _index -= 1;

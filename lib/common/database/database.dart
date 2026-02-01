@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:hikari_novel_flutter/common/migration.dart';
 import 'package:path_provider/path_provider.dart';
 import 'entity.dart';
 
@@ -10,11 +11,15 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2; //版本号
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onUpgrade: (m, from, to) async {},
+    onUpgrade: (m, from, to) async {
+      if (from == 1 && to == 2) {
+        Migration.fromOneToTwo(this);
+      }
+    },
   );
 
   Future<void> insertAllBookshelf(Iterable<BookshelfEntityData> data) => batch((b) => b.insertAll(bookshelfEntity, data));
@@ -57,10 +62,12 @@ class AppDatabase extends _$AppDatabase {
 
   Stream<ReadHistoryEntityData?> getWatchableReadHistoryByCid(String cid) => (select(readHistoryEntity)..where((i) => i.cid.equals(cid))).watchSingleOrNull();
 
-  Stream<List<ReadHistoryEntityData>> getWatchableReadHistoryByVolume(String aid, int index) =>
-      (select(readHistoryEntity)..where((i) => i.aid.equals(aid) & i.volume.equals(index))).watch();
+  /// - [cids] 该卷下所有小说的cid
+  Stream<List<ReadHistoryEntityData>> getWatchableReadHistoryByVolume(List<String> cids) => (select(readHistoryEntity)..where((i) => i.cid.isIn(cids))).watch();
 
   Future<void> deleteReadHistoryByCid(String cid) => (delete(readHistoryEntity)..where((i) => i.cid.equals(cid))).go();
+
+  Future<void> upsertReadHistoryDirectly(ReadHistoryEntityData data) => into(readHistoryEntity).insertOnConflictUpdate(data);
 
   Future<void> deleteAllReadHistory() => delete(readHistoryEntity).go();
 

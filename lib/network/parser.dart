@@ -13,6 +13,7 @@ import '../models/bookshelf.dart';
 import '../models/cat_chapter.dart';
 import '../models/cat_volume.dart';
 import '../models/comment_item.dart';
+import '../models/content.dart';
 import '../models/novel_cover.dart';
 import '../models/user_info.dart';
 
@@ -459,15 +460,6 @@ class Parser {
     );
   }
 
-  ///获取小说内容中的图像 URL
-  static List<String> getImageFromContent(String content) {
-    //定义正则，非贪婪地匹配 <!--image--> 与 <!--image--> 之间的内容
-    final regex = RegExp(r'<!--image-->(.*?)<!--image-->', dotAll: true);
-    final matches = regex.allMatches(content);
-
-    return matches.map((m) => m.group(1)!.trim()).toList();
-  }
-
   static bool isError(String html) {
     Document document = parse(html);
 
@@ -510,5 +502,54 @@ class Parser {
     } catch (e) {
       return null;
     }
+  }
+
+  static Content getContent(String html) {
+    // 解析HTML并提取核心内容
+    Document document = parse(html);
+    Element contentElement = document.getElementById('content')!;
+
+    // 提取所有img标签的src属性到List
+    List<String> imgSrcList = [];
+    List<Element> imgElements = contentElement.querySelectorAll('img');
+    for (var img in imgElements) {
+      String? src = img.attributes['src'];
+      if (src != null && src.isNotEmpty) {
+        imgSrcList.add(src);
+      }
+    }
+
+    // 移除指定元素（比如id=contentdp的ul）
+    contentElement.querySelectorAll('ul#contentdp').forEach((e) => e.remove());
+
+    // 去除文本首尾的空行（核心处理）
+    // 正则说明：^[\n\s]* 匹配开头的所有换行/空白；[\n\s]*$ 匹配结尾的所有换行/空白
+    String trimmedText = contentElement.text.replaceAll(RegExp(r'^[\n\s]*|[\n\s]*$'), '');
+
+    // 按空行分割成段落列表（兼容含空格的空行）
+    List<String> paragraphs = trimmedText.split(RegExp(r'\n\s*\n'));
+
+    // 处理每个段落，仅第一行加缩进
+    List<String> processedParagraphs = paragraphs.map((paragraph) {
+      String trimmedPara = paragraph.trim();
+      if (trimmedPara.isEmpty) {
+        return '';
+      }
+      List<String> lines = paragraph.split('\n');
+      if (lines.isNotEmpty) {
+        lines[0] = '   ${lines[0]}'; // 仅首行加3个空格
+      }
+      return lines.join('\n');
+    }).toList();
+
+    // 拼接段落，保留段落间空行，确保最终文本无首尾空行
+    String finalText = processedParagraphs.join('\n\n').trim();
+
+    // 从纯文本中移除图片链接
+    for (var src in imgSrcList) {
+      finalText = finalText.replaceAll(src, '');
+    }
+
+    return Content(text: finalText, images: imgSrcList);
   }
 }

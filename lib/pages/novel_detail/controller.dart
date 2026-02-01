@@ -10,11 +10,11 @@ import 'package:hikari_novel_flutter/models/reader_direction.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 import 'package:hikari_novel_flutter/pages/bookshelf/controller.dart';
 import 'package:hikari_novel_flutter/pages/cache_queue/controller.dart';
+import 'package:hikari_novel_flutter/widgets/state_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/database/database.dart';
-import '../../common/log.dart';
 import '../../models/cat_chapter.dart';
 import '../../models/dual_page_mode.dart';
 import '../../models/page_state.dart';
@@ -265,13 +265,7 @@ class NovelDetailController extends GetxController {
         }
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(result.error.toString()),
-              actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
-            ),
-          );
+          showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
         }
     }
     _isAdding = false;
@@ -291,13 +285,7 @@ class NovelDetailController extends GetxController {
         }
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(result.error.toString()),
-              actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
-            ),
-          );
+          showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
         }
     }
     _isRemoving = false;
@@ -389,5 +377,43 @@ class NovelDetailController extends GetxController {
     }
   }
 
-  void deleteAllReadHistory() async => await DBService.instance.deleteAllReadHistory();
+  void deleteAllReadHistory() async => DBService.instance.deleteAllReadHistory();
+
+  Future<void> markAsUnRead() async {
+    for (var chapter in getSelectedChapters()) {
+      await DBService.instance.deleteReadHistoryByCid(chapter.cid);
+    }
+  }
+
+  Future<void> markAsRead() async {
+    // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
+    final readerMode = LocalStorageService.instance.getReaderDirection() == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode;
+    bool isDualPage = switch (LocalStorageService.instance.getReaderDualPageMode()) {
+      DualPageMode.auto => Get.context!.isLargeScreen(),
+      DualPageMode.enabled => true,
+      DualPageMode.disabled => false,
+    };
+
+    for (var chapter in getSelectedChapters()) {
+      final data = await DBService.instance.getReadHistoryByCid(chapter.cid);
+
+      if (data == null) {
+        DBService.instance.upsertReadHistoryDirectly(
+          ReadHistoryEntityData(cid: chapter.cid, aid: aid, readerMode: readerMode, isDualPage: isDualPage, location: 0, progress: 100, isLatest: false),
+        );
+      } else {
+        DBService.instance.upsertReadHistoryDirectly(
+          ReadHistoryEntityData(
+            cid: data.cid,
+            aid: data.aid,
+            readerMode: data.readerMode,
+            isDualPage: data.isDualPage,
+            location: data.location,
+            progress: 100,
+            isLatest: data.isLatest,
+          ),
+        );
+      }
+    }
+  }
 }

@@ -21,8 +21,6 @@ class LocalStorageService extends GetxService {
 
   static const String kCookie = "cookie",
       kUserInfo = "user_info",
-      kUsername = "username",
-      kPassword = "password",
       kLanguage = "language",
       kIsAutoCheckUpdate = "isAutoCheckUpdate",
       kWenku8Node = "wenku8Node",
@@ -71,14 +69,6 @@ class LocalStorageService extends GetxService {
   void setUserInfo(UserInfo value) => _setting.put(kUserInfo, value);
 
   UserInfo? getUserInfo() => _setting.get(kUserInfo);
-
-  void setUsername(String value) => _loginInfo.put(kUsername, value);
-
-  String? getUsername() => _loginInfo.get(kUsername);
-
-  void setPassword(String value) => _loginInfo.put(kPassword, value);
-
-  String? getPassword() => _loginInfo.get(kPassword);
 
   void setIsAutoCheckUpdate(bool enabled) => _setting.put(kIsAutoCheckUpdate, enabled);
 

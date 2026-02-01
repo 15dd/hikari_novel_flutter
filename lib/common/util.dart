@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:get/get.dart';
@@ -7,10 +6,8 @@ import 'package:hikari_novel_flutter/service/local_storage_service.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_semver/pub_semver.dart';
-
 import '../models/common/language.dart';
 import '../network/api.dart';
-import 'log.dart';
 
 class Util {
   static String getDateTime(String dateStr) {
@@ -42,14 +39,14 @@ class Util {
   static Future<dynamic> isLatestVersionAvail() async {
     final response = await Api.fetchLatestRelease();
     if (response is Success) {
-      final data = jsonDecode(response.data);
-      final remoteVer = data['tag_name']; // e.g. "1.2.3"
+      final data = response.data;
+      final remoteVer = data['tag_name']; // e.g. "1.2.3-beta.2+2"
 
       final info = await PackageInfo.fromPlatform();
-      final localVer = info.version; // e.g. "1.2.0"
+      final localVer = info.version; // e.g. "1.2.0-beta.2"
 
-      final currRemoteVer = Version.parse(remoteVer);
-      final currLocalVer = Version.parse(localVer);
+      final currRemoteVer = Version.parse(remoteVer.toString().substring(0, remoteVer.toString().indexOf("+")));
+      final currLocalVer = Version.parse(localVer.toString());
 
       return currRemoteVer > currLocalVer;
     } else {

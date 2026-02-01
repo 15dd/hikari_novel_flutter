@@ -2,7 +2,7 @@
 // Do not modify
 // Check in to version control
 
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'package:hikari_novel_flutter/models/user_info.dart';
 
 extension HiveRegistrar on HiveInterface {

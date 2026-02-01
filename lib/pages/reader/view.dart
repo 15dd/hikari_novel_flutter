@@ -12,7 +12,6 @@ import 'package:hikari_novel_flutter/widgets/state_page.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/constants.dart';
-import '../../common/log.dart';
 import '../../models/page_state.dart';
 import '../../router/route_path.dart';
 
@@ -43,65 +42,52 @@ class ReaderPage extends StatelessWidget {
       body: Stack(
         children: [
           Obx(
-            () => Offstage(
-              offstage: controller.pageState.value != PageState.success,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent, //防止上下滚动事件被拦截，只拦截点击事件
-                onTap: () => controller.showBar.value = !controller.showBar.value,
-                child: ReaderBackground(
-                  child: Obx(
-                    () => Padding(
-                      padding: EdgeInsets.only(
-                        bottom: controller.readerSettingsState.value.showStatusBar ? kStatusBarPadding + MediaQuery.of(context).padding.bottom : 0,
+            () => controller.pageState.value == PageState.success
+                ? GestureDetector(
+                    behavior: HitTestBehavior.translucent, //防止上下滚动事件被拦截，只拦截点击事件
+                    onTap: () => controller.showBar.value = !controller.showBar.value,
+                    child: ReaderBackground(
+                      child: Obx(
+                        () => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: controller.readerSettingsState.value.showStatusBar ? kStatusBarPadding + MediaQuery.of(context).padding.bottom : 0,
+                          ),
+                          child: _buildReadPage(context),
+                        ),
                       ),
-                      child: controller.readerSettingsState.value.direction == ReaderDirection.upToDown ? _buildVertical(context) : _buildHorizontal(context),
                     ),
-                  ),
-                ),
-              ),
-            ),
+                  )
+                : Container(),
           ),
           Obx(() {
-            final bool isIgnoring = controller.pageState.value != PageState.success;
-            final bool isOffstage = controller.readerSettingsState.value.direction == ReaderDirection.upToDown;
+            final bool isEnabled =
+                controller.pageState.value == PageState.success && controller.readerSettingsState.value.direction != ReaderDirection.upToDown;
 
-            return Positioned.fill(
-              child: Offstage(
-                offstage: isOffstage,
-                //确保IgnorePointer的hitTestBehavior正确
-                child: IgnorePointer(
-                  ignoring: isIgnoring,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          //根据ignoring状态禁用GestureDetector
-                          onTap: isIgnoring
-                              ? null
-                              : () => controller.readerSettingsState.value.direction == ReaderDirection.leftToRight
-                                    ? controller.prevPage()
-                                    : controller.nextPage(),
-                          behavior: HitTestBehavior.translucent,
+            return isEnabled
+                ? Positioned.fill(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTap: () =>
+                                controller.readerSettingsState.value.direction == ReaderDirection.leftToRight ? controller.prevPage() : controller.nextPage(),
+                            behavior: HitTestBehavior.translucent,
+                          ),
                         ),
-                      ),
-                      const Expanded(flex: 1, child: SizedBox()),
-                      Expanded(
-                        flex: 1,
-                        child: GestureDetector(
-                          onTap: isIgnoring
-                              ? null
-                              : () => controller.readerSettingsState.value.direction == ReaderDirection.leftToRight
-                                    ? controller.nextPage()
-                                    : controller.prevPage(),
-                          behavior: HitTestBehavior.translucent,
+                        const Expanded(flex: 1, child: SizedBox()),
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTap: () =>
+                                controller.readerSettingsState.value.direction == ReaderDirection.leftToRight ? controller.nextPage() : controller.prevPage(),
+                            behavior: HitTestBehavior.translucent,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
+                      ],
+                    ),
+                  )
+                : Container();
           }),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.loading, child: const LoadingPage())),
           Obx(
@@ -182,52 +168,58 @@ class ReaderPage extends StatelessWidget {
     );
   }
 
+  Widget _buildReadPage(BuildContext context) {
+    return Obx(() {
+      if (controller.pageState.value == PageState.success) {
+        return controller.readerSettingsState.value.direction == ReaderDirection.upToDown ? _buildVertical(context) : _buildHorizontal(context);
+      } else {
+        return Container();
+      }
+    });
+  }
+
   Widget _buildVertical(BuildContext context) {
-    return Obx(
-      () => SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: EasyRefresh(
-          header: MaterialHeader2(
-            triggerOffset: 80,
-            child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-              padding: const EdgeInsets.all(12),
-              child: Icon(Icons.arrow_circle_up, color: Theme.of(context).colorScheme.primary),
-            ),
+    return SizedBox(
+      height: double.infinity,
+      child: EasyRefresh(
+        header: MaterialHeader2(
+          triggerOffset: 80,
+          child: Container(
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
+            padding: const EdgeInsets.all(12),
+            child: Icon(Icons.arrow_circle_up, color: Theme.of(context).colorScheme.primary),
           ),
-          footer: MaterialFooter2(
-            triggerOffset: 80,
-            child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-              padding: const EdgeInsets.all(12),
-              child: Icon(Icons.arrow_circle_down, color: Theme.of(context).colorScheme.primary),
-            ),
+        ),
+        footer: MaterialFooter2(
+          triggerOffset: 80,
+          child: Container(
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
+            padding: const EdgeInsets.all(12),
+            child: Icon(Icons.arrow_circle_down, color: Theme.of(context).colorScheme.primary),
           ),
-          refreshOnStart: false,
-          onRefresh: controller.prevChapter,
-          onLoad: controller.nextChapter,
-          child: VerticalReadPage(
-            controller.text.value,
-            controller.images,
-            initPosition: controller.getInitLocation(),
-            padding: padding,
-            style: textStyle,
-            controller: controller.scrollController,
-            onScroll: (position, max) {
-              if (max == 0 && position == 0) {
-                //仅一页的情况下
-                controller.location.value = 0;
-                controller.verticalProgress.value = 100;
-                controller.setReadHistory(); //立即更新历史阅读记录
-              } else if (max > 0) {
-                controller.location.value = position.toInt();
-                controller.verticalProgress.value = ((position.toInt() / max.toInt()) * 100).toInt();
-                //延迟更新阅读记录
-                debounce(controller.location, (_) => controller.setReadHistory(), time: const Duration(milliseconds: 500));
-              }
-            },
-          ),
+        ),
+        refreshOnStart: false,
+        onRefresh: controller.prevChapter,
+        onLoad: controller.nextChapter,
+        child: VerticalReadPage(
+          controller.text.value,
+          controller.images,
+          initPosition: controller.isInitialized ? 0 : controller.getInitLocation(),
+          padding: padding,
+          style: textStyle,
+          controller: controller.scrollController,
+          onScroll: (position, max) {
+            if (max == 0 && position == 0) {
+              //仅一页的情况下
+              controller.location.value = 0;
+              controller.verticalProgress.value = 100;
+              controller.setReadHistory(); //立即更新历史阅读记录
+            } else if (max > 0) {
+              controller.location.value = position.toInt();
+              controller.verticalProgress.value = ((position.toInt() / max.toInt()) * 100).toInt();
+              //由controller的debounce监听location变化，判断是否更新历史阅读记录
+            }
+          },
         ),
       ),
     );
@@ -257,7 +249,7 @@ class ReaderPage extends StatelessWidget {
       child: HorizontalReadPage(
         controller.text.value,
         controller.images,
-        initIndex: controller.getInitLocation(),
+        initIndex: controller.isInitialized ? 0 : controller.getInitLocation(),
         padding: padding,
         style: textStyle,
         reverse: controller.readerSettingsState.value.direction == ReaderDirection.rightToLeft,
@@ -273,8 +265,7 @@ class ReaderPage extends StatelessWidget {
             controller.setReadHistory(); //立即更新历史阅读记录
           } else if (max > 0) {
             controller.horizontalProgress.value = int.parse(((index + 1) / max * 100.0).toStringAsFixed(0));
-            //延迟更新阅读记录
-            debounce(controller.currentIndex, (_) => controller.setReadHistory(), time: const Duration(milliseconds: 500));
+            //由controller的debounce监听currentIndex变化，判断是否更新历史阅读记录
           }
         },
         onViewImage: (index) => Get.toNamed(RoutePath.photo, arguments: {"gallery_mode": true, "list": controller.images, "index": index}),

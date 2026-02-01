@@ -20,11 +20,27 @@ class ErrorMessage extends StatelessWidget {
             "error".tr,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child: Text(msg)),
+          Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child: _buildErrorInfo()),
           onRetry == null ? Container() : FilledButton.icon(onPressed: onRetry, icon: Icon(Icons.refresh), label: Text("retry".tr)),
         ],
       ),
     );
+  }
+
+  Widget _buildErrorInfo() {
+    if (msg.contains("Cloudflare Challenge Detected")) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            Text("cloudflare_challenge_exception_tip".tr),
+            SizedBox(width: 50, child: Divider()),
+            Text(msg),
+          ],
+        ),
+      );
+    } else {
+      return SingleChildScrollView(child: Text(msg));
+    }
   }
 }
 
@@ -45,13 +61,7 @@ class LogoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image.asset(
-        "assets/images/logo_transparent.png",
-        width: 150,
-        height: 150,
-      ),
-    );
+    return Center(child: Image.asset("assets/images/logo_transparent.png", width: 150, height: 150));
   }
 }
 
@@ -92,4 +102,23 @@ class EmptyPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future showErrorDialog(String msg, List<Widget> actions) {
+  late Widget content;
+  if (msg.contains("Cloudflare Challenge Detected")) {
+    content = SingleChildScrollView(
+      child: Column(
+        children: [
+          Text("cloudflare_challenge_exception_tip".tr),
+          SizedBox(width: 50, child: Divider()),
+          Text(msg),
+        ],
+      ),
+    );
+  } else {
+    content = SingleChildScrollView(child: Text(msg));
+  }
+
+  return Get.dialog(AlertDialog(title: Text("error".tr), content: content, actions: actions));
 }

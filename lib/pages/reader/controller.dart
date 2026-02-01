@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:battery_plus/battery_plus.dart';
 import 'package:file_picker/file_picker.dart';
@@ -31,8 +32,8 @@ class ReaderController extends GetxController {
 
   late List<CatVolume> catalogue;
   late String aid;
-  int currentVolumeIndex = int.parse(Get.parameters["volume"]!);
-  int currentChapterIndex = int.parse(Get.parameters["chapter"]!);
+  late int currentVolumeIndex;
+  late int currentChapterIndex;
 
   String get cid => catalogue[currentVolumeIndex].chapters[currentChapterIndex].cid;
 
@@ -92,13 +93,14 @@ class ReaderController extends GetxController {
 
   Rxn<String> currentBgImagePath = Rxn();
 
+  bool isInitialized = false;
+
   @override
   void onInit() async {
     super.onInit();
 
     aid = _novelDetailController.aid;
     catalogue = _novelDetailController.novelDetail.value!.catalogue;
-    chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
 
     _battery.batteryLevel.then((l) => batteryLevel.value = l);
     _battery.onBatteryStateChanged.listen((l) async {
@@ -110,6 +112,12 @@ class ReaderController extends GetxController {
     getBgImage();
 
     checkFontFile(true);
+
+    //延迟更新阅读记录
+    //debounce / ever / interval 只能在 Controller 生命周期里创建一次
+    //TODO 还需要优化
+    interval(location, (_) async => setReadHistory(), time: const Duration(milliseconds: 500));
+    interval(currentIndex, (_) async => setReadHistory(), time: const Duration(milliseconds: 500));
   }
 
   @override
@@ -117,6 +125,20 @@ class ReaderController extends GetxController {
     super.onReady();
     if (readerSettingsState.value.wakeLock) WakelockPlus.toggle(enable: true);
     if (readerSettingsState.value.immersionMode) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+    /*
+     1) 至于这里的cid为什么不直接使用上面的<get cid>，是因为上面的<get cid>依赖currentVolumeIndex和currentChapterIndex。
+        而我们想要currentVolumeIndex和currentChapterIndex的时候，需要根据cid在catalogue中获取其对应的VolumeIndex和ChapterIndex。
+     2) 因为getContent()函数依赖cid，所以我把初始化cid的过程放到了onReady而不是onInit中。
+     */
+    final listOnlyWithCid = catalogue.map((cat) => cat.chapters.map((chap) => chap.cid).toList()).toList(); //仅提取含有cid的list
+    final targetCid = Get.parameters["cid"]!;
+    final indexPosition = (await compute(_findIndexPositionInCatalogue, {'catalogue': listOnlyWithCid, 'cid': targetCid}))!;
+
+    currentVolumeIndex = indexPosition[0];
+    currentChapterIndex = indexPosition[1];
+
+    chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
 
     await getContent();
   }
@@ -130,6 +152,7 @@ class ReaderController extends GetxController {
 
   //获取初始页面位置
   int getInitLocation() {
+    isInitialized = true;
     if (readerSettingsState.value.direction == ReaderDirection.upToDown) {
       try {
         int value = int.parse(Get.parameters["location"]!);
@@ -171,9 +194,10 @@ class ReaderController extends GetxController {
     switch (result) {
       case Success():
         {
-          images.value = Parser.getImageFromContent(result.data);
+          final content = await compute(Parser.getContent, result.data as String);
+          images.value = content.images;
           chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
-          text.value = await compute(_extractContent, result.data as String);
+          text.value = content.text;
 
           pageState.value = PageState.success;
         }
@@ -186,9 +210,10 @@ class ReaderController extends GetxController {
   }
 
   Future<void> _getContentByLocal(String result) async {
-    images.value = Parser.getImageFromContent(result);
+    final content = await compute(Parser.getContent, result);
+    images.value = content.images;
     chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
-    text.value = await compute(_extractContent, result);
+    text.value = content.text;
     pageState.value = PageState.success;
   }
 
@@ -265,13 +290,13 @@ class ReaderController extends GetxController {
   }
 
   void setReadHistory() {
+    Log.d("setReadHistory");
     DBService.instance.upsertReadHistory(
       ReadHistoryEntityData(
         cid: cid,
         aid: aid,
-        volume: currentVolumeIndex,
-        chapter: currentChapterIndex,
-        readerMode: readerSettingsState.value.direction == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode,  // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
+        readerMode: readerSettingsState.value.direction == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode,
+        // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
         isDualPage: isDualPage,
         location: readerSettingsState.value.direction == ReaderDirection.upToDown ? location.value : currentIndex.value,
         progress: readerSettingsState.value.direction == ReaderDirection.upToDown ? verticalProgress.value : horizontalProgress.value,
@@ -535,50 +560,24 @@ class ReaderController extends GetxController {
   }
 }
 
-String _extractContent(String text) {
-  //如果文本中含有图片占位符，可选地进行处理
-  final regex = RegExp(r'<!--image-->.*?<!--image-->', dotAll: true);
-  text = text.replaceAll(regex, '');
+///查找目标字符串在二维列表中出现的位置
+///返回格式：[外层索引, 内层索引]，未找到则返回 null
+List<int>? _findIndexPositionInCatalogue(Map<String, dynamic> args) {
+  final catalogue = args['catalogue'] as List<List<String>>;
+  final targetCid = args['cid'] as String;
 
-  List<String> lines = text.split('\n');
-  bool titleSkipped = false; //标记是否跳过了标题
-  List<String> contentLines = [];
-
-  for (String line in lines) {
-    String trimmedLine = line.trim();
-
-    //首先跳过标题部分：第一个非空行为标题
-    if (!titleSkipped) {
-      if (trimmedLine.isNotEmpty) {
-        titleSkipped = true;
-      }
-      continue;
-    }
-
-    //保留段落分隔符
-    if (trimmedLine.isEmpty) {
-      //如果结果列表已经有内容，并且上一行不是空行，则添加一个空行作为段落分隔符
-      if (contentLines.isNotEmpty && contentLines.last.isNotEmpty) {
-        contentLines.add('');
-      }
-    } else {
-      //非空行，直接添加
-      contentLines.add(line);
+  // 遍历外层列表，同时获取索引和子列表
+  for (int outerIndex = 0; outerIndex < catalogue.length; outerIndex++) {
+    List<String> innerList = catalogue[outerIndex];
+    // 查找目标字符串在当前子列表中的索引
+    int innerIndex = innerList.indexOf(targetCid);
+    // 如果找到（索引不为 -1），返回位置
+    if (innerIndex != -1) {
+      return [outerIndex, innerIndex];
+      // return IndexPosition(volumeIndex: outerIndex, chapterIndex: innerIndex);
     }
   }
-
-  //移除末尾多余的空行
-  while (contentLines.isNotEmpty && contentLines.last.isEmpty) {
-    contentLines.removeLast();
-  }
-
-  //移除开头多余的空行（如果有）
-  while (contentLines.isNotEmpty && contentLines.first.isEmpty) {
-    contentLines.removeAt(0);
-  }
-
-  //将处理后的各行以换行符拼接返回
-  return contentLines.join('\n');
+  return null;
 }
 
 class ReaderSettingsState {
