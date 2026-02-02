@@ -33,19 +33,16 @@ class TtsService extends GetxService {
   bool _pauseRequested = false;
   bool _stopRequested = false;
 
-final isSessionActive = false.obs;
-final sessionTitle = ''.obs;
-final sessionProgress = 0.0.obs;
-List<String> _chunks = const [];
-int _chunkIndex = 0;
+  final isSessionActive = false.obs;
+  final sessionTitle = ''.obs;
+  final sessionProgress = 0.0.obs;
+  List<String> _chunks = const [];
+  int _chunkIndex = 0;
 
-// Smaller chunks reduce the "restart from the beginning" feeling on engines
-// that don't support true pause/resume.
-static const int _maxChunkLen = 140;
+  static const int _maxChunkLen = 140;
 
   static const String multiTtsEnginePackage = 'org.nobody.multitts';
 
-  /// Prefer Chinese by default, but fall back to system locale if unavailable.
   static const List<String> _preferredLocales = <String>['zh-CN', 'zh-TW', 'zh-HK', 'en-US'];
 
   Future<void> init() async {
@@ -104,9 +101,6 @@ static const int _maxChunkLen = 140;
 
     await refreshEngines();
 
-    // Only apply saved engine if we can actually see it on this device.
-    // If engines list is empty (common on Android 11+ without package visibility),
-    // keep engine = null so system default works.
     final savedEngine = engine.value;
     final hasSaved = savedEngine != null && savedEngine.isNotEmpty && engines.contains(savedEngine);
     if (hasSaved) {
@@ -227,29 +221,19 @@ static const int _maxChunkLen = 140;
     await _tts.setVolume(v);
   }
 
-  /// Re-apply current rate/pitch/volume to the underlying TTS engine.
-  ///
-  /// Note: Most engines only read these parameters when (re)starting speech,
-  /// so if we are currently playing/paused we will pause->apply->resume to
-  /// make the change take effect immediately.
   Future<void> refreshSettings({bool restartIfPlaying = true}) async {
     if (!enabled.value) return;
 
-    // If currently speaking (or in-session), do a soft refresh to avoid
-    // ending the session.
     if (restartIfPlaying && (isPlaying.value || isPaused.value || isSessionActive.value)) {
-      // Pause first (some engines will treat stop() as cancel, so we try pause).
       try {
         await pauseSession();
       } catch (_) {}
 
       await _prepareForSpeak();
 
-      // Resume from the current chunk/session if possible.
       try {
         await resumeSession();
       } catch (_) {
-        // Fallback: speak last text again if resume fails.
         if (lastSpokenText.value.trim().isNotEmpty) {
           await speak(lastSpokenText.value);
         }
@@ -257,7 +241,6 @@ static const int _maxChunkLen = 140;
       return;
     }
 
-    // Not playing: just apply settings for the next speak().
     await _prepareForSpeak();
   }
 
@@ -319,7 +302,6 @@ Future<void> startChapter(String fullText, {String title = ''}) async {
   sessionTitle.value = title;
   isSessionActive.value = true;
   isPaused.value = false;
-  // isPlaying will be set by startHandler when TTS actually starts.
 
   _chunks = _splitToChunks(cleaned);
   _chunkIndex = 0;
@@ -338,11 +320,8 @@ Future<void> resumeSession() async {
     }
     return;
   }
-  // Prefer true resume if the engine supports it.
   if (isPaused.value) {
     final dynamic ttsDyn = _tts;
-    // flutter_tts provides continueSpeaking / resume depending on platform & version.
-    // Keep it dynamic so we don't break compilation if a method doesn't exist.
     try {
       isPaused.value = false;
       await ttsDyn.continueSpeaking();
@@ -353,7 +332,6 @@ Future<void> resumeSession() async {
         await ttsDyn.resume();
         return;
       } catch (_) {
-        // Fallback below.
       }
     }
   }
@@ -416,7 +394,6 @@ Future<void> pauseSession() async {
         : (_chunkIndex / _chunks.length).clamp(0.0, 1.0);
   }
 
-  /// Ensure engine / locale / parameters are applied before speaking.
   Future<void> _prepareForSpeak() async {
     try {
       await _tts.setSpeechRate(rate.value);
@@ -427,7 +404,6 @@ Future<void> pauseSession() async {
   }
 
   Future<void> _applyBestLanguage() async {
-    // If user picked a voice, try its locale first.
     final fromVoice = voice.value?['locale'];
     final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale.toLanguageTag();
 
@@ -446,7 +422,6 @@ Future<void> pauseSession() async {
 
   Future<bool> _trySetLanguage(String locale) async {
     try {
-      // Some engines return null/false here; be defensive.
       final available = await _tts.isLanguageAvailable(locale);
       if (available == null) {
         await _tts.setLanguage(locale);
@@ -461,10 +436,7 @@ Future<void> pauseSession() async {
   }
 
   void _handleSpeakResult(dynamic r) {
-    // flutter_tts returns 1 on success, 0 on failure on Android.
     if (r is int && r == 0) {
-      // If user explicitly requested stop/pause, we should not show a "failed" toast.
-      // Some engines return 0 when the utterance is cancelled before it really starts.
       if (_stopRequested || _pauseRequested) {
         if (kDebugMode) {
           print('[TtsService] speak() returned 0 but stop/pause was requested; suppressing error');
@@ -474,7 +446,6 @@ Future<void> pauseSession() async {
       if (kDebugMode) {
         print('[TtsService] speak() returned 0 (failed)');
       }
-      // Make UI honest: don't stay "playing" with no audio.
       isPlaying.value = false;
       isPaused.value = false;
       if (isSessionActive.value) {
