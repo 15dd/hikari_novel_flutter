@@ -22,17 +22,24 @@ class RecommendController extends GetxController {
   Future<IndicatorResult> getRecommend() async {
     pageState.value = PageState.loading;
 
-    final result = await Api.getRecommend();
-    switch (result) {
-      case Success():
-        data.clear();
-        data.addAll(Parser.getRecommend(result.data));
-        pageState.value = PageState.success;
-        return IndicatorResult.success;
-      case Error():
-        errorMsg = result.error;
-        pageState.value = PageState.error;
-        return IndicatorResult.fail;
+    try {
+      final result = await Api.getRecommend();
+      switch (result) {
+        case Success():
+          data.clear();
+          data.addAll(Parser.getRecommend(result.data));
+          pageState.value = PageState.success;
+          return IndicatorResult.success;
+        case Error():
+          errorMsg = result.error;
+          pageState.value = PageState.error;
+          return IndicatorResult.fail;
+      }
+    } catch (e) {
+      // 兜底：站点结构变更/解析异常/网络异常，避免 release 白屏
+      errorMsg = e.toString();
+      pageState.value = PageState.error;
+      return IndicatorResult.fail;
     }
   }
 }

@@ -55,6 +55,7 @@ class LocalStorageService extends GetxService {
       kReaderTtsEngine = "readerTtsEngine",
       kReaderTtsVoice = "readerTtsVoice",
       kReaderTtsRate = "readerTtsRate",
+      kDevModeEnabled = "devModeEnabled",
       kReaderTtsPitch = "readerTtsPitch",
       kReaderTtsVolume = "readerTtsVolume";
 
@@ -229,4 +230,9 @@ class LocalStorageService extends GetxService {
   double getReaderTtsVolume() => _reader.get(kReaderTtsVolume, defaultValue: 1.0);
 
   void setReaderTtsVolume(double value) => _reader.put(kReaderTtsVolume, value);
+
+bool getDevModeEnabled() => _setting.get(kDevModeEnabled, defaultValue: false);
+
+Future<void> setDevModeEnabled(bool value) async => _setting.put(kDevModeEnabled, value);
+
 }

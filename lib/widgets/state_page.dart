@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class ErrorMessage extends StatelessWidget {
-  const ErrorMessage({super.key, required this.msg, required this.onRetry});
+  // Keep `onRetry` for backward compatibility with existing call sites.
+  // The UI intentionally does NOT render a retry button.
+  const ErrorMessage({super.key, required this.msg, this.onRetry});
 
   final String msg;
-  final Function()? onRetry;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +20,16 @@ class ErrorMessage extends StatelessWidget {
         children: [
           Text(
             "error".tr,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child: _buildErrorInfo()),
-          onRetry == null ? Container() : FilledButton.icon(onPressed: onRetry, icon: Icon(Icons.refresh), label: Text("retry".tr)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: _buildErrorInfo(),
+          ),
         ],
       ),
     );
@@ -33,7 +41,7 @@ class ErrorMessage extends StatelessWidget {
         child: Column(
           children: [
             Text("cloudflare_challenge_exception_tip".tr),
-            SizedBox(width: 50, child: Divider()),
+            const SizedBox(width: 50, child: Divider()),
             Text(msg),
           ],
         ),
@@ -51,7 +59,7 @@ class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.surface,
-      child: Center(child: CircularProgressIndicator()),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -61,7 +69,13 @@ class LogoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Image.asset("assets/images/logo_transparent.png", width: 150, height: 150));
+    return Center(
+      child: Image.asset(
+        "assets/images/logo_transparent.png",
+        width: 150,
+        height: 150,
+      ),
+    );
   }
 }
 
@@ -74,9 +88,12 @@ class PleaseSelectPage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Symbols.web_traffic, size: 48),
-          SizedBox(height: 16),
-          Text("please_select_type".tr, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          const Icon(Symbols.web_traffic, size: 48),
+          const SizedBox(height: 16),
+          Text(
+            "please_select_type".tr,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -94,10 +111,18 @@ class EmptyPage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.inbox, size: 48),
-          SizedBox(height: 16),
-          Text("empty_content".tr, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          onRefresh != null ? TextButton.icon(onPressed: onRefresh, icon: Icon(Icons.refresh), label: Text("refresh".tr)) : SizedBox(),
+          const Icon(Icons.inbox, size: 48),
+          const SizedBox(height: 16),
+          Text(
+            "empty_content".tr,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          if (onRefresh != null)
+            TextButton.icon(
+              onPressed: onRefresh,
+              icon: const Icon(Icons.refresh),
+              label: Text("refresh".tr),
+            ),
         ],
       ),
     );
@@ -111,7 +136,7 @@ Future showErrorDialog(String msg, List<Widget> actions) {
       child: Column(
         children: [
           Text("cloudflare_challenge_exception_tip".tr),
-          SizedBox(width: 50, child: Divider()),
+          const SizedBox(width: 50, child: Divider()),
           Text(msg),
         ],
       ),
@@ -120,5 +145,7 @@ Future showErrorDialog(String msg, List<Widget> actions) {
     content = SingleChildScrollView(child: Text(msg));
   }
 
-  return Get.dialog(AlertDialog(title: Text("error".tr), content: content, actions: actions));
+  return Get.dialog(
+    AlertDialog(title: Text("error".tr), content: content, actions: actions),
+  );
 }

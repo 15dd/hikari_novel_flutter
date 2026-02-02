@@ -99,15 +99,17 @@ class SearchController extends GetxController {
             return IndicatorResult.fail;
           }
 
-          var tempResult = Parser.isSearchResultOnlyOne(html);
-          if (tempResult != null) {
-            AppSubRouter.toNovelDetail(aid: tempResult.aid);
-            pageState.value = PageState.jumpToOtherPage;
-            return IndicatorResult.noMore;
-          }
-          if (!loadMore) _maxNum = Parser.getMaxNum(html);
+          // Wenku8 will sometimes return a "single result" page and directly show the novel detail.
+          // We still want to present it as a search result list for better UX ("仪式感").
+          final onlyOne = Parser.isSearchResultOnlyOne(html);
 
-          final parsedHtml = Parser.parseToList(html);
+          // When it's the single-result page, Parser.parseToList() will usually be empty.
+          // In that case, fall back to adding the single novel cover to the list.
+          if (!loadMore) {
+            _maxNum = (onlyOne != null) ? 1 : Parser.getMaxNum(html);
+          }
+
+          final parsedHtml = (onlyOne != null) ? <NovelCover>[onlyOne] : Parser.parseToList(html);
 
           if (parsedHtml.isEmpty) {
             pageState.value = PageState.empty;
@@ -116,7 +118,7 @@ class SearchController extends GetxController {
 
           data.addAll(parsedHtml);
           if (!loadMore) pageState.value = PageState.success;
-          return IndicatorResult.success;
+          return (onlyOne != null) ? IndicatorResult.noMore : IndicatorResult.success;
         }
       case Error():
         {

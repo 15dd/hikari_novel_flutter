@@ -39,7 +39,9 @@ final sessionProgress = 0.0.obs;
 List<String> _chunks = const [];
 int _chunkIndex = 0;
 
-static const int _maxChunkLen = 280;
+// Smaller chunks reduce the "restart from the beginning" feeling on engines
+// that don't support true pause/resume.
+static const int _maxChunkLen = 140;
 
   static const String multiTtsEnginePackage = 'org.nobody.multitts';
 
@@ -225,6 +227,41 @@ static const int _maxChunkLen = 280;
     await _tts.setVolume(v);
   }
 
+  /// Re-apply current rate/pitch/volume to the underlying TTS engine.
+  ///
+  /// Note: Most engines only read these parameters when (re)starting speech,
+  /// so if we are currently playing/paused we will pause->apply->resume to
+  /// make the change take effect immediately.
+  Future<void> refreshSettings({bool restartIfPlaying = true}) async {
+    if (!enabled.value) return;
+
+    // If currently speaking (or in-session), do a soft refresh to avoid
+    // ending the session.
+    if (restartIfPlaying && (isPlaying.value || isPaused.value || isSessionActive.value)) {
+      // Pause first (some engines will treat stop() as cancel, so we try pause).
+      try {
+        await pauseSession();
+      } catch (_) {}
+
+      await _prepareForSpeak();
+
+      // Resume from the current chunk/session if possible.
+      try {
+        await resumeSession();
+      } catch (_) {
+        // Fallback: speak last text again if resume fails.
+        if (lastSpokenText.value.trim().isNotEmpty) {
+          await speak(lastSpokenText.value);
+        }
+      }
+      return;
+    }
+
+    // Not playing: just apply settings for the next speak().
+    await _prepareForSpeak();
+  }
+
+
   Future<void> openAndroidTtsSettings() async {
     if (!Platform.isAndroid) return;
     try {
@@ -300,6 +337,25 @@ Future<void> resumeSession() async {
       await speak(lastSpokenText.value);
     }
     return;
+  }
+  // Prefer true resume if the engine supports it.
+  if (isPaused.value) {
+    final dynamic ttsDyn = _tts;
+    // flutter_tts provides continueSpeaking / resume depending on platform & version.
+    // Keep it dynamic so we don't break compilation if a method doesn't exist.
+    try {
+      isPaused.value = false;
+      await ttsDyn.continueSpeaking();
+      return;
+    } catch (_) {
+      try {
+        isPaused.value = false;
+        await ttsDyn.resume();
+        return;
+      } catch (_) {
+        // Fallback below.
+      }
+    }
   }
   isPaused.value = false;
   await _speakCurrentChunk();
@@ -407,6 +463,14 @@ Future<void> pauseSession() async {
   void _handleSpeakResult(dynamic r) {
     // flutter_tts returns 1 on success, 0 on failure on Android.
     if (r is int && r == 0) {
+      // If user explicitly requested stop/pause, we should not show a "failed" toast.
+      // Some engines return 0 when the utterance is cancelled before it really starts.
+      if (_stopRequested || _pauseRequested) {
+        if (kDebugMode) {
+          print('[TtsService] speak() returned 0 but stop/pause was requested; suppressing error');
+        }
+        return;
+      }
       if (kDebugMode) {
         print('[TtsService] speak() returned 0 (failed)');
       }

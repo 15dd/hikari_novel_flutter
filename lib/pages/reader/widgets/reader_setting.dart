@@ -498,6 +498,30 @@ class ReaderSettingPage extends StatelessWidget {
             ),
           ),
         ),
+        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Text('刷新设置', style: kSettingTitleTextStyle),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            '修改语速/音调/音量后，需点击“刷新设置”才会立即生效（部分引擎播放中无法实时更新）。',
+            style: kSettingSubtitleTextStyle,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Obx(
+            () => ElevatedButton.icon(
+              onPressed: tts.enabled.value ? () => tts.refreshSettings(restartIfPlaying: true) : null,
+              icon: const Icon(Icons.refresh),
+              label: const Text('刷新设置'),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
       ],
     );
   }

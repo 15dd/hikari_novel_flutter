@@ -161,17 +161,25 @@ class ReaderPage extends StatelessWidget {
                                 Get.snackbar('提示', '当前章节还在加载中');
                                 return;
                               }
+
+                              // UX: first click => start; second click => stop.
                               if (tts.isPlaying.value) {
-                                await tts.pauseSession();
-                              } else if (tts.isPaused.value && tts.isSessionActive.value) {
-                                await tts.resumeSession();
-                              } else {
-                                await tts.startChapter(cleaned);
+                                await tts.stop();
+                                return;
                               }
+                              if (tts.isPaused.value && tts.isSessionActive.value) {
+                                await tts.resumeSession();
+                                return;
+                              }
+
+                              await tts.startChapter(cleaned);
                             },
                             icon: Obx(() {
                               final tts = TtsService.instance;
-                              return Icon(tts.isPlaying.value ? Icons.pause_circle_filled : Icons.play_circle_fill);
+                              if (tts.isPlaying.value) {
+                                return const Icon(Icons.stop_circle);
+                              }
+                              return const Icon(Icons.play_circle_fill);
                             }),
                           ),
                         ),

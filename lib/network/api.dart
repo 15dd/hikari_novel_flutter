@@ -188,6 +188,64 @@ class Api {
     return Request.get(url, charsetsType: charsetsType);
   }
 
+  /// Wenku8 每日签到
+  ///
+  /// Wenku8 不同镜像站点的签到路径可能不同，因此这里做多路径尝试。
+  /// 只要响应内容包含“成功/已签/签到”等关键词，就认为签到完成。
+  ///
+  /// 注意：此功能依赖已登录后的 Cookie（与书架/用户信息同一套登录态）。
+
+  /// 登录app.wenku8（用于签到）
+  /// - [username] 用户名
+  /// - [password] 密码
+  static Future<Resource> loginAppWenku8({required String username, required String password}) {
+    // The relay expects URL-encoded credentials (same as the original Android implementation).
+    // This prevents failures when the username/password contains special characters.
+    final un = Uri.encodeComponent(username);
+    final pw = Uri.encodeComponent(password);
+    final String request = "action=login&username=$un&password=$pw";
+    return Request.postFormToMewxWenku8(request, charsetsType: charsetsType);
+  }
+
+  /// 签到（需先调用 [loginAppWenku8]）
+  static Future<Resource> sign() {
+    final String request = "action=block&do=sign";
+    return Request.postFormToMewxWenku8(request, charsetsType: charsetsType);
+  }
+
+  static Future<Resource> checkIn() async {
+    final paths = <String>[
+      // 常见/猜测路径（不同镜像可能不同）
+      "/usercheckin.php",
+      "/checkin.php",
+      "/signin.php",
+      "/user/sign.php",
+      "/modules/article/checkin.php",
+      "/modules/article/sign.php",
+      "/modules/article/getmoney.php",
+      "/getmoney.php",
+    ];
+
+    Resource? last;
+    for (final p in paths) {
+      final String url = "${wenku8Node.node}$p";
+      try {
+        final r = await Request.get(url, charsetsType: charsetsType);
+        last = r;
+        if (r.data != null) {
+          final s = r.data.toString();
+          if (s.contains("成功") || s.contains("已签") || s.contains("签到") || s.contains("reward")) {
+            return Success<String>(s);
+          }
+        }
+      } catch (e) {
+        // Resource.Error 不是泛型类型，这里直接传入错误信息即可
+        last = Error(e.toString());
+      }
+    }
+    return last ?? Error("check in failed");
+  }
+
   /// 获取已完结小说的列表
   /// - [index] 第几页
   static Future<Resource> getCompletionNovel({required int index}) {
