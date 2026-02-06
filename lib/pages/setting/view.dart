@@ -24,7 +24,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("setting".tr), titleSpacing: 0),
       body: Column(
         children: [
           ListTile(
@@ -39,8 +39,8 @@ class SettingPage extends StatelessWidget {
               return Text(str, style: kSettingSubtitleTextStyle);
             }),
             trailing: Icon(Icons.keyboard_arrow_down),
-            onTap:
-                () => showMenu(
+            onTap: () =>
+                showMenu(
                   context: context,
                   position: languageKey.currentContext!.getMenuPosition(),
                   items: [
@@ -82,7 +82,7 @@ class SettingPage extends StatelessWidget {
           Offstage(
             offstage: !Platform.isAndroid,
             child: Obx(
-                  () => SwitchListTile(
+              () => SwitchListTile(
                 title: Text("dynamic_color_mode".tr, style: kSettingTitleTextStyle),
                 value: controller.isDynamicColor.value,
                 onChanged: (value) => controller.changeIsDynamicColor(value),
@@ -93,7 +93,7 @@ class SettingPage extends StatelessWidget {
             offstage: controller.isDynamicColor.value && Platform.isAndroid,
             child: ListTile(
               title: Text("theme_color".tr, style: kSettingTitleTextStyle),
-              trailing: Obx(() => ColorIndicator(width: 20, height: 20,borderRadius: 100, color: controller.customColor.value)),
+              trailing: Obx(() => ColorIndicator(width: 20, height: 20, borderRadius: 100, color: controller.customColor.value)),
               onTap: () => _buildColorPickerDialog(context),
             ),
           ),
@@ -108,8 +108,8 @@ class SettingPage extends StatelessWidget {
               return Text(str, style: kSettingSubtitleTextStyle);
             }),
             trailing: Icon(Icons.keyboard_arrow_down),
-            onTap:
-                () => showMenu(
+            onTap: () =>
+                showMenu(
                   context: context,
                   position: nodeKey.currentContext!.getMenuPosition(),
                   items: [
@@ -167,10 +167,7 @@ class SettingPage extends StatelessWidget {
       },
       pickerTypeLabels: <ColorPickerType, String>{ColorPickerType.primary: "theme_color".tr, ColorPickerType.wheel: "custom".tr},
       enableShadesSelection: false,
-      actionButtons: ColorPickerActionButtons(
-        dialogOkButtonLabel: "save".tr,
-        dialogCancelButtonLabel: "cancel".tr,
-      ),
+      actionButtons: ColorPickerActionButtons(dialogOkButtonLabel: "save".tr, dialogCancelButtonLabel: "cancel".tr),
       copyPasteBehavior: ColorPickerCopyPasteBehavior().copyWith(copyFormat: ColorPickerCopyFormat.hexRRGGBB),
     );
     if (newColor == initColor) return;

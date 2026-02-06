@@ -262,7 +262,9 @@ class AppTranslations extends Translations {
       "search_history": "搜索历史",
       "clear_all_history": "清除所有历史记录",
       "content_of_search_is_empty": "搜索内容为空",
-      "jumped_to_other_page": "已跳转至另一页面"
+      "jumped_to_other_page": "已跳转至另一页面",
+      //TODO
+      "dev_setting": "开发者设置"
     },
 
     "zh_TW": {

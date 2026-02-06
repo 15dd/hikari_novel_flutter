@@ -333,8 +333,6 @@ class ReaderSettingPage extends StatelessWidget {
     );
   }
 
-  
-
   Widget _buildListen(BuildContext context) {
     final tts = TtsService.instance;
     return ListView(

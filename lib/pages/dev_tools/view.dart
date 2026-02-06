@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../service/dev_mode_service.dart';
+
 //TODO 翻译
 class DevToolsPage extends StatelessWidget {
   const DevToolsPage({super.key});
@@ -42,7 +44,7 @@ class DevToolsPage extends StatelessWidget {
           width: double.maxFinite,
           child: SingleChildScrollView(child: SelectableText(exists ? content : '暂无内容')),
         ),
-        actions: [TextButton(onPressed: () => Get.back(), child: const Text('关闭'))],
+        actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
       ),
     );
   }
@@ -52,7 +54,7 @@ class DevToolsPage extends StatelessWidget {
     if (await file.exists()) {
       await file.writeAsString('', flush: true);
     }
-    Get.snackbar('开发者工具', '日志已清空');
+    Get.snackbar('开发者工具', '日志已清空'); //TODO
   }
 
   Future<List<FileSystemEntity>> _listDumps() async {
@@ -103,7 +105,7 @@ class DevToolsPage extends StatelessWidget {
                   },
                 ),
         ),
-        actions: [TextButton(onPressed: () => Get.back(), child: const Text('关闭'))],
+        actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
       ),
     );
   }
@@ -116,25 +118,35 @@ class DevToolsPage extends StatelessWidget {
         children: [
           Obx(
             () => SwitchListTile(
-              title: const Text('开发者模式'),
-              subtitle: const Text('开启后才会自动保存 html_debug.txt 与 HTML dumps'),
+              title: Text('开发者模式', style: kSettingTitleTextStyle),
+              subtitle: Text('开启后才会自动保存 html_debug.txt 与 HTML dumps', style: kSettingSubtitleTextStyle),
               value: DevModeService.instance.enabled.value,
               onChanged: (_) => DevModeService.instance.toggle(),
             ),
           ),
           const Divider(height: 1),
           ListTile(
-            title: const Text('查看 html_debug.txt'),
-            subtitle: const Text('摘要日志：title + HTML 前 500 字'),
+            title: Text('查看 html_debug.txt', style: kSettingTitleTextStyle),
+            subtitle: Text('摘要日志：title + HTML 前 500 字', style: kSettingSubtitleTextStyle),
             onTap: () async {
               final file = await _logFile();
               await _showTextFile('html_debug.txt', file);
             },
           ),
-          ListTile(title: const Text('清空 html_debug.txt'), onTap: _clearLog),
+          ListTile(
+            title: Text('清空 html_debug.txt', style: kSettingTitleTextStyle),
+            onTap: _clearLog,
+          ),
           const Divider(height: 1),
-          ListTile(title: const Text('查看 HTML dumps'), subtitle: const Text('完整 HTML（用于 MT 直接分析）'), onTap: () => _showDumps()),
-          ListTile(title: const Text('清空 HTML dumps'), onTap: _clearDumps),
+          ListTile(
+            title: Text('查看 HTML dumps', style: kSettingTitleTextStyle),
+            subtitle: Text('完整 HTML（用于 MT 直接分析）', style: kSettingSubtitleTextStyle),
+            onTap: () => _showDumps(),
+          ),
+          ListTile(
+            title: Text('清空 HTML dumps', style: kSettingTitleTextStyle),
+            onTap: _clearDumps,
+          ),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(16),

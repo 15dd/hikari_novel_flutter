@@ -6,11 +6,11 @@ import 'package:hikari_novel_flutter/router/route_path.dart';
 class AboutController extends GetxController {
   int _versionTapCount = 0;
 
-  void onVersionTap() async {
+  void onVersionTap() {
     _versionTapCount++;
     if (_versionTapCount >= 5) {
       _versionTapCount = 0;
-      final enabled = await DevModeService.instance.toggle();
+      final enabled = DevModeService.instance.toggle();
       //TODO 1）风格不统一，应去除；2）翻译
       Get.snackbar(
         '开发者模式',
