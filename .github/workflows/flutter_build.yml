@@ -1,0 +1,45 @@
+name: Build Flutter APK
+
+on:
+  workflow_dispatch: # 允许手动点击运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. 配置 Java 17 (根据你的 build.gradle.kts 要求)
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 2. 配置 Flutter 环境
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.22.0' # 建议指定一个较新的稳定版，或者直接用 'any'
+
+      # 3. 下载依赖
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 4. 关键步骤：生成代码 (因为项目用了 drift/hive/json_serializable)
+      - name: Run Build Runner
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # 5. 打包 APK
+      # build.gradle.kts 里配置了 release 包也使用 debug 签名，所以这里可以直接 build release
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
+
+      # 6. 上传生成的 APK
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
