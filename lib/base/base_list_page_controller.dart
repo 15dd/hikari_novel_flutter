@@ -1,6 +1,7 @@
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikari_novel_flutter/widgets/state_page.dart';
 
 import '../models/page_state.dart';
 import '../models/resource.dart';
@@ -51,13 +52,7 @@ abstract class BaseListPageController<T> extends GetxController {
             pageState.value = PageState.error;
             errorMsg = result.error;
           } else {
-            Get.dialog(
-              AlertDialog(
-                title: Text("error".tr),
-                content: Text(result.error.toString()),
-                actions: [TextButton(onPressed: () => Get.back(), child: Text("confirm".tr))],
-              ),
-            );
+            showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
           }
           if (_index > 0) {
             _index -= 1;

@@ -41,7 +41,7 @@ class CompletionView extends StatelessWidget {
             ),
           ),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.loading, child: LoadingPage())),
-          Obx(() => Offstage(offstage: controller.pageState.value != PageState.error, child: ErrorMessage(msg: controller.errorMsg, onRetry:() => controller.getPage(false)))),
+          Obx(() => Offstage(offstage: controller.pageState.value != PageState.error, child: ErrorMessage(msg: controller.errorMsg, action:() => controller.getPage(false)))),
         ],
       ),
     );

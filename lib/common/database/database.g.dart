@@ -911,26 +911,6 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _volumeMeta = const VerificationMeta('volume');
-  @override
-  late final GeneratedColumn<int> volume = GeneratedColumn<int>(
-    'volume',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _chapterMeta = const VerificationMeta(
-    'chapter',
-  );
-  @override
-  late final GeneratedColumn<int> chapter = GeneratedColumn<int>(
-    'chapter',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
   static const VerificationMeta _readerModeMeta = const VerificationMeta(
     'readerMode',
   );
@@ -996,8 +976,6 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
   List<GeneratedColumn> get $columns => [
     cid,
     aid,
-    volume,
-    chapter,
     readerMode,
     isDualPage,
     location,
@@ -1031,22 +1009,6 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
       );
     } else if (isInserting) {
       context.missing(_aidMeta);
-    }
-    if (data.containsKey('volume')) {
-      context.handle(
-        _volumeMeta,
-        volume.isAcceptableOrUnknown(data['volume']!, _volumeMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_volumeMeta);
-    }
-    if (data.containsKey('chapter')) {
-      context.handle(
-        _chapterMeta,
-        chapter.isAcceptableOrUnknown(data['chapter']!, _chapterMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_chapterMeta);
     }
     if (data.containsKey('reader_mode')) {
       context.handle(
@@ -1108,14 +1070,6 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
         DriftSqlType.string,
         data['${effectivePrefix}aid'],
       )!,
-      volume: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}volume'],
-      )!,
-      chapter: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}chapter'],
-      )!,
       readerMode: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}reader_mode'],
@@ -1149,8 +1103,6 @@ class ReadHistoryEntityData extends DataClass
     implements Insertable<ReadHistoryEntityData> {
   final String cid;
   final String aid;
-  final int volume;
-  final int chapter;
   final int readerMode;
   final bool isDualPage;
   final int location;
@@ -1159,8 +1111,6 @@ class ReadHistoryEntityData extends DataClass
   const ReadHistoryEntityData({
     required this.cid,
     required this.aid,
-    required this.volume,
-    required this.chapter,
     required this.readerMode,
     required this.isDualPage,
     required this.location,
@@ -1172,8 +1122,6 @@ class ReadHistoryEntityData extends DataClass
     final map = <String, Expression>{};
     map['cid'] = Variable<String>(cid);
     map['aid'] = Variable<String>(aid);
-    map['volume'] = Variable<int>(volume);
-    map['chapter'] = Variable<int>(chapter);
     map['reader_mode'] = Variable<int>(readerMode);
     map['is_dual_page'] = Variable<bool>(isDualPage);
     map['location'] = Variable<int>(location);
@@ -1186,8 +1134,6 @@ class ReadHistoryEntityData extends DataClass
     return ReadHistoryEntityCompanion(
       cid: Value(cid),
       aid: Value(aid),
-      volume: Value(volume),
-      chapter: Value(chapter),
       readerMode: Value(readerMode),
       isDualPage: Value(isDualPage),
       location: Value(location),
@@ -1204,8 +1150,6 @@ class ReadHistoryEntityData extends DataClass
     return ReadHistoryEntityData(
       cid: serializer.fromJson<String>(json['cid']),
       aid: serializer.fromJson<String>(json['aid']),
-      volume: serializer.fromJson<int>(json['volume']),
-      chapter: serializer.fromJson<int>(json['chapter']),
       readerMode: serializer.fromJson<int>(json['readerMode']),
       isDualPage: serializer.fromJson<bool>(json['isDualPage']),
       location: serializer.fromJson<int>(json['location']),
@@ -1219,8 +1163,6 @@ class ReadHistoryEntityData extends DataClass
     return <String, dynamic>{
       'cid': serializer.toJson<String>(cid),
       'aid': serializer.toJson<String>(aid),
-      'volume': serializer.toJson<int>(volume),
-      'chapter': serializer.toJson<int>(chapter),
       'readerMode': serializer.toJson<int>(readerMode),
       'isDualPage': serializer.toJson<bool>(isDualPage),
       'location': serializer.toJson<int>(location),
@@ -1232,8 +1174,6 @@ class ReadHistoryEntityData extends DataClass
   ReadHistoryEntityData copyWith({
     String? cid,
     String? aid,
-    int? volume,
-    int? chapter,
     int? readerMode,
     bool? isDualPage,
     int? location,
@@ -1242,8 +1182,6 @@ class ReadHistoryEntityData extends DataClass
   }) => ReadHistoryEntityData(
     cid: cid ?? this.cid,
     aid: aid ?? this.aid,
-    volume: volume ?? this.volume,
-    chapter: chapter ?? this.chapter,
     readerMode: readerMode ?? this.readerMode,
     isDualPage: isDualPage ?? this.isDualPage,
     location: location ?? this.location,
@@ -1254,8 +1192,6 @@ class ReadHistoryEntityData extends DataClass
     return ReadHistoryEntityData(
       cid: data.cid.present ? data.cid.value : this.cid,
       aid: data.aid.present ? data.aid.value : this.aid,
-      volume: data.volume.present ? data.volume.value : this.volume,
-      chapter: data.chapter.present ? data.chapter.value : this.chapter,
       readerMode: data.readerMode.present
           ? data.readerMode.value
           : this.readerMode,
@@ -1273,8 +1209,6 @@ class ReadHistoryEntityData extends DataClass
     return (StringBuffer('ReadHistoryEntityData(')
           ..write('cid: $cid, ')
           ..write('aid: $aid, ')
-          ..write('volume: $volume, ')
-          ..write('chapter: $chapter, ')
           ..write('readerMode: $readerMode, ')
           ..write('isDualPage: $isDualPage, ')
           ..write('location: $location, ')
@@ -1288,8 +1222,6 @@ class ReadHistoryEntityData extends DataClass
   int get hashCode => Object.hash(
     cid,
     aid,
-    volume,
-    chapter,
     readerMode,
     isDualPage,
     location,
@@ -1302,8 +1234,6 @@ class ReadHistoryEntityData extends DataClass
       (other is ReadHistoryEntityData &&
           other.cid == this.cid &&
           other.aid == this.aid &&
-          other.volume == this.volume &&
-          other.chapter == this.chapter &&
           other.readerMode == this.readerMode &&
           other.isDualPage == this.isDualPage &&
           other.location == this.location &&
@@ -1315,8 +1245,6 @@ class ReadHistoryEntityCompanion
     extends UpdateCompanion<ReadHistoryEntityData> {
   final Value<String> cid;
   final Value<String> aid;
-  final Value<int> volume;
-  final Value<int> chapter;
   final Value<int> readerMode;
   final Value<bool> isDualPage;
   final Value<int> location;
@@ -1326,8 +1254,6 @@ class ReadHistoryEntityCompanion
   const ReadHistoryEntityCompanion({
     this.cid = const Value.absent(),
     this.aid = const Value.absent(),
-    this.volume = const Value.absent(),
-    this.chapter = const Value.absent(),
     this.readerMode = const Value.absent(),
     this.isDualPage = const Value.absent(),
     this.location = const Value.absent(),
@@ -1338,8 +1264,6 @@ class ReadHistoryEntityCompanion
   ReadHistoryEntityCompanion.insert({
     required String cid,
     required String aid,
-    required int volume,
-    required int chapter,
     required int readerMode,
     required bool isDualPage,
     required int location,
@@ -1348,8 +1272,6 @@ class ReadHistoryEntityCompanion
     this.rowid = const Value.absent(),
   }) : cid = Value(cid),
        aid = Value(aid),
-       volume = Value(volume),
-       chapter = Value(chapter),
        readerMode = Value(readerMode),
        isDualPage = Value(isDualPage),
        location = Value(location),
@@ -1358,8 +1280,6 @@ class ReadHistoryEntityCompanion
   static Insertable<ReadHistoryEntityData> custom({
     Expression<String>? cid,
     Expression<String>? aid,
-    Expression<int>? volume,
-    Expression<int>? chapter,
     Expression<int>? readerMode,
     Expression<bool>? isDualPage,
     Expression<int>? location,
@@ -1370,8 +1290,6 @@ class ReadHistoryEntityCompanion
     return RawValuesInsertable({
       if (cid != null) 'cid': cid,
       if (aid != null) 'aid': aid,
-      if (volume != null) 'volume': volume,
-      if (chapter != null) 'chapter': chapter,
       if (readerMode != null) 'reader_mode': readerMode,
       if (isDualPage != null) 'is_dual_page': isDualPage,
       if (location != null) 'location': location,
@@ -1384,8 +1302,6 @@ class ReadHistoryEntityCompanion
   ReadHistoryEntityCompanion copyWith({
     Value<String>? cid,
     Value<String>? aid,
-    Value<int>? volume,
-    Value<int>? chapter,
     Value<int>? readerMode,
     Value<bool>? isDualPage,
     Value<int>? location,
@@ -1396,8 +1312,6 @@ class ReadHistoryEntityCompanion
     return ReadHistoryEntityCompanion(
       cid: cid ?? this.cid,
       aid: aid ?? this.aid,
-      volume: volume ?? this.volume,
-      chapter: chapter ?? this.chapter,
       readerMode: readerMode ?? this.readerMode,
       isDualPage: isDualPage ?? this.isDualPage,
       location: location ?? this.location,
@@ -1415,12 +1329,6 @@ class ReadHistoryEntityCompanion
     }
     if (aid.present) {
       map['aid'] = Variable<String>(aid.value);
-    }
-    if (volume.present) {
-      map['volume'] = Variable<int>(volume.value);
-    }
-    if (chapter.present) {
-      map['chapter'] = Variable<int>(chapter.value);
     }
     if (readerMode.present) {
       map['reader_mode'] = Variable<int>(readerMode.value);
@@ -1448,8 +1356,6 @@ class ReadHistoryEntityCompanion
     return (StringBuffer('ReadHistoryEntityCompanion(')
           ..write('cid: $cid, ')
           ..write('aid: $aid, ')
-          ..write('volume: $volume, ')
-          ..write('chapter: $chapter, ')
           ..write('readerMode: $readerMode, ')
           ..write('isDualPage: $isDualPage, ')
           ..write('location: $location, ')
@@ -2269,8 +2175,6 @@ typedef $$ReadHistoryEntityTableCreateCompanionBuilder =
     ReadHistoryEntityCompanion Function({
       required String cid,
       required String aid,
-      required int volume,
-      required int chapter,
       required int readerMode,
       required bool isDualPage,
       required int location,
@@ -2282,8 +2186,6 @@ typedef $$ReadHistoryEntityTableUpdateCompanionBuilder =
     ReadHistoryEntityCompanion Function({
       Value<String> cid,
       Value<String> aid,
-      Value<int> volume,
-      Value<int> chapter,
       Value<int> readerMode,
       Value<bool> isDualPage,
       Value<int> location,
@@ -2308,16 +2210,6 @@ class $$ReadHistoryEntityTableFilterComposer
 
   ColumnFilters<String> get aid => $composableBuilder(
     column: $table.aid,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get volume => $composableBuilder(
-    column: $table.volume,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get chapter => $composableBuilder(
-    column: $table.chapter,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2366,16 +2258,6 @@ class $$ReadHistoryEntityTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get volume => $composableBuilder(
-    column: $table.volume,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get chapter => $composableBuilder(
-    column: $table.chapter,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get readerMode => $composableBuilder(
     column: $table.readerMode,
     builder: (column) => ColumnOrderings(column),
@@ -2416,12 +2298,6 @@ class $$ReadHistoryEntityTableAnnotationComposer
 
   GeneratedColumn<String> get aid =>
       $composableBuilder(column: $table.aid, builder: (column) => column);
-
-  GeneratedColumn<int> get volume =>
-      $composableBuilder(column: $table.volume, builder: (column) => column);
-
-  GeneratedColumn<int> get chapter =>
-      $composableBuilder(column: $table.chapter, builder: (column) => column);
 
   GeneratedColumn<int> get readerMode => $composableBuilder(
     column: $table.readerMode,
@@ -2485,8 +2361,6 @@ class $$ReadHistoryEntityTableTableManager
               ({
                 Value<String> cid = const Value.absent(),
                 Value<String> aid = const Value.absent(),
-                Value<int> volume = const Value.absent(),
-                Value<int> chapter = const Value.absent(),
                 Value<int> readerMode = const Value.absent(),
                 Value<bool> isDualPage = const Value.absent(),
                 Value<int> location = const Value.absent(),
@@ -2496,8 +2370,6 @@ class $$ReadHistoryEntityTableTableManager
               }) => ReadHistoryEntityCompanion(
                 cid: cid,
                 aid: aid,
-                volume: volume,
-                chapter: chapter,
                 readerMode: readerMode,
                 isDualPage: isDualPage,
                 location: location,
@@ -2509,8 +2381,6 @@ class $$ReadHistoryEntityTableTableManager
               ({
                 required String cid,
                 required String aid,
-                required int volume,
-                required int chapter,
                 required int readerMode,
                 required bool isDualPage,
                 required int location,
@@ -2520,8 +2390,6 @@ class $$ReadHistoryEntityTableTableManager
               }) => ReadHistoryEntityCompanion.insert(
                 cid: cid,
                 aid: aid,
-                volume: volume,
-                chapter: chapter,
                 readerMode: readerMode,
                 isDualPage: isDualPage,
                 location: location,

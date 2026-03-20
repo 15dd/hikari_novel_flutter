@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../network/request.dart';
+import 'paper_curl_pager.dart';
 
 class HorizontalReadPage extends StatefulWidget {
   final String text;
@@ -15,8 +16,13 @@ class HorizontalReadPage extends StatefulWidget {
   final bool reverse;
   final bool isDualPage;
   final double dualPageSpacing;
+  final bool pageTurningAnimation;
+  final PaperCurlPagerController? paperCurlController;
   final Function(int index, int max) onPageChanged;
   final Function(int index) onViewImage;
+  final VoidCallback? onCenterTap;
+  final VoidCallback? onReachStart;
+  final VoidCallback? onReachEnd;
 
   const HorizontalReadPage(
     this.text,
@@ -28,6 +34,11 @@ class HorizontalReadPage extends StatefulWidget {
     this.reverse = false,
     required this.isDualPage,
     required this.dualPageSpacing,
+    this.pageTurningAnimation = false,
+    this.paperCurlController,
+    this.onCenterTap,
+    this.onReachStart,
+    this.onReachEnd,
     required this.onPageChanged,
     required this.onViewImage,
     super.key,
@@ -114,20 +125,72 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
         });
       }
       resetPage();
+      return;
+    }
+
+    if (oldWidget.pageTurningAnimation != widget.pageTurningAnimation || oldWidget.isDualPage != widget.isDualPage || oldWidget.initIndex != widget.initIndex) {
+      final target = (widget.initIndex.clamp(0, pages.isEmpty ? 0 : pages.length - 1) as num).toInt();
+      index = target;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (widget.pageTurningAnimation && !widget.isDualPage) {
+          widget.paperCurlController?.jumpToPage(target);
+        } else if (widget.controller.hasClients) {
+          widget.controller.jumpToPage(target);
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      controller: widget.controller,
-      reverse: widget.reverse,
-      itemCount: _pageCount(),
-      onPageChanged: (v) {
-        index = v;
-        widget.onPageChanged(v, _pageCount());
+    if (widget.pageTurningAnimation && !widget.isDualPage) {
+      return PaperCurlPager(
+        controller: widget.paperCurlController,
+        pages: List<Widget>.generate(pages.length, (i) => RepaintBoundary(child: _buildPage(i))),
+        initialIndex: (index.clamp(0, pages.isEmpty ? 0 : pages.length - 1) as num).toInt(),
+        interactivePageIndices: {
+          for (var i = 0; i < pages.length; i++)
+            if (pages[i] is ImagePage) i,
+        },
+        reverse: widget.reverse,
+        animationEnabled: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        backsideColor: Color.lerp(
+          Theme.of(context).colorScheme.surface,
+          Theme.of(context).colorScheme.surfaceTint,
+          Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.10,
+        ),
+        onCenterTap: widget.onCenterTap,
+        onReachStart: widget.onReachStart,
+        onReachEnd: widget.onReachEnd,
+        onIndexChanged: (v) {
+          index = v;
+          widget.onPageChanged(v, _pageCount());
+        },
+      );
+    }
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTapUp: (details) {
+        final width = MediaQuery.of(context).size.width;
+        final left = width * 0.28;
+        final right = width * 0.72;
+        final x = details.localPosition.dx;
+        if (x > left && x < right) {
+          widget.onCenterTap?.call();
+        }
       },
-      itemBuilder: (_, i) => _buildPage(i),
+      child: PageView.builder(
+        controller: widget.controller,
+        reverse: widget.reverse,
+        itemCount: _pageCount(),
+        onPageChanged: (v) {
+          index = v;
+          widget.onPageChanged(v, _pageCount());
+        },
+        itemBuilder: (_, i) => _buildPage(i),
+      ),
     );
   }
 
@@ -321,7 +384,11 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
     setState(() {}); //刷新UI
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.controller.jumpToPage(widget.initIndex);
+      if (widget.pageTurningAnimation && !widget.isDualPage) {
+        widget.paperCurlController?.jumpToPage(widget.initIndex);
+      } else {
+        widget.controller.jumpToPage(widget.initIndex);
+      }
     });
   }
 
@@ -439,6 +506,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
       s.height,
       s.letterSpacing,
       s.wordSpacing,
+      s.color?.toARGB32(),
       p.left,
       p.right,
       p.top,

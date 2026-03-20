@@ -26,10 +26,6 @@
 		<true/>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>用于将图片保存到相册</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>用于访问相册并保存图片</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
 		<key>UISupportedInterfaceOrientations</key>
@@ -51,7 +47,5 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
-	  <key>NSFaceIDUsageDescription</key>
-  <string>用于签到时进行面容/指纹验证</string>
-</dict>
+	</dict>
 </plist>

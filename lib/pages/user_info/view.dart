@@ -22,7 +22,7 @@ class UserInfoPage extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.error,
-              child: ErrorMessage(msg: controller.errorMsg, onRetry: controller.getPage),
+              child: ErrorMessage(msg: controller.errorMsg, action: controller.getPage),
             ),
           ),
         ],

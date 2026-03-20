@@ -21,9 +21,6 @@ class LocalStorageService extends GetxService {
 
   static const String kCookie = "cookie",
       kUserInfo = "user_info",
-      kUsername = "username",
-      kPassword = "password",
-      kBiometricCheckInEnabled = "biometricCheckInEnabled",
       kLanguage = "language",
       kIsAutoCheckUpdate = "isAutoCheckUpdate",
       kWenku8Node = "wenku8Node",
@@ -53,7 +50,16 @@ class LocalStorageService extends GetxService {
       kReaderNightBgImage = "readerNightBgImage",
       kReaderTextFamily = "readerTextFamily",
       kReaderTextStyleFilePath = "readerTextStyleFilePath",
-      kReaderPageTurningAnimation = "readerPageTurningAnimation";
+      kReaderPageTurningAnimation = "readerPageTurningAnimation",
+      kReaderTtsEnabled = "readerTtsEnabled",
+      kReaderTtsEngine = "readerTtsEngine",
+      kReaderTtsVoice = "readerTtsVoice",
+      kReaderTtsRate = "readerTtsRate",
+      kDevModeEnabled = "devModeEnabled",
+      kReaderTtsPitch = "readerTtsPitch",
+      kReaderTtsVolume = "readerTtsVolume",
+      kReaderParaIndent = "readerParaIndent",
+      kReaderParaSpacing = "readerParaSpacing";
 
   Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
@@ -72,18 +78,6 @@ class LocalStorageService extends GetxService {
   void setUserInfo(UserInfo value) => _setting.put(kUserInfo, value);
 
   UserInfo? getUserInfo() => _setting.get(kUserInfo);
-
-  void setUsername(String value) => _loginInfo.put(kUsername, value);
-
-  String? getUsername() => _loginInfo.get(kUsername);
-
-  void setPassword(String value) => _loginInfo.put(kPassword, value);
-
-  String? getPassword() => _loginInfo.get(kPassword);
-
-  void setBiometricCheckInEnabled(bool enabled) => _setting.put(kBiometricCheckInEnabled, enabled);
-
-  bool getBiometricCheckInEnabled() => _setting.get(kBiometricCheckInEnabled, defaultValue: false);
 
   void setIsAutoCheckUpdate(bool enabled) => _setting.put(kIsAutoCheckUpdate, enabled);
 
@@ -208,4 +202,46 @@ class LocalStorageService extends GetxService {
   String? getReaderNightBgImage() => _reader.get(kReaderDayBgImage, defaultValue: null);
 
   void setReaderNightBgImage(String? value) => _reader.put(kReaderDayBgImage, value);
+
+  bool getReaderTtsEnabled() => _reader.get(kReaderTtsEnabled, defaultValue: false);
+
+  void setReaderTtsEnabled(bool enabled) => _reader.put(kReaderTtsEnabled, enabled);
+
+  String? getReaderTtsEngine() => _reader.get(kReaderTtsEngine);
+
+  void setReaderTtsEngine(String? value) => _reader.put(kReaderTtsEngine, value);
+
+  Map<String, String>? getReaderTtsVoice() {
+    final v = _reader.get(kReaderTtsVoice);
+    if (v is Map) {
+      return v.map((k, val) => MapEntry(k.toString(), val.toString()));
+    }
+    return null;
+  }
+
+  void setReaderTtsVoice(Map<String, String>? value) => _reader.put(kReaderTtsVoice, value);
+
+  double getReaderTtsRate() => _reader.get(kReaderTtsRate, defaultValue: 0.5);
+
+  void setReaderTtsRate(double value) => _reader.put(kReaderTtsRate, value);
+
+  double getReaderTtsPitch() => _reader.get(kReaderTtsPitch, defaultValue: 1.0);
+
+  void setReaderTtsPitch(double value) => _reader.put(kReaderTtsPitch, value);
+
+  double getReaderTtsVolume() => _reader.get(kReaderTtsVolume, defaultValue: 1.0);
+
+  void setReaderTtsVolume(double value) => _reader.put(kReaderTtsVolume, value);
+
+  bool getDevModeEnabled() => _setting.get(kDevModeEnabled, defaultValue: false);
+
+  void setDevModeEnabled(bool value) => _setting.put(kDevModeEnabled, value);
+
+  int getReaderParaIndent() => _reader.get(kReaderParaIndent, defaultValue: 1);
+
+  void setReaderParaIndent(int value) => _reader.put(kReaderParaIndent, value);
+
+  int getReaderParaSpacing() => _reader.get(kReaderParaSpacing, defaultValue: 25);
+
+  void setReaderParaSpacing(int value) => _reader.put(kReaderParaSpacing, value);
 }

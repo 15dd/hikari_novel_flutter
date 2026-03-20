@@ -38,7 +38,7 @@ class RecommendView extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.error,
-              child: ErrorMessage(msg: controller.errorMsg, onRetry: controller.getRecommend),
+              child: ErrorMessage(msg: controller.errorMsg, action: controller.getRecommend),
             ),
           ),
         ],

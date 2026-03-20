@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hikari_novel_flutter/common/common_widgets.dart';
 import 'package:hikari_novel_flutter/models/comment_item.dart';
 import 'package:hikari_novel_flutter/router/app_sub_router.dart';
 
@@ -14,6 +15,7 @@ class CommentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => AppSubRouter.toReply(aid: aid, rid: item.rid),
+      onLongPress: () => CommonWidgets.showCommentOrReplyBottomSheet(context, item.content),
       child: Column(
         children: [
           Padding(

@@ -8,7 +8,7 @@ import '../../models/resource.dart';
 import '../../network/api.dart';
 import '../../network/parser.dart';
 
-class ReplyController extends BaseListPageController<ReplyItem> {
+class ReplyController extends BaseListPageController<ReplyItem> with GetSingleTickerProviderStateMixin {
   final String aid;
   final String rid;
 
@@ -24,6 +24,37 @@ class ReplyController extends BaseListPageController<ReplyItem> {
 
   @override
   List<ReplyItem> getParser(String html) => Parser.getReply(html);
+
+  bool _isFabVisible = true;
+  late final AnimationController _fabAnimationCtr;
+  late final Animation<Offset> animation;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _fabAnimationCtr = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..forward();
+    animation = _fabAnimationCtr.drive(Tween<Offset>(begin: const Offset(0.0, 2.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut)));
+  }
+
+  @override
+  void onClose() {
+    _fabAnimationCtr.dispose();
+    super.onClose();
+  }
+
+  void showFab() {
+    if (!_isFabVisible) {
+      _isFabVisible = true;
+      _fabAnimationCtr.forward();
+    }
+  }
+
+  void hideFab() {
+    if (_isFabVisible) {
+      _isFabVisible = false;
+      _fabAnimationCtr.reverse();
+    }
+  }
 
   Future<String> sendReply() async {
     if (replyContentController.text.length < 7) {
@@ -47,6 +78,4 @@ class ReplyController extends BaseListPageController<ReplyItem> {
         }
     }
   }
-
-
 }

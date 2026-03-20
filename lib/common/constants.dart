@@ -7,9 +7,9 @@ const int kStatusBarPadding = 30;
 
 const double kSmallIconSize = 16.0;
 
-final TextStyle kSettingTitleTextStyle = TextStyle(fontSize: 15, fontWeight: FontWeight.w500);
+final TextStyle kBaseTileTitleTextStyle = TextStyle(fontSize: 15, fontWeight: FontWeight.w500);
 
-final TextStyle kSettingSubtitleTextStyle = TextStyle(fontSize: 13);
+final TextStyle kBaseTileSubtitleTextStyle = TextStyle(fontSize: 13);
 
 const double kCardBorderRadius = 6.0;
 

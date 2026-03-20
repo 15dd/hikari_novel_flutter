@@ -45,9 +45,11 @@ class DBService extends GetxService {
 
   Stream<ReadHistoryEntityData?> getWatchableReadHistoryByCid(String cid) => _db.getWatchableReadHistoryByCid(cid);
 
-  Stream<List<ReadHistoryEntityData>> getWatchableReadHistoryByVolume(String aid, int index) => _db.getWatchableReadHistoryByVolume(aid, index);
+  Stream<List<ReadHistoryEntityData>> getWatchableReadHistoryByVolume(List<String> cids) => _db.getWatchableReadHistoryByVolume(cids);
 
   Future<void> deleteReadHistoryByCid(String cid) => _db.deleteReadHistoryByCid(cid);
+
+  Future<void> upsertReadHistoryDirectly(ReadHistoryEntityData data) => _db.upsertReadHistoryDirectly(data);
 
   Future<void> deleteAllReadHistory() => _db.deleteAllReadHistory();
 

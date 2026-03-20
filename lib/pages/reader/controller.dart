@@ -17,21 +17,24 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:ttf_metadata/ttf_metadata.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:hikari_novel_flutter/service/tts_service.dart';
 
 import '../../common/database/database.dart';
+import '../../common/log.dart';
 import '../../models/cat_volume.dart';
 import '../../models/page_state.dart';
 import '../../network/api.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
+import 'widgets/paper_curl_pager.dart';
 
 class ReaderController extends GetxController {
   final _novelDetailController = Get.find<NovelDetailController>();
 
   late List<CatVolume> catalogue;
   late String aid;
-  int currentVolumeIndex = int.parse(Get.parameters["volume"]!);
-  int currentChapterIndex = int.parse(Get.parameters["chapter"]!);
+  late int currentVolumeIndex;
+  late int currentChapterIndex;
 
   String get cid => catalogue[currentVolumeIndex].chapters[currentChapterIndex].cid;
 
@@ -40,7 +43,7 @@ class ReaderController extends GetxController {
   int get currentVolumeTotal => catalogue.length;
 
   final pageController = PageController();
-  final scrollController = ScrollController();
+  final paperCurlController = PaperCurlPagerController();
 
   final _battery = Battery();
   RxInt batteryLevel = 0.obs;
@@ -69,15 +72,10 @@ class ReaderController extends GetxController {
   RxInt maxPage = 0.obs;
 
   ///阅读位置，竖向用
-  RxInt location = 0.obs;
+  RxInt currentLocation = 0.obs;
 
   ///竖向模式下，显示当前阅读进度的百分比
   RxInt verticalProgress = 0.obs;
-
-  ///Debounce workers (avoid creating new debounce workers on every scroll/page change)
-  late final Worker _locationDebounceWorker;
-  late final Worker _indexDebounceWorker;
-
 
   ///文本内容
   RxString text = "".obs;
@@ -100,23 +98,8 @@ class ReaderController extends GetxController {
   void onInit() async {
     super.onInit();
 
-    // Create debounce workers only once. Do NOT create them inside scroll/page callbacks.
-    _locationDebounceWorker = debounce(
-      location,
-      (_) => setReadHistory(),
-      time: const Duration(milliseconds: 500),
-    );
-
-    _indexDebounceWorker = debounce(
-      currentIndex,
-      (_) => setReadHistory(),
-      time: const Duration(milliseconds: 500),
-    );
-
-
     aid = _novelDetailController.aid;
     catalogue = _novelDetailController.novelDetail.value!.catalogue;
-    chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
 
     _battery.batteryLevel.then((l) => batteryLevel.value = l);
     _battery.onBatteryStateChanged.listen((l) async {
@@ -128,6 +111,14 @@ class ReaderController extends GetxController {
     getBgImage();
 
     checkFontFile(true);
+
+    getInitLocation(); //事先赋值一下对应的变量，防止在build过程中修改obx变量
+
+    //延迟更新阅读记录
+    //debounce / ever / interval 只能在 Controller 生命周期里创建一次
+    //TODO 还需要优化
+    debounce(currentLocation, (_) => setReadHistory(), time: const Duration(milliseconds: 150));
+    debounce(currentIndex, (_) => setReadHistory(), time: const Duration(milliseconds: 150));
   }
 
   @override
@@ -136,15 +127,28 @@ class ReaderController extends GetxController {
     if (readerSettingsState.value.wakeLock) WakelockPlus.toggle(enable: true);
     if (readerSettingsState.value.immersionMode) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
+    /*
+     1) 至于这里的cid为什么不直接使用上面的<get cid>，是因为上面的<get cid>依赖currentVolumeIndex和currentChapterIndex。
+        而我们想要currentVolumeIndex和currentChapterIndex的时候，需要根据cid在catalogue中获取其对应的VolumeIndex和ChapterIndex。
+     2) 因为getContent()函数依赖cid，所以我把初始化cid的过程放到了onReady而不是onInit中。
+     */
+    final listOnlyWithCid = catalogue.map((cat) => cat.chapters.map((chap) => chap.cid).toList()).toList(); //仅提取含有cid的list
+    final targetCid = Get.parameters["cid"]!;
+    final indexPosition = (await compute(_findIndexPositionInCatalogue, {'catalogue': listOnlyWithCid, 'cid': targetCid}))!;
+
+    currentVolumeIndex = indexPosition[0];
+    currentChapterIndex = indexPosition[1];
+
+    chapterTitle.value = catalogue[currentVolumeIndex].chapters[currentChapterIndex].title;
+
     await getContent();
   }
 
   @override
   void onClose() {
+    TtsService.instance.stop();
     if (readerSettingsState.value.wakeLock) WakelockPlus.toggle(enable: false);
     if (readerSettingsState.value.immersionMode) SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    _locationDebounceWorker.dispose();
-    _indexDebounceWorker.dispose();
     super.onClose();
   }
 
@@ -153,7 +157,7 @@ class ReaderController extends GetxController {
     if (readerSettingsState.value.direction == ReaderDirection.upToDown) {
       try {
         int value = int.parse(Get.parameters["location"]!);
-        location.value = value;
+        currentLocation.value = value;
         return value;
       } catch (_) {
         return 0;
@@ -237,6 +241,10 @@ class ReaderController extends GetxController {
 
   /// 跳转页数
   void jumpToPage(int page) {
+    if (readerSettingsState.value.direction != ReaderDirection.upToDown && !isDualPage && readerSettingsState.value.pageTurningAnimation) {
+      paperCurlController.jumpToPage(page);
+      return;
+    }
     readerSettingsState.value.pageTurningAnimation
         ? pageController.animateToPage(page, duration: const Duration(milliseconds: 200), curve: Curves.linear)
         : pageController.jumpToPage(page);
@@ -286,16 +294,16 @@ class ReaderController extends GetxController {
     }
   }
 
-  void setReadHistory() {
-    DBService.instance.upsertReadHistory(
+  void setReadHistory() async {
+    Log.d("setReadHistory");
+    await DBService.instance.upsertReadHistory(
       ReadHistoryEntityData(
         cid: cid,
         aid: aid,
-        volume: currentVolumeIndex,
-        chapter: currentChapterIndex,
-        readerMode: readerSettingsState.value.direction == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode,  // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
+        readerMode: readerSettingsState.value.direction == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode,
+        // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
         isDualPage: isDualPage,
-        location: readerSettingsState.value.direction == ReaderDirection.upToDown ? location.value : currentIndex.value,
+        location: readerSettingsState.value.direction == ReaderDirection.upToDown ? currentLocation.value : currentIndex.value,
         progress: readerSettingsState.value.direction == ReaderDirection.upToDown ? verticalProgress.value : horizontalProgress.value,
         isLatest: true,
       ),
@@ -411,6 +419,16 @@ class ReaderController extends GetxController {
   void changeReaderNightBgImage(String? path) {
     currentBgImagePath.value = path;
     LocalStorageService.instance.setReaderNightBgImage(path);
+  }
+
+  void changeReaderParaIndent(int value) {
+    readerSettingsState.value = readerSettingsState.value.copyWith(readerParaIndent: value);
+    LocalStorageService.instance.setReaderParaIndent(value);
+  }
+
+  void changeReaderParaSpacing(int value) {
+    readerSettingsState.value = readerSettingsState.value.copyWith(readerParaSpacing: value);
+    LocalStorageService.instance.setReaderParaSpacing(value);
   }
 
   void getTextColor() {
@@ -557,6 +575,26 @@ class ReaderController extends GetxController {
   }
 }
 
+///查找目标字符串在二维列表中出现的位置
+///返回格式：[外层索引, 内层索引]，未找到则返回 null
+List<int>? _findIndexPositionInCatalogue(Map<String, dynamic> args) {
+  final catalogue = args['catalogue'] as List<List<String>>;
+  final targetCid = args['cid'] as String;
+
+  // 遍历外层列表，同时获取索引和子列表
+  for (int outerIndex = 0; outerIndex < catalogue.length; outerIndex++) {
+    List<String> innerList = catalogue[outerIndex];
+    // 查找目标字符串在当前子列表中的索引
+    int innerIndex = innerList.indexOf(targetCid);
+    // 如果找到（索引不为 -1），返回位置
+    if (innerIndex != -1) {
+      return [outerIndex, innerIndex];
+      // return IndexPosition(volumeIndex: outerIndex, chapterIndex: innerIndex);
+    }
+  }
+  return null;
+}
+
 class ReaderSettingsState {
   final ReaderDirection direction;
   final bool pageTurningAnimation;
@@ -582,6 +620,8 @@ class ReaderSettingsState {
   final Color? readerNightTextColor;
   final Color? readerDayBgColor;
   final Color? readerNightBgColor;
+  final int readerParaIndent;
+  final int readerParaSpacing;
 
   ReaderSettingsState({
     required this.direction,
@@ -608,6 +648,8 @@ class ReaderSettingsState {
     required this.readerNightTextColor,
     required this.readerDayBgColor,
     required this.readerNightBgColor,
+    required this.readerParaIndent,
+    required this.readerParaSpacing
   });
 
   ReaderSettingsState copyWith({
@@ -635,6 +677,8 @@ class ReaderSettingsState {
     Color? readerNightTextColor,
     Color? readerDayBgColor,
     Color? readerNightBgColor,
+    int? readerParaIndent,
+    int? readerParaSpacing
   }) => ReaderSettingsState(
     direction: direction ?? this.direction,
     pageTurningAnimation: pageTurningAnimation ?? this.pageTurningAnimation,
@@ -660,6 +704,8 @@ class ReaderSettingsState {
     readerNightTextColor: readerNightTextColor ?? this.readerNightTextColor,
     readerDayBgColor: readerDayBgColor ?? this.readerDayBgColor,
     readerNightBgColor: readerNightBgColor ?? this.readerNightBgColor,
+    readerParaIndent: readerParaIndent ?? this.readerParaIndent,
+    readerParaSpacing: readerParaSpacing ?? this.readerParaSpacing
   );
 
   ReaderSettingsState.init()
@@ -686,5 +732,7 @@ class ReaderSettingsState {
       readerDayTextColor = LocalStorageService.instance.getReaderDayTextColor(),
       readerNightTextColor = LocalStorageService.instance.getReaderNightTextColor(),
       readerDayBgColor = LocalStorageService.instance.getReaderDayBgColor(),
-      readerNightBgColor = LocalStorageService.instance.getReaderNightBgColor();
+      readerNightBgColor = LocalStorageService.instance.getReaderNightBgColor(),
+      readerParaIndent = LocalStorageService.instance.getReaderParaIndent(),
+      readerParaSpacing = LocalStorageService.instance.getReaderParaSpacing();
 }

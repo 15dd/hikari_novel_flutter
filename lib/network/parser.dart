@@ -206,7 +206,7 @@ class Parser {
         try {
           String title = j.getElementsByTagName("a")[1].text;
           String img = j.getElementsByTagName("img")[0].attributes["src"] ?? "";
-          if (!regex.hasMatch(img)) throw Exception();
+          if (!regex.hasMatch(img)) img = "";
           if (!img.startsWith("https")) {
             img = img.replaceFirst("http", "https");
           }
@@ -423,9 +423,11 @@ class Parser {
   static String novelVote(String html) {
     Document document = parse(html);
     var blockContent = document.getElementsByClassName("blockcontent");
-    if (blockContent.isEmpty) throw Exception();
-    var targetDiv = blockContent[0].querySelector("div[style='padding:10px']");
-    return targetDiv!.text;
+    if (blockContent.isNotEmpty) {
+      var targetDiv = blockContent[0].querySelector("div[style='padding:10px']");
+      return targetDiv!.text;
+    }
+    return "";
   }
 
   static UserInfo getUserInfo(String html) {

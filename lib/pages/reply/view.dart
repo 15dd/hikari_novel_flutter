@@ -1,5 +1,6 @@
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/pages/reply/controller.dart';
 import 'package:hikari_novel_flutter/pages/reply/widgets/reply_card.dart';
@@ -30,16 +31,26 @@ class ReplyPage extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.success,
-              child: EasyRefresh(
-                onRefresh: () => controller.getPage(false),
-                onLoad: () => controller.getPage(true),
-                child: ListView(
-                  children:
-                      controller.data.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final item = entry.value;
-                        return ReplyCard(item: item, number: index);
-                      }).toList(),
+              child: NotificationListener<UserScrollNotification>(
+                onNotification: (UserScrollNotification notification) {
+                  final direction = notification.direction;
+                  if (direction == ScrollDirection.forward) {
+                    controller.showFab();
+                  } else if (direction == ScrollDirection.reverse) {
+                    controller.hideFab();
+                  }
+                  return false;
+                },
+                child: EasyRefresh(
+                  onRefresh: () => controller.getPage(false),
+                  onLoad: () => controller.getPage(true),
+                  child: ListView(
+                    children: controller.data.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final item = entry.value;
+                      return ReplyCard(item: item, number: index);
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
@@ -48,7 +59,7 @@ class ReplyPage extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.error,
-              child: ErrorMessage(msg: controller.errorMsg, onRetry: () async => controller.getPage(false)),
+              child: ErrorMessage(msg: controller.errorMsg, action: () async => controller.getPage(false)),
             ),
           ),
         ],
@@ -56,36 +67,39 @@ class ReplyPage extends StatelessWidget {
       floatingActionButton: Obx(
         () => Offstage(
           offstage: controller.pageState.value != PageState.success,
-          child: FloatingActionButton(
-            child: Icon(Icons.comment_outlined),
-            onPressed: () {
-              Get.dialog(
-                AlertDialog(
-                  title: Text("reply".tr),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: controller.replyContentController,
-                        decoration: InputDecoration(labelText: "reply_content".tr, border: OutlineInputBorder()),
-                        maxLines: 5,
-                        keyboardType: TextInputType.multiline,
+          child: SlideTransition(
+            position: controller.animation,
+            child: FloatingActionButton(
+              child: Icon(Icons.comment_outlined),
+              onPressed: () {
+                Get.dialog(
+                  AlertDialog(
+                    title: Text("reply".tr),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: controller.replyContentController,
+                          decoration: InputDecoration(labelText: "reply_content".tr, border: OutlineInputBorder()),
+                          maxLines: 5,
+                          keyboardType: TextInputType.multiline,
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(onPressed: Get.back, child: Text("cancel".tr)),
+                      TextButton(
+                        onPressed: () async {
+                          showSnackBar(message: await controller.sendReply(), context: Get.context!);
+                          Get.back();
+                        },
+                        child: Text("reply".tr),
                       ),
                     ],
                   ),
-                  actions: [
-                    TextButton(onPressed: Get.back, child: Text("cancel".tr)),
-                    TextButton(
-                      onPressed: () async {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(await controller.sendReply())));
-                        Get.back();
-                      },
-                      child: Text("reply".tr),
-                    ),
-                  ],
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

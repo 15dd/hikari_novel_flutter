@@ -10,6 +10,7 @@ import 'package:hikari_novel_flutter/models/reader_direction.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 import 'package:hikari_novel_flutter/pages/bookshelf/controller.dart';
 import 'package:hikari_novel_flutter/pages/cache_queue/controller.dart';
+import 'package:hikari_novel_flutter/widgets/state_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +23,7 @@ import '../../network/api.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 
-class NovelDetailController extends GetxController {
+class NovelDetailController extends GetxController with GetSingleTickerProviderStateMixin {
   final String aid;
 
   NovelDetailController({required this.aid});
@@ -39,16 +40,47 @@ class NovelDetailController extends GetxController {
 
   RxBool isSelectionMode = false.obs;
 
+  bool _isFabVisible = true;
+  late final AnimationController _fabAnimationCtr;
+  late final Animation<Offset> animation;
+
   final bookshelfController = Get.find<BookshelfController>();
   final cacheQueueController = Get.findOrPut(() => CacheQueueController());
 
   late final Directory _supportDir;
 
   @override
+  void onInit() {
+    super.onInit();
+    _fabAnimationCtr = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..forward();
+    animation = _fabAnimationCtr.drive(Tween<Offset>(begin: const Offset(0.0, 2.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut)));
+  }
+
+  @override
   void onReady() async {
     super.onReady();
     _supportDir = await getApplicationSupportDirectory();
     getNovelDetail();
+  }
+
+  @override
+  void onClose() {
+    _fabAnimationCtr.dispose();
+    super.onClose();
+  }
+
+  void showFab() {
+    if (!_isFabVisible) {
+      _isFabVisible = true;
+      _fabAnimationCtr.forward();
+    }
+  }
+
+  void hideFab() {
+    if (_isFabVisible) {
+      _isFabVisible = false;
+      _fabAnimationCtr.reverse();
+    }
   }
 
   void enterSelectionMode() => isSelectionMode.value = true;
@@ -184,14 +216,12 @@ class NovelDetailController extends GetxController {
   Future<void> getNovelDetail() async {
     late NovelDetail data;
 
-    final futureList = await Future.wait([Api.getNovelDetail(aid: aid), Api.getCatalogue(aid: aid)]);
-
-    final nd = futureList[0];
-    final cat = futureList[1];
+    final nd = await Api.getNovelDetail(aid: aid);
 
     switch (nd) {
       case Success():
         data = Parser.getNovelDetail(nd.data);
+        final cat = await Api.getCatalogue(aid: aid);
         switch (cat) {
           case Success():
             {
@@ -206,23 +236,20 @@ class NovelDetailController extends GetxController {
               pageState.value = PageState.success;
               await DBService.instance.upsertNovelDetail(NovelDetailEntityData(aid: aid, json: novelDetail.value!.toString())); //缓存小说详情
             }
-
           case Error():
             {
-              if (!await _getNovelDetailByLocal()) {
-                //当网络和本地目录都没有的时候报错
-                errorMsg = cat.error.toString();
-                pageState.value = PageState.error;
-              }
+              //检测本地是否有缓存
+              if (await _getNovelDetailByLocal()) return;
+              errorMsg = cat.error.toString();
+              pageState.value = PageState.error;
             }
         }
       case Error():
         {
-          if (!await _getNovelDetailByLocal()) {
-            //当网络和本地目录都没有的时候报错
-            errorMsg = nd.error;
-            pageState.value = PageState.success;
-          }
+          //检测本地是否有缓存
+          if (await _getNovelDetailByLocal()) return;
+          errorMsg = nd.error.toString();
+          pageState.value = PageState.error;
         }
     }
   }
@@ -264,13 +291,7 @@ class NovelDetailController extends GetxController {
         }
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(result.error.toString()),
-              actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
-            ),
-          );
+          showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
         }
     }
     _isAdding = false;
@@ -290,13 +311,7 @@ class NovelDetailController extends GetxController {
         }
       case Error():
         {
-          Get.dialog(
-            AlertDialog(
-              title: Text("error".tr),
-              content: Text(result.error.toString()),
-              actions: [TextButton(onPressed: Get.back, child: Text("confirm".tr))],
-            ),
-          );
+          showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
         }
     }
     _isRemoving = false;
@@ -308,12 +323,12 @@ class NovelDetailController extends GetxController {
       Success() => Parser.novelVote(result.data),
       Error() => result.error.toString(),
     };
-    ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(content: Text(string)));
+    showSnackBar(message: string, context: Get.context!);
   }
 
   Future<void> openWithBrowser() async {
     if (!await launchUrl(Uri.parse("${Api.wenku8Node.node}/book/$aid.htm"))) {
-      ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(content: Text("unable_to_open_external_browser".tr)));
+      showSnackBar(message: "unable_to_open_external_browser".tr, context: Get.context!);
     }
   }
 
@@ -388,5 +403,43 @@ class NovelDetailController extends GetxController {
     }
   }
 
-  void deleteAllReadHistory() async => await DBService.instance.deleteAllReadHistory();
+  void deleteAllReadHistory() async => DBService.instance.deleteAllReadHistory();
+
+  Future<void> markAsUnRead() async {
+    for (var chapter in getSelectedChapters()) {
+      await DBService.instance.deleteReadHistoryByCid(chapter.cid);
+    }
+  }
+
+  Future<void> markAsRead() async {
+    // 1为滚动模式，2为翻页模式，翻页模式的左右方向不影响阅读记录的使用
+    final readerMode = LocalStorageService.instance.getReaderDirection() == ReaderDirection.upToDown ? kScrollReadMode : kPageReadMode;
+    bool isDualPage = switch (LocalStorageService.instance.getReaderDualPageMode()) {
+      DualPageMode.auto => Get.context!.isLargeScreen(),
+      DualPageMode.enabled => true,
+      DualPageMode.disabled => false,
+    };
+
+    for (var chapter in getSelectedChapters()) {
+      final data = await DBService.instance.getReadHistoryByCid(chapter.cid);
+
+      if (data == null) {
+        DBService.instance.upsertReadHistoryDirectly(
+          ReadHistoryEntityData(cid: chapter.cid, aid: aid, readerMode: readerMode, isDualPage: isDualPage, location: 0, progress: 100, isLatest: false),
+        );
+      } else {
+        DBService.instance.upsertReadHistoryDirectly(
+          ReadHistoryEntityData(
+            cid: data.cid,
+            aid: data.aid,
+            readerMode: data.readerMode,
+            isDualPage: data.isDualPage,
+            location: data.location,
+            progress: 100,
+            isLatest: data.isLatest,
+          ),
+        );
+      }
+    }
+  }
 }

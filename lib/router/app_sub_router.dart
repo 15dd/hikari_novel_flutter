@@ -40,5 +40,5 @@ class AppSubRouter {
 
   static void toCacheQueue() => _toContentPage(RoutePath.cacheQueue);
 
-  static void toOfflineBooks() => _toContentPage(RoutePath.offlineBooks);
+  static void toDevTools() => _toContentPage(RoutePath.devTools);
 }

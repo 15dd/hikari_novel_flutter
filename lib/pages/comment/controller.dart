@@ -8,7 +8,7 @@ import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/network/api.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 
-class CommentController extends BaseListPageController<CommentItem> {
+class CommentController extends BaseListPageController<CommentItem> with GetSingleTickerProviderStateMixin {
   final String aid;
 
   CommentController({required this.aid});
@@ -24,6 +24,37 @@ class CommentController extends BaseListPageController<CommentItem> {
 
   @override
   Future<Resource> getData(int index) => Api.getComment(aid: aid, index: index);
+
+  bool _isFabVisible = true;
+  late final AnimationController _fabAnimationCtr;
+  late final Animation<Offset> animation;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _fabAnimationCtr = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..forward();
+    animation = _fabAnimationCtr.drive(Tween<Offset>(begin: const Offset(0.0, 2.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut)));
+  }
+
+  @override
+  void onClose() {
+    _fabAnimationCtr.dispose();
+    super.onClose();
+  }
+
+  void showFab() {
+    if (!_isFabVisible) {
+      _isFabVisible = true;
+      _fabAnimationCtr.forward();
+    }
+  }
+
+  void hideFab() {
+    if (_isFabVisible) {
+      _isFabVisible = false;
+      _fabAnimationCtr.reverse();
+    }
+  }
 
   Future<String> sendComment() async {
     if (commentTitleController.text.isEmpty || commentContentController.text.isEmpty) {

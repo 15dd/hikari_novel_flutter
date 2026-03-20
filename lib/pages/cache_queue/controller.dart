@@ -82,8 +82,7 @@ class CacheQueueController extends GetxService {
 
   Future<void> _runTask(ChapterCacheTask task) async {
     try {
-      // ChapterDownloader.download 使用位置参数（taskId, aid, cid）
-      await downloader.download(task.uuid, task.aid, task.cid);
+      await downloader.download(taskId: task.uuid, aid: task.aid, cid: task.cid);
 
       // task.status = CacheStatus.completed;
       // task.progress = 1.0;
