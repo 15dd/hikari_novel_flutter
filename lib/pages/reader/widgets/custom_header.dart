@@ -46,6 +46,7 @@ class MaterialHeader2 extends Header {
 
   const MaterialHeader2({
     this.key,
+    IndicatorStateListenable? listenable,
     super.triggerOffset = 100,
     super.clamping = true,
     super.position,
@@ -85,6 +86,7 @@ class MaterialHeader2 extends Header {
               (showBezierBackground
                   ? kBezierHorizontalFrictionFactor
                   : kMaterialHorizontalFrictionFactor),
+          listenable: listenable,
         );
 
   @override
@@ -147,6 +149,7 @@ class MaterialFooter2 extends Footer {
   final Widget child;
   const MaterialFooter2({
     this.key,
+    IndicatorStateListenable? listenable,
     super.triggerOffset = 100,
     super.clamping = true,
     super.position,
@@ -186,6 +189,7 @@ class MaterialFooter2 extends Footer {
               (showBezierBackground
                   ? kBezierHorizontalFrictionFactor
                   : kMaterialHorizontalFrictionFactor),
+          listenable: listenable,
         );
 
   @override

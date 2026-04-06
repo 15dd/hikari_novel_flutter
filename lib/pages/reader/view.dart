@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +26,8 @@ class ReaderPage extends StatelessWidget {
   final controller = Get.put(ReaderController());
 
   final GlobalKey<VerticalReadPageState> _verticalReadPageKey = GlobalKey();
+  final IndicatorStateListenable _verticalHeaderListenable = IndicatorStateListenable();
+  final IndicatorStateListenable _verticalFooterListenable = IndicatorStateListenable();
 
   EdgeInsets _contentPadding(BuildContext context, {required bool inPageStatusBar}) => EdgeInsets.fromLTRB(
     controller.readerSettingsState.value.leftMargin,
@@ -183,6 +187,8 @@ class ReaderPage extends StatelessWidget {
               ),
             );
           }),
+          _buildVerticalHeaderOverlay(context),
+          _buildVerticalFooterOverlay(context),
         ],
       ),
     );
@@ -206,20 +212,14 @@ class ReaderPage extends StatelessWidget {
         height: double.infinity,
         child: EasyRefresh(
           header: MaterialHeader2(
+            listenable: _verticalHeaderListenable,
             triggerOffset: 80,
-            child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-              padding: const EdgeInsets.all(12),
-              child: Icon(Icons.arrow_circle_up, color: Theme.of(context).colorScheme.primary),
-            ),
+            child: const SizedBox.shrink(),
           ),
           footer: MaterialFooter2(
+            listenable: _verticalFooterListenable,
             triggerOffset: 80,
-            child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(24)),
-              padding: const EdgeInsets.all(12),
-              child: Icon(Icons.arrow_circle_down, color: Theme.of(context).colorScheme.primary),
-            ),
+            child: const SizedBox.shrink(),
           ),
           refreshOnStart: false,
           onRefresh: controller.prevChapter,
@@ -456,6 +456,94 @@ class ReaderPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildVerticalHeaderOverlay(BuildContext context) {
+    return Obx(() {
+      final visible = controller.pageState.value == PageState.success && controller.readerSettingsState.value.direction == ReaderDirection.upToDown;
+      if (!visible) {
+        return const SizedBox.shrink();
+      }
+
+      return ValueListenableBuilder<IndicatorState?>(
+        valueListenable: _verticalHeaderListenable,
+        builder: (context, state, _) {
+          if (state == null) {
+            return const SizedBox.shrink();
+          }
+
+          const iconExtent = 48.0;
+          final offset = math.max(0.0, state.offset);
+          final progress = (offset / iconExtent).clamp(0.0, 1.0);
+          final top = MediaQuery.of(context).padding.top + (offset / 2) - (iconExtent / 2);
+
+          return Positioned(
+            left: 0,
+            right: 0,
+            top: top,
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: progress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Icon(Icons.arrow_circle_up, color: Theme.of(context).colorScheme.primary),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  Widget _buildVerticalFooterOverlay(BuildContext context) {
+    return Obx(() {
+      final visible = controller.pageState.value == PageState.success && controller.readerSettingsState.value.direction == ReaderDirection.upToDown;
+      if (!visible) {
+        return const SizedBox.shrink();
+      }
+
+      return ValueListenableBuilder<IndicatorState?>(
+        valueListenable: _verticalFooterListenable,
+        builder: (context, state, _) {
+          if (state == null) {
+            return const SizedBox.shrink();
+          }
+
+          const iconExtent = 48.0;
+          final offset = math.max(0.0, state.offset);
+          final progress = (offset / iconExtent).clamp(0.0, 1.0);
+          final bottom = MediaQuery.of(context).padding.bottom + (offset / 2) - (iconExtent / 2);
+
+          return Positioned(
+            left: 0,
+            right: 0,
+            bottom: bottom,
+            child: IgnorePointer(
+              child: Center(
+                child: Opacity(
+                  opacity: progress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Icon(Icons.arrow_circle_down, color: Theme.of(context).colorScheme.primary),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
   }
 
   Widget _buildBottomStatusBar(BuildContext context) {
