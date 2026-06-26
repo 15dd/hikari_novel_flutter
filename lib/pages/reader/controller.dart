@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:battery_plus/battery_plus.dart';
@@ -46,7 +47,10 @@ class ReaderController extends GetxController {
   final paperCurlController = PaperCurlPagerController();
 
   final _battery = Battery();
+  StreamSubscription<BatteryState>? _batterySubscription;
+  Timer? _clockTimer;
   RxInt batteryLevel = 0.obs;
+  Rx<DateTime> currentTime = DateTime.now().obs;
 
   Rx<PageState> pageState = Rx(PageState.loading);
 
@@ -104,8 +108,11 @@ class ReaderController extends GetxController {
     catalogue = _novelDetailController.novelDetail.value!.catalogue;
 
     _battery.batteryLevel.then((l) => batteryLevel.value = l);
-    _battery.onBatteryStateChanged.listen((l) async {
+    _batterySubscription = _battery.onBatteryStateChanged.listen((_) async {
       batteryLevel.value = await _battery.batteryLevel;
+    });
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      currentTime.value = DateTime.now();
     });
 
     getTextColor();
@@ -148,6 +155,8 @@ class ReaderController extends GetxController {
 
   @override
   void onClose() {
+    _batterySubscription?.cancel();
+    _clockTimer?.cancel();
     TtsService.instance.stop();
     if (readerSettingsState.value.wakeLock) WakelockPlus.toggle(enable: false);
     _applyReaderSystemUi(false);
@@ -184,14 +193,12 @@ class ReaderController extends GetxController {
     initialVerticalOffset = 0;
   }
 
-  Stream<DateTime> clockStream() => Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now());
-
   Future<void> getContent() async {
     pageState.value = PageState.loading;
 
     chapterTitle.value = "";
     final chapter = await _getChapterContentFromLocal();
-    chapter == null ? _getContentByNetwork() : _getContentByLocal(chapter);
+    chapter == null ? await _getContentByNetwork() : await _getContentByLocal(chapter);
   }
 
   Future<String?> _getChapterContentFromLocal() async {
@@ -482,7 +489,7 @@ class ReaderController extends GetxController {
 
   Future<bool?> pickTextStyleFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['ttf', 'otf']);
+      final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['ttf', 'otf']);
       if (result == null) return null; // 用户取消
 
       final tempPath = result.files.single.path!;
@@ -522,7 +529,7 @@ class ReaderController extends GetxController {
 
   Future<void> deleteFontDir() async {
     final appDir = await getApplicationSupportDirectory();
-    final fontsDir = Directory('${appDir.path}/fonts');
+    final fontsDir = Directory('${appDir.path}/font');
 
     if (await fontsDir.exists()) {
       await fontsDir.delete(recursive: true);
@@ -568,12 +575,10 @@ class ReaderController extends GetxController {
 
   Future<bool?> pickBgImageFile(bool isDark) async {
     try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png', 'jpeg']);
+      final result = await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png', 'jpeg']);
       if (result == null) return null; // 用户取消
 
       final tempPath = result.files.single.path!;
-
-      await deleteBgImageDir();
 
       final srcFile = File(tempPath);
       final ext = path.extension(tempPath);
@@ -586,6 +591,8 @@ class ReaderController extends GetxController {
       }
       final destPath = '${destDir.path}/$fileName';
       await srcFile.copy(destPath);
+      final oldPath = isDark ? LocalStorageService.instance.getReaderNightBgImage() : LocalStorageService.instance.getReaderDayBgImage();
+      await _deleteStoredBgImageFile(oldPath);
 
       if (isDark) {
         changeReaderNightBgImage(destPath);
@@ -595,6 +602,31 @@ class ReaderController extends GetxController {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> clearReaderBgImage(bool isDark) async {
+    final oldPath = isDark ? LocalStorageService.instance.getReaderNightBgImage() : LocalStorageService.instance.getReaderDayBgImage();
+    await _deleteStoredBgImageFile(oldPath);
+
+    if (isDark) {
+      changeReaderNightBgImage(null);
+    } else {
+      changeReaderDayBgImage(null);
+    }
+  }
+
+  Future<void> _deleteStoredBgImageFile(String? filePath) async {
+    if (filePath == null || filePath.isEmpty) return;
+
+    final appDir = await getApplicationSupportDirectory();
+    final bgDirPath = path.normalize(path.join(appDir.path, 'bgImage'));
+    final targetPath = path.normalize(filePath);
+    if (!path.isWithin(bgDirPath, targetPath)) return;
+
+    final file = File(targetPath);
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 
@@ -714,7 +746,7 @@ class ReaderSettingsState {
     Color? readerNightBgColor,
     int? readerParaIndent,
     int? readerParaSpacing,
-    int? readerBottomStatusBarHorizontalSpacing
+    int? readerBottomStatusBarHorizontalSpacing,
   }) => ReaderSettingsState(
     direction: direction ?? this.direction,
     pageTurningAnimation: pageTurningAnimation ?? this.pageTurningAnimation,
@@ -742,7 +774,7 @@ class ReaderSettingsState {
     readerNightBgColor: readerNightBgColor ?? this.readerNightBgColor,
     readerParaIndent: readerParaIndent ?? this.readerParaIndent,
     readerParaSpacing: readerParaSpacing ?? this.readerParaSpacing,
-    readerBottomStatusBarHorizontalSpacing: readerBottomStatusBarHorizontalSpacing ?? this.readerBottomStatusBarHorizontalSpacing
+    readerBottomStatusBarHorizontalSpacing: readerBottomStatusBarHorizontalSpacing ?? this.readerBottomStatusBarHorizontalSpacing,
   );
 
   ReaderSettingsState.init()

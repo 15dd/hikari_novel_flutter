@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/pages/about/controller.dart';
-import 'package:hikari_novel_flutter/router/app_sub_router.dart';
-import 'package:hikari_novel_flutter/service/dev_mode_service.dart';
 import 'package:hikari_novel_flutter/widgets/custom_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,8 +27,7 @@ class AboutPage extends StatelessWidget {
             () => NormalTile(
               title: "version".tr,
               subtitle: "${controller.version.value}(${controller.buildNumber.value})",
-              leading: const Icon(Icons.commit),
-              onTap: controller.onVersionTap,
+              leading: const Icon(Icons.commit)
             ),
           ),
           NormalTile(title: "check_update".tr, leading: const Icon(Icons.update), onTap: () => Util.checkUpdate(true)),
@@ -54,17 +51,7 @@ class AboutPage extends StatelessWidget {
             leading: const Icon(Icons.group),
             trailing: const Icon(Icons.open_in_new),
             onTap: () => launchUrl(Uri.parse("https://t.me/+CUSABNkX5U83NGNl")),
-          ),
-          Obx(
-            () => Get.find<DevModeService>().enabled.value
-                ? Column(
-                    children: [
-                      const Divider(height: 1),
-                      NormalTile(title: "dev_setting".tr, leading: const Icon(Icons.developer_mode), onTap: AppSubRouter.toDevTools),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ),
+          )
         ],
       ),
     );

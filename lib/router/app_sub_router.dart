@@ -39,6 +39,4 @@ class AppSubRouter {
   static void toSearch({required String? author}) => _toContentPage(RoutePath.search, arg: author);
 
   static void toCacheQueue() => _toContentPage(RoutePath.cacheQueue);
-
-  static void toDevTools() => _toContentPage(RoutePath.devTools);
 }

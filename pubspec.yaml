@@ -3,7 +3,7 @@ description: "An app for reading wenku8, refactor with flutter"
 
 publish_to: 'none'
 
-version: 0.4.0-beta.3+8
+version: 0.4.0-beta.4+9
 
 environment:
   sdk: ^3.10.7
@@ -84,8 +84,7 @@ dependencies:
   battery_plus: ^7.0.0
 
   # 文件选择器
-  # TODO 暂时不要使用10.3.9版本，后面再考虑是否要升级
-  file_picker: 10.3.8
+  file_picker: ^11.0.2
 
   # ttf源文件解析
   ttf_metadata: ^0.0.6

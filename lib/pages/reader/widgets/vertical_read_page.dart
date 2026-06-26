@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -33,7 +34,7 @@ class VerticalReadPage extends StatefulWidget {
 
 class VerticalReadPageState extends State<VerticalReadPage> {
   late ScrollController controller;
-  late List<ReaderItem> _items;
+  List<ReaderItem> _items = [];
 
   bool _restored = false;
 
@@ -78,12 +79,12 @@ class VerticalReadPageState extends State<VerticalReadPage> {
   }
 
   //初始位置恢复
-  void _restoreInitialPosition() {
-    if (!controller.hasClients) return;
+  bool _restoreInitialPosition() {
+    if (!controller.hasClients) return false;
 
     final position = controller.position;
 
-    if (!position.hasContentDimensions) return;
+    if (!position.hasContentDimensions) return false;
 
     double targetOffset = widget.initialOffset.toDouble();
     targetOffset = targetOffset.clamp(0, position.maxScrollExtent);
@@ -91,6 +92,7 @@ class VerticalReadPageState extends State<VerticalReadPage> {
     controller.jumpTo(targetOffset);
 
     widget.onScroll(currentPositionPixels, maxPositionPixels);
+    return true;
   }
 
   /// 进度跳转
@@ -113,20 +115,33 @@ class VerticalReadPageState extends State<VerticalReadPage> {
     paraIndent = widget.paraIndent;
     paraSpacing = widget.paraSpacing;
     if (text.isEmpty && images.isEmpty) {
-      setState(() {});
+      setState(() {
+        _items = [];
+      });
       return;
     }
 
     _splitItems();
+    setState(() {});
   }
 
   @override
   void didUpdateWidget(covariant VerticalReadPage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    final contentChanged =
+        widget.text != oldWidget.text ||
+        !listEquals(widget.images, oldWidget.images);
+    final newSig = _layoutSignature();
+    if (contentChanged) {
+      _lastLayoutSig = newSig;
+      _restored = false;
+      resetPage();
+      return;
+    }
+
     //这里比较排版几何参数（fontSize, textStyle）是否有变化
     //这里不能使用"widget.xxx != oldWidget.xxx"，这是在比较对象，而不是比较其中的参数。比如深浅模式切换导致页面重建，会重建TextStyle对象实例，最终误判
-    final newSig = _layoutSignature();
     if (newSig != _lastLayoutSig) {
       _lastLayoutSig = newSig;
       resetPage();
@@ -137,8 +152,8 @@ class VerticalReadPageState extends State<VerticalReadPage> {
   Widget build(BuildContext context) {
     if (!_restored) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _restoreInitialPosition();
-        _restored = true;
+        if (!mounted || _restored) return;
+        _restored = _restoreInitialPosition();
       });
     }
 
@@ -173,7 +188,9 @@ class VerticalReadPageState extends State<VerticalReadPage> {
             style: textStyle,
             children: [
               WidgetSpan(
-                child: SizedBox(width: textStyle.fontSize! * paraIndent), //按汉字宽度缩进
+                child: SizedBox(
+                  width: textStyle.fontSize! * paraIndent,
+                ), //按汉字宽度缩进
               ),
               TextSpan(text: content),
             ],
@@ -188,15 +205,36 @@ class VerticalReadPageState extends State<VerticalReadPage> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: GestureDetector(
-          onDoubleTap: () => Get.toNamed(RoutePath.photo, arguments: {"gallery_mode": true, "list": widget.images, "index": index}),
-          onLongPress: () => Get.toNamed(RoutePath.photo, arguments: {"gallery_mode": true, "list": widget.images, "index": index}),
+          onDoubleTap: () => Get.toNamed(
+            RoutePath.photo,
+            arguments: {
+              "gallery_mode": true,
+              "list": widget.images,
+              "index": index,
+            },
+          ),
+          onLongPress: () => Get.toNamed(
+            RoutePath.photo,
+            arguments: {
+              "gallery_mode": true,
+              "list": widget.images,
+              "index": index,
+            },
+          ),
           child: CachedNetworkImage(
             width: double.infinity,
             imageUrl: url,
             httpHeaders: Request.userAgent,
             fit: BoxFit.fitWidth,
-            progressIndicatorBuilder: (context, url, progress) => Center(child: CircularProgressIndicator(value: progress.progress)),
-            errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),
+            progressIndicatorBuilder: (context, url, progress) => Center(
+              child: CircularProgressIndicator(value: progress.progress),
+            ),
+            errorWidget: (context, url, error) => Column(
+              children: [
+                const Icon(Icons.error_outline),
+                Text(error.toString()),
+              ],
+            ),
           ),
         ),
       ),
@@ -204,7 +242,9 @@ class VerticalReadPageState extends State<VerticalReadPage> {
   }
 
   void _splitItems() {
-    final paragraphs = widget.text.split('\n\n').where((e) => e.trim().isNotEmpty);
+    final paragraphs = widget.text
+        .split('\n\n')
+        .where((e) => e.trim().isNotEmpty);
 
     _items = [];
 
@@ -223,8 +263,6 @@ class VerticalReadPageState extends State<VerticalReadPage> {
     final p = widget.padding;
 
     return [
-      widget.text.length,
-      widget.images.length,
       s.fontSize,
       s.height,
       s.letterSpacing,

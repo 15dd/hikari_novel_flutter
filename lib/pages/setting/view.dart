@@ -33,12 +33,11 @@ class SettingPage extends StatelessWidget {
               subtitle: sub,
               leading: const Icon(Icons.language),
               onTap: () =>
-                  Get.dialog(
-                    RadioListDialog(
-                      value: controller.language.value,
-                      values: [(Language.followSystem, "follow_system".tr), (Language.simplifiedChinese, "简体中文"), (Language.traditionalChinese, "繁體中文")],
-                      title: "language".tr,
-                    ),
+                  showRadioListSheet(
+                    context,
+                    value: controller.language.value,
+                    values: [(Language.followSystem, "follow_system".tr), (Language.simplifiedChinese, "简体中文"), (Language.traditionalChinese, "繁體中文")],
+                    title: "language".tr,
                   ).then((value) async {
                     if (value != null) controller.changeLanguage(value);
                   }),
@@ -55,12 +54,11 @@ class SettingPage extends StatelessWidget {
               subtitle: sub,
               leading: const Icon(Icons.palette_outlined),
               onTap: () =>
-                  Get.dialog(
-                    RadioListDialog(
-                      value: controller.themeMode.value,
-                      values: [(ThemeMode.system, "follow_system".tr), (ThemeMode.light, "light_mode".tr), (ThemeMode.dark, "dark_mode".tr)],
-                      title: "theme_mode".tr,
-                    ),
+                  showRadioListSheet(
+                    context,
+                    value: controller.themeMode.value,
+                    values: [(ThemeMode.system, "follow_system".tr), (ThemeMode.light, "light_mode".tr), (ThemeMode.dark, "dark_mode".tr)],
+                    title: "theme_mode".tr,
                   ).then((value) {
                     if (value != null) controller.changeThemeMode(value);
                   }),
@@ -94,12 +92,11 @@ class SettingPage extends StatelessWidget {
               subtitle: controller.wenku8Node.value.node,
               leading: const Icon(Icons.lan_outlined),
               onTap: () =>
-                  Get.dialog(
-                    RadioListDialog(
-                      value: controller.wenku8Node.value,
-                      values: [(Wenku8Node.wwwWenku8Net, Wenku8Node.wwwWenku8Net.node), (Wenku8Node.wwwWenku8Cc, Wenku8Node.wwwWenku8Cc.node)],
-                      title: "node".tr,
-                    ),
+                  showRadioListSheet(
+                    context,
+                    value: controller.wenku8Node.value,
+                    values: [(Wenku8Node.wwwWenku8Net, Wenku8Node.wwwWenku8Net.node), (Wenku8Node.wwwWenku8Cc, Wenku8Node.wwwWenku8Cc.node)],
+                    title: "node".tr,
                   ).then((value) async {
                     if (value != null) controller.changeWenku8Node(value);
                   }),

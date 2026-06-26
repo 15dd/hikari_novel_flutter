@@ -65,7 +65,11 @@ class LoginController extends GetxController {
           LocalStorageService.instance.setCookie(null); //清空cookie
           Request.deleteCookie();
 
-          inAppWebViewController?.dispose(); //销毁webview，停止加载网页
+          final controller = inAppWebViewController;
+          if (controller != null) {
+            inAppWebViewController = null;
+            controller.dispose(); //销毁webview，停止加载网页
+          }
 
           errorMsg = e.toString();
           pageState.value = PageState.error;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/pages/about/view.dart';
 import 'package:hikari_novel_flutter/pages/cache_queue/view.dart';
-import 'package:hikari_novel_flutter/pages/dev_tools/view.dart';
 import 'package:hikari_novel_flutter/pages/comment/view.dart';
 import 'package:hikari_novel_flutter/pages/home/view.dart';
 import 'package:hikari_novel_flutter/pages/login/view.dart';
@@ -10,7 +9,6 @@ import 'package:hikari_novel_flutter/pages/main/view.dart';
 import 'package:hikari_novel_flutter/pages/novel_detail/view.dart';
 import 'package:hikari_novel_flutter/pages/photo/view.dart';
 import 'package:hikari_novel_flutter/pages/reader/view.dart';
-import 'package:hikari_novel_flutter/pages/reader/widgets/reader_setting.dart';
 import 'package:hikari_novel_flutter/pages/reply/view.dart';
 import 'package:hikari_novel_flutter/pages/search/view.dart';
 import 'package:hikari_novel_flutter/pages/setting/view.dart';
@@ -29,8 +27,7 @@ class AppRoutes {
     CustomGetPage(name: RoutePath.login, page: () => LoginPage()),
     CustomGetPage(name: RoutePath.photo, page: () => PhotoPage()),
     CustomGetPage(name: RoutePath.reader, page: () => ReaderPage()),
-    CustomGetPage(name: RoutePath.welcome, page: () => WelcomePage()),
-    CustomGetPage(name: RoutePath.readerSetting, page: () => ReaderSettingPage()),
+    CustomGetPage(name: RoutePath.welcome, page: () => WelcomePage())
   ];
 
   static Route<dynamic>? subRoutePages(RouteSettings settings) {
@@ -72,8 +69,6 @@ class AppRoutes {
         }
       case RoutePath.cacheQueue:
         return GetPageRoute(settings: settings, page: () => CacheQueuePage());
-      case RoutePath.devTools:
-        return GetPageRoute(settings: settings, page: () => const DevToolsPage());
       default:
         return null;
     }

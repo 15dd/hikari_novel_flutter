@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/foundation.dart';
@@ -15,7 +13,6 @@ import 'package:hikari_novel_flutter/network/request.dart';
 import 'package:hikari_novel_flutter/router/app_pages.dart';
 import 'package:hikari_novel_flutter/router/route_path.dart';
 import 'package:hikari_novel_flutter/service/db_service.dart';
-import 'package:hikari_novel_flutter/service/dev_mode_service.dart';
 import 'package:hikari_novel_flutter/service/local_storage_service.dart';
 import 'package:hikari_novel_flutter/service/tts_service.dart';
 import 'package:jiffy/jiffy.dart';
@@ -23,20 +20,30 @@ import 'package:jiffy/jiffy.dart';
 final localhostServer = InAppLocalhostServer(documentRoot: 'assets');
 WebViewEnvironment? webViewEnvironment;
 
+bool get _isAndroid =>
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+bool get _isWindows =>
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Get.put(LocalStorageService()).init();
-  Get.put(DevModeService()).init();
   Get.put(DBService()).init();
   await Get.put(TtsService()).init();
 
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+  if (_isWindows) {
     final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    assert(availableVersion != null, 'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
-    webViewEnvironment = await WebViewEnvironment.create(settings: WebViewEnvironmentSettings(userDataFolder: 'custom_path'));
-  } else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    assert(
+      availableVersion != null,
+      'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.',
+    );
+    webViewEnvironment = await WebViewEnvironment.create(
+      settings: WebViewEnvironmentSettings(userDataFolder: 'custom_path'),
+    );
+  } else if (_isAndroid) {
     await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
   }
 
@@ -61,16 +68,28 @@ class MyApp extends StatelessWidget {
     //是否动态取色
     bool isDynamicColor = LocalStorageService.instance.getIsDynamicColor();
 
-    if (Platform.isAndroid) {
-      return AndroidApp(brandColor: brandColor, isDynamicColor: isDynamicColor, currentThemeValue: currentThemeValue);
+    if (_isAndroid) {
+      return AndroidApp(
+        brandColor: brandColor,
+        isDynamicColor: isDynamicColor,
+        currentThemeValue: currentThemeValue,
+      );
     } else {
-      return OtherApp(brandColor: brandColor, currentThemeValue: currentThemeValue);
+      return OtherApp(
+        brandColor: brandColor,
+        currentThemeValue: currentThemeValue,
+      );
     }
   }
 }
 
 class AndroidApp extends StatelessWidget {
-  const AndroidApp({super.key, required this.brandColor, required this.isDynamicColor, required this.currentThemeValue});
+  const AndroidApp({
+    super.key,
+    required this.brandColor,
+    required this.isDynamicColor,
+    required this.currentThemeValue,
+  });
 
   final Color brandColor;
   final bool isDynamicColor;
@@ -88,17 +107,31 @@ class AndroidApp extends StatelessWidget {
           darkColorScheme = darkDynamic.harmonized();
         } else {
           // dynamic取色失败，采用品牌色
-          lightColorScheme = ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.light);
-          darkColorScheme = ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.dark);
+          lightColorScheme = ColorScheme.fromSeed(
+            seedColor: brandColor,
+            brightness: Brightness.light,
+          );
+          darkColorScheme = ColorScheme.fromSeed(
+            seedColor: brandColor,
+            brightness: Brightness.dark,
+          );
         }
-        return BuildMainApp(lightColorScheme: lightColorScheme, darkColorScheme: darkColorScheme, currentThemeValue: currentThemeValue);
+        return BuildMainApp(
+          lightColorScheme: lightColorScheme,
+          darkColorScheme: darkColorScheme,
+          currentThemeValue: currentThemeValue,
+        );
       }),
     );
   }
 }
 
 class OtherApp extends StatelessWidget {
-  const OtherApp({super.key, required this.brandColor, required this.currentThemeValue});
+  const OtherApp({
+    super.key,
+    required this.brandColor,
+    required this.currentThemeValue,
+  });
 
   final Color brandColor;
   final ThemeMode currentThemeValue;
@@ -106,15 +139,26 @@ class OtherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BuildMainApp(
-      lightColorScheme: ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.light),
-      darkColorScheme: ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.dark),
+      lightColorScheme: ColorScheme.fromSeed(
+        seedColor: brandColor,
+        brightness: Brightness.light,
+      ),
+      darkColorScheme: ColorScheme.fromSeed(
+        seedColor: brandColor,
+        brightness: Brightness.dark,
+      ),
       currentThemeValue: currentThemeValue,
     );
   }
 }
 
 class BuildMainApp extends StatelessWidget {
-  const BuildMainApp({super.key, required this.lightColorScheme, required this.darkColorScheme, required this.currentThemeValue});
+  const BuildMainApp({
+    super.key,
+    required this.lightColorScheme,
+    required this.darkColorScheme,
+    required this.currentThemeValue,
+  });
 
   final ColorScheme lightColorScheme;
   final ColorScheme darkColorScheme;
@@ -136,27 +180,34 @@ class BuildMainApp extends StatelessWidget {
       title: kAppName,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: currentThemeValue == ThemeMode.dark ? darkColorScheme : lightColorScheme,
+        colorScheme: lightColorScheme,
         snackBarTheme: snackBarTheme,
         pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{TargetPlatform.android: ZoomPageTransitionsBuilder(allowEnterRouteSnapshotting: false)},
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: ZoomPageTransitionsBuilder(
+              allowEnterRouteSnapshotting: false,
+            ),
+          },
         ),
         //页面切换动画
-        fontFamily: Platform.isWindows ? "Microsoft YaHei" : null,
+        fontFamily: _isWindows ? "Microsoft YaHei" : null,
       ),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: currentThemeValue == ThemeMode.light ? lightColorScheme : darkColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+      themeMode: currentThemeValue,
       translations: AppTranslations(),
       locale: Util.getCurrentLocale(),
       fallbackLocale: Locale("zh", "CN"),
       getPages: AppRoutes.mainRoutePages,
-      initialRoute: LocalStorageService.instance.getCookie() != null ? RoutePath.main : RoutePath.welcome, //初始页面
+      initialRoute: LocalStorageService.instance.getCookie() != null
+          ? RoutePath.main
+          : RoutePath.welcome, //初始页面
     );
   }
 }
 
 void _init() {
   // 小白条、导航栏沉浸
-  if (Platform.isAndroid) {
+  if (_isAndroid) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -168,16 +219,7 @@ void _init() {
     );
   }
 
-  EasyRefresh.defaultHeaderBuilder = () => ClassicHeader(
-    dragText: "drag_text_refresh".tr,
-    armedText: "armed_text_refresh".tr,
-    readyText: "ready_text_refresh".tr,
-    processingText: "processing_text_refresh".tr,
-    processedText: "processed_text_refresh".tr,
-    noMoreText: "no_more_text".tr,
-    failedText: "failed_text_refresh".tr,
-    messageText: "message_text".tr,
-  );
+  EasyRefresh.defaultHeaderBuilder = () => MaterialHeader();
   EasyRefresh.defaultFooterBuilder = () => ClassicFooter(
     dragText: "drag_text_load".tr,
     armedText: "armed_text_load".tr,
