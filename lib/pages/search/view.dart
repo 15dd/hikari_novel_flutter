@@ -132,8 +132,8 @@ class SearchPage extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: EasyRefresh(
-                    onRefresh: () => controller.getPage(false),
-                    onLoad: () => controller.getPage(true),
+                    onRefresh: () => controller.pageState.value == PageState.success ? controller.getPage(false) : null,
+                    onLoad: () => controller.pageState.value == PageState.success ? controller.getPage(true) : null,
                     child: Padding(
                       padding: EdgeInsets.zero,
                       child: ResponsiveGridList(
