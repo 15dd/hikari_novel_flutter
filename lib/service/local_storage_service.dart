@@ -49,6 +49,7 @@ class LocalStorageService extends GetxService {
       kReaderTextFamily = "readerTextFamily",
       kReaderTextStyleFilePath = "readerTextStyleFilePath",
       kReaderPageTurningAnimation = "readerPageTurningAnimation",
+      kReaderVolumeKeyPageTurning = "readerVolumeKeyPageTurning",
       kReaderTtsEnabled = "readerTtsEnabled",
       kReaderTtsEngine = "readerTtsEngine",
       kReaderTtsVoice = "readerTtsVoice",
@@ -165,6 +166,10 @@ class LocalStorageService extends GetxService {
   bool getReaderPageTurningAnimation() => _reader.get(kReaderPageTurningAnimation, defaultValue: true);
 
   void setReaderPageTurningAnimation(bool enabled) => _reader.put(kReaderPageTurningAnimation, enabled);
+
+  bool getReaderVolumeKeyPageTurning() => _reader.get(kReaderVolumeKeyPageTurning, defaultValue: false);
+
+  void setReaderVolumeKeyPageTurning(bool enabled) => _reader.put(kReaderVolumeKeyPageTurning, enabled);
 
   Color? getReaderDayBgColor() {
     final result = _reader.get(kReaderDayBgColor, defaultValue: null);

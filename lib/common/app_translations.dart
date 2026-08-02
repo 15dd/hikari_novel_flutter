@@ -212,6 +212,7 @@ class AppTranslations extends Translations {
       "reply": "回复",
       "reply_content": "回复内容",
       "search_too_quickly_tip": "两次搜索的间隔时间不得少于5秒",
+      "search_loading_too_long_tip": "加载时间过长，可能是网络问题，请稍后重试",
       "user_information": "用户信息",
       "username": "用户名",
       "level": "等级",
@@ -238,6 +239,8 @@ class AppTranslations extends Translations {
       "failed": "失败",
       "canceled": "已取消",
       "page_turning_animation": "翻页动画",
+      "volume_key_page_turning": "音量键翻页",
+      "volume_key_page_turning_android_only": "非 Android 手机无法使用此功能",
       "move_to_other_bookshelf": "移动到其他书架",
       "remove_from_bookshelf": "从书架中移出",
       "bookshelf_number_selection": "第 @no 书架",
@@ -246,7 +249,8 @@ class AppTranslations extends Translations {
       "no_new_version_available": "已经是最新版本了",
       "mark_as_read": "标为已读",
       "mark_as_unread": "标为未读",
-      "cloudflare_challenge_exception_tip": "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
+      "cloudflare_challenge_exception_tip":
+          "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
       "last_read": "上次阅读",
       "keyword": "关键词",
       "search": "搜索",
@@ -273,7 +277,8 @@ class AppTranslations extends Translations {
       "refresh_tts_setting_tip": "修改语速/音调/音量后，需点击“刷新设置”才会立即生效（部分引擎播放中无法实时更新）",
       "listen_to_books": "听书",
       "unable_to_open_system_setting": "无法打开系统TTS设置",
-      "listen_to_books_failed_tip": "系统TTS没有开始播放。请在<系统TTS设置>里确认已安装引擎/语音，并尝试切换语言/引擎",
+      "listen_to_books_failed_tip":
+          "系统TTS没有开始播放。请在<系统TTS设置>里确认已安装引擎/语音，并尝试切换语言/引擎",
       "system_tts": "系统TTS",
       "pause": "暂停",
       "play": "播放",
@@ -498,6 +503,7 @@ class AppTranslations extends Translations {
       "reply": "回覆",
       "reply_content": "回覆內容",
       "search_too_quickly_tip": "兩次搜尋間隔不得少於5秒",
+      "search_loading_too_long_tip": "載入時間過長，可能是網路問題，請稍後再試",
       "user_information": "使用者資訊",
       "username": "使用者名稱",
       "level": "等級",
@@ -524,6 +530,8 @@ class AppTranslations extends Translations {
       "failed": "失敗",
       "canceled": "已取消",
       "page_turning_animation": "翻頁動畫",
+      "volume_key_page_turning": "音量鍵翻頁",
+      "volume_key_page_turning_android_only": "非 Android 手機無法使用此功能",
       "move_to_other_bookshelf": "移動至其他書架",
       "remove_from_bookshelf": "從書架移除",
       "bookshelf_number_selection": "第 @no 書架",
@@ -532,7 +540,8 @@ class AppTranslations extends Translations {
       "no_new_version_available": "已是最新版本",
       "mark_as_read": "標為已讀",
       "mark_as_unread": "標為未讀",
-      "cloudflare_challenge_exception_tip": "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
+      "cloudflare_challenge_exception_tip":
+          "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
       "last_read": "上次閱讀",
       "keyword": "關鍵詞",
       "search": "搜尋",
@@ -559,7 +568,8 @@ class AppTranslations extends Translations {
       "refresh_tts_setting_tip": "修改語速／音調／音量後，需點擊<重新整理設定>才會立即生效（部分引擎播放中無法即時更新）",
       "listen_to_books": "聽書",
       "unable_to_open_system_setting": "無法開啟系統TTS設定",
-      "listen_to_books_failed_tip": "系統TTS尚未開始播放。請在<系統TTS設定>中確認已安裝引擎／語音，並嘗試切換語言／引擎",
+      "listen_to_books_failed_tip":
+          "系統TTS尚未開始播放。請在<系統TTS設定>中確認已安裝引擎／語音，並嘗試切換語言／引擎",
       "system_tts": "系統TTS",
       "pause": "暫停",
       "play": "播放",
@@ -573,6 +583,6 @@ class AppTranslations extends Translations {
       "para_indent": "首行縮進",
       "para_spacing": "段距",
       "bottomStatusBarHorizontalSpacing": "底部狀態欄文字邊距",
-    }
+    },
   };
 }

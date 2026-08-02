@@ -7,6 +7,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../service/db_service.dart';
 import '../../widgets/novel_cover_card.dart';
 import 'controller.dart' as c;
+import 'widgets/search_loading_view.dart';
 
 class SearchPage extends StatelessWidget {
   final String? author;
@@ -44,7 +45,10 @@ class SearchPage extends StatelessWidget {
                           decoration: InputDecoration(
                             hintText: "keyword".tr,
                             border: OutlineInputBorder(),
-                            suffixIcon: IconButton(icon: const Icon(Icons.clear), onPressed: controller.keywordController.clear),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: controller.keywordController.clear,
+                            ),
                           ),
                           onSubmitted: (_) {
                             controller.getPage(false);
@@ -54,7 +58,13 @@ class SearchPage extends StatelessWidget {
                       SizedBox(height: 10),
                       Padding(
                         padding: EdgeInsets.fromLTRB(20, 0, 0, 2),
-                        child: Text("search_mode".tr, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        child: Text(
+                          "search_mode".tr,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20),
@@ -62,7 +72,10 @@ class SearchPage extends StatelessWidget {
                           () => Row(
                             children: [
                               ChoiceChip(
-                                label: Text("search_by_title".tr, style: TextStyle(fontSize: 13)),
+                                label: Text(
+                                  "search_by_title".tr,
+                                  style: TextStyle(fontSize: 13),
+                                ),
                                 selected: controller.searchMode.value == 0,
                                 onSelected: (_) {
                                   controller.searchMode.value = 0;
@@ -70,7 +83,10 @@ class SearchPage extends StatelessWidget {
                               ),
                               SizedBox(width: 10),
                               ChoiceChip(
-                                label: Text("search_by_author".tr, style: TextStyle(fontSize: 13)),
+                                label: Text(
+                                  "search_by_author".tr,
+                                  style: TextStyle(fontSize: 13),
+                                ),
                                 selected: controller.searchMode.value == 1,
                                 onSelected: (_) {
                                   controller.searchMode.value = 1;
@@ -83,7 +99,13 @@ class SearchPage extends StatelessWidget {
                       SizedBox(height: 10),
                       Padding(
                         padding: EdgeInsets.only(left: 20),
-                        child: Text("search_history".tr, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        child: Text(
+                          "search_history".tr,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -96,12 +118,18 @@ class SearchPage extends StatelessWidget {
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: controller.searchHistory.length,
-                                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                                    separatorBuilder: (_, _) =>
+                                        const SizedBox(width: 8),
                                     itemBuilder: (context, index) {
                                       return ActionChip(
-                                        label: Text(controller.searchHistory[index], style: TextStyle(fontSize: 13)),
+                                        label: Text(
+                                          controller.searchHistory[index],
+                                          style: TextStyle(fontSize: 13),
+                                        ),
                                         onPressed: () {
-                                          controller.searchFromHistory(controller.searchHistory[index]);
+                                          controller.searchFromHistory(
+                                            controller.searchHistory[index],
+                                          );
                                         },
                                       );
                                     },
@@ -111,7 +139,8 @@ class SearchPage extends StatelessWidget {
                               IconButton(
                                 icon: Icon(Icons.delete_outline),
                                 tooltip: "clear_all_history".tr,
-                                onPressed: () => DBService.instance.deleteAllSearchHistory(),
+                                onPressed: () =>
+                                    DBService.instance.deleteAllSearchHistory(),
                               ),
                             ],
                           ),
@@ -132,8 +161,14 @@ class SearchPage extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: EasyRefresh(
-                    onRefresh: () => controller.pageState.value == PageState.success ? controller.getPage(false) : null,
-                    onLoad: () => controller.pageState.value == PageState.success ? controller.getPage(true) : null,
+                    onRefresh: () =>
+                        controller.pageState.value == PageState.success
+                        ? controller.getPage(false)
+                        : null,
+                    onLoad: () =>
+                        controller.pageState.value == PageState.success
+                        ? controller.getPage(true)
+                        : null,
                     child: Padding(
                       padding: EdgeInsets.zero,
                       child: ResponsiveGridList(
@@ -150,9 +185,9 @@ class SearchPage extends StatelessWidget {
               ),
             ),
             Obx(
-              () => Offstage(
-                offstage: controller.pageState.value != PageState.loading,
-                child: Center(child: CircularProgressIndicator()),
+              () => SearchLoadingView(
+                isLoading: controller.pageState.value == PageState.loading,
+                onRetry: () => controller.getPage(false),
               ),
             ),
             Obx(
@@ -169,7 +204,8 @@ class SearchPage extends StatelessWidget {
             ),
             Obx(
               () => Offstage(
-                offstage: controller.pageState.value != PageState.jumpToOtherPage,
+                offstage:
+                    controller.pageState.value != PageState.jumpToOtherPage,
                 child: Center(child: Text("jumped_to_other_page".tr)),
               ),
             ),
