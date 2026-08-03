@@ -123,6 +123,17 @@ class ReaderSettingPage extends StatelessWidget {
           ),
         ),
         Obx(
+          () => Offstage(
+            offstage: controller.readerSettingsState.value.direction == ReaderDirection.upToDown,
+            child: SwitchTile(
+              title: "one_handed_page_turning".tr,
+              leading: const Icon(Icons.touch_app_outlined),
+              onChanged: (enabled) => controller.changeReaderOneHandedPageTurning(enabled),
+              value: controller.readerSettingsState.value.oneHandedPageTurning,
+            ),
+          ),
+        ),
+        Obx(
           () => SwitchTile(
             title: "screen_stays_on".tr,
             leading: const Icon(Icons.lightbulb_outlined),

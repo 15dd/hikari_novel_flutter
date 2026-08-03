@@ -29,6 +29,7 @@ class HorizontalReadPage extends StatefulWidget {
   final VoidCallback? onRightTap;
   final VoidCallback? onReachStart;
   final VoidCallback? onReachEnd;
+  final bool oneHandedPageTurning;
 
   const HorizontalReadPage(
     this.text,
@@ -52,6 +53,7 @@ class HorizontalReadPage extends StatefulWidget {
     this.onRightTap,
     this.onReachStart,
     this.onReachEnd,
+    this.oneHandedPageTurning = false,
     required this.onPageChanged,
     required this.onViewImage,
     super.key,
@@ -225,6 +227,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
               Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.10,
             ),
         onCenterTap: widget.onCenterTap,
+        oneHandedPageTurning: widget.oneHandedPageTurning,
         onReachStart: widget.onReachStart,
         onReachEnd: widget.onReachEnd,
         onIndexChanged: (v) {

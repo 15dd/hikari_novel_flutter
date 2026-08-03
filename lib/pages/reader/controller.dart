@@ -359,6 +359,11 @@ class ReaderController extends GetxController {
     _setVolumeKeyHandlingEnabled(_volumeKeyPageTurningEnabled);
   }
 
+  void changeReaderOneHandedPageTurning(bool enabled) {
+    readerSettingsState.value = readerSettingsState.value.copyWith(oneHandedPageTurning: enabled);
+    LocalStorageService.instance.setReaderOneHandedPageTurning(enabled);
+  }
+
   bool get _volumeKeyPageTurningEnabled => readerSettingsState.value.volumeKeyPageTurning && readerSettingsState.value.direction != ReaderDirection.upToDown;
 
   Future<void> _setVolumeKeyHandlingEnabled(bool enabled) async {
@@ -684,6 +689,7 @@ class ReaderSettingsState {
   final ReaderDirection direction;
   final bool pageTurningAnimation;
   final bool volumeKeyPageTurning;
+  final bool oneHandedPageTurning;
   final bool wakeLock;
   final DualPageMode dualPageMode;
   final double dualPageSpacing;
@@ -714,6 +720,7 @@ class ReaderSettingsState {
     required this.direction,
     required this.pageTurningAnimation,
     required this.volumeKeyPageTurning,
+    required this.oneHandedPageTurning,
     required this.wakeLock,
     required this.dualPageMode,
     required this.dualPageSpacing,
@@ -745,6 +752,7 @@ class ReaderSettingsState {
     ReaderDirection? direction,
     bool? pageTurningAnimation,
     bool? volumeKeyPageTurning,
+    bool? oneHandedPageTurning,
     bool? wakeLock,
     DualPageMode? dualPageMode,
     double? dualPageSpacing,
@@ -774,6 +782,7 @@ class ReaderSettingsState {
     direction: direction ?? this.direction,
     pageTurningAnimation: pageTurningAnimation ?? this.pageTurningAnimation,
     volumeKeyPageTurning: volumeKeyPageTurning ?? this.volumeKeyPageTurning,
+    oneHandedPageTurning: oneHandedPageTurning ?? this.oneHandedPageTurning,
     wakeLock: wakeLock ?? this.wakeLock,
     dualPageMode: dualPageMode ?? this.dualPageMode,
     dualPageSpacing: dualPageSpacing ?? this.dualPageSpacing,
@@ -805,6 +814,7 @@ class ReaderSettingsState {
     : direction = LocalStorageService.instance.getReaderDirection(),
       pageTurningAnimation = LocalStorageService.instance.getReaderPageTurningAnimation(),
       volumeKeyPageTurning = LocalStorageService.instance.getReaderVolumeKeyPageTurning(),
+      oneHandedPageTurning = LocalStorageService.instance.getReaderOneHandedPageTurning(),
       wakeLock = LocalStorageService.instance.getReaderWakeLock(),
       dualPageMode = LocalStorageService.instance.getReaderDualPageMode(),
       dualPageSpacing = LocalStorageService.instance.getReaderDualPageSpacing(),

@@ -38,6 +38,7 @@ class PaperCurlPager extends StatefulWidget {
     this.onReachStart,
     this.onReachEnd,
     this.edgeTapWidthFactor = 0.28,
+    this.oneHandedPageTurning = false,
   }) : assert(pageCount >= 0);
 
   final PaperCurlPagerController? controller;
@@ -55,6 +56,7 @@ class PaperCurlPager extends StatefulWidget {
   final VoidCallback? onReachStart;
   final VoidCallback? onReachEnd;
   final double edgeTapWidthFactor;
+  final bool oneHandedPageTurning;
 
   @override
   State<PaperCurlPager> createState() => _PaperCurlPagerState();
@@ -295,7 +297,9 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     final right = _size.width * (1 - widget.edgeTapWidthFactor);
     final fromTop = pos.dy <= (_size.height / 2);
     if (pos.dx <= left) {
-      final opensFromRight = widget.reverse;
+      final opensFromRight = widget.oneHandedPageTurning
+          ? !widget.reverse
+          : widget.reverse;
       if ((opensFromRight && !_canGoForward) ||
           (!opensFromRight && !_canGoBackward)) {
         _notifyReachedBoundary(opensFromRight);

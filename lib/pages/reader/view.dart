@@ -412,8 +412,11 @@ class _ReaderPageState extends State<ReaderPage> {
           ? _buildInPageStatusBar(context)
           : null,
       onCenterTap: () => controller.showBar.value = !controller.showBar.value,
-      onLeftTap: controller.prevPage,
+      onLeftTap: controller.readerSettingsState.value.oneHandedPageTurning
+          ? controller.nextPage
+          : controller.prevPage,
       onRightTap: controller.nextPage,
+      oneHandedPageTurning: controller.readerSettingsState.value.oneHandedPageTurning,
       onReachStart: controller.prevChapter,
       onReachEnd: controller.nextChapter,
       onPageChanged: (index, max) {

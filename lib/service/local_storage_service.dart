@@ -59,7 +59,8 @@ class LocalStorageService extends GetxService {
       kReaderTtsVolume = "readerTtsVolume",
       kReaderParaIndent = "readerParaIndent",
       kReaderParaSpacing = "readerParaSpacing",
-      kReaderBottomStatusBarHorizontalSpacing = "readerBottomStatusBarHorizontalSpacing";
+      kReaderBottomStatusBarHorizontalSpacing = "readerBottomStatusBarHorizontalSpacing",
+      kReaderOneHandedPageTurning = "readerOneHandedPageTurning";
 
   Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
@@ -170,6 +171,10 @@ class LocalStorageService extends GetxService {
   bool getReaderVolumeKeyPageTurning() => _reader.get(kReaderVolumeKeyPageTurning, defaultValue: false);
 
   void setReaderVolumeKeyPageTurning(bool enabled) => _reader.put(kReaderVolumeKeyPageTurning, enabled);
+
+  bool getReaderOneHandedPageTurning() => _reader.get(kReaderOneHandedPageTurning, defaultValue: false);
+
+  void setReaderOneHandedPageTurning(bool enabled) => _reader.put(kReaderOneHandedPageTurning, enabled);
 
   Color? getReaderDayBgColor() {
     final result = _reader.get(kReaderDayBgColor, defaultValue: null);
