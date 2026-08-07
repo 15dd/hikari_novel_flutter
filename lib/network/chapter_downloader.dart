@@ -56,12 +56,7 @@ class ChapterDownloader {
   /// [aid] 书籍ID
   /// [cid] 章节ID
   /// [onProgress] 下载进度回调 (已完成字节数, 总字节数)
-  Future<String> download({
-    required String taskId,
-    required String aid,
-    required String cid,
-    Function(int received, int total)? onProgress,
-  }) async {
+  Future<String> download({required String taskId, required String aid, required String cid, Function(int received, int total)? onProgress}) async {
     // 检查是否已有相同任务在下载
     if (isDownloading(taskId)) {
       throw Exception('任务 $taskId 正在下载中，请勿重复下载');
@@ -110,16 +105,12 @@ class ChapterDownloader {
           if (onProgress != null && total > 0) {
             onProgress(received, total);
           }
-        }
+        },
       );
 
       // 检查是否在请求过程中被取消
       if (cancelToken.isCancelled) {
-        throw DioException(
-          requestOptions: response.requestOptions,
-          type: DioExceptionType.cancel,
-          message: '任务 $taskId 下载过程中被取消',
-        );
+        throw DioException(requestOptions: response.requestOptions, type: DioExceptionType.cancel, message: '任务 $taskId 下载过程中被取消');
       }
 
       // 解码
@@ -141,7 +132,6 @@ class ChapterDownloader {
 
       Log.i('章节 $aid-$cid 下载完成，保存路径：$savePath');
       return savePath;
-
     } on DioException catch (e) {
       // 处理Dio异常（重点处理取消类型）
       if (e.type == DioExceptionType.cancel) {

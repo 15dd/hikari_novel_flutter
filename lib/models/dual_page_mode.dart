@@ -1,5 +1,1 @@
-enum DualPageMode {
-  auto,
-  enabled,
-  disabled
-}
+enum DualPageMode { auto, enabled, disabled }

@@ -3,68 +3,29 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $BookshelfEntityTable extends BookshelfEntity
-    with TableInfo<$BookshelfEntityTable, BookshelfEntityData> {
+class $BookshelfEntityTable extends BookshelfEntity with TableInfo<$BookshelfEntityTable, BookshelfEntityData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $BookshelfEntityTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _aidMeta = const VerificationMeta('aid');
   @override
-  late final GeneratedColumn<String> aid = GeneratedColumn<String>(
-    'aid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> aid = GeneratedColumn<String>('aid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _bidMeta = const VerificationMeta('bid');
   @override
-  late final GeneratedColumn<String> bid = GeneratedColumn<String>(
-    'bid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> bid = GeneratedColumn<String>('bid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _urlMeta = const VerificationMeta('url');
   @override
-  late final GeneratedColumn<String> url = GeneratedColumn<String>(
-    'url',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> url = GeneratedColumn<String>('url', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-    'title',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> title = GeneratedColumn<String>('title', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _imgMeta = const VerificationMeta('img');
   @override
-  late final GeneratedColumn<String> img = GeneratedColumn<String>(
-    'img',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _classIdMeta = const VerificationMeta(
-    'classId',
-  );
+  late final GeneratedColumn<String> img = GeneratedColumn<String>('img', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _classIdMeta = const VerificationMeta('classId');
   @override
-  late final GeneratedColumn<String> classId = GeneratedColumn<String>(
-    'class_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> classId = GeneratedColumn<String>('class_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [aid, bid, url, title, img, classId];
   @override
@@ -73,57 +34,36 @@ class $BookshelfEntityTable extends BookshelfEntity
   String get actualTableName => $name;
   static const String $name = 'bookshelf_entity';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<BookshelfEntityData> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<BookshelfEntityData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('aid')) {
-      context.handle(
-        _aidMeta,
-        aid.isAcceptableOrUnknown(data['aid']!, _aidMeta),
-      );
+      context.handle(_aidMeta, aid.isAcceptableOrUnknown(data['aid']!, _aidMeta));
     } else if (isInserting) {
       context.missing(_aidMeta);
     }
     if (data.containsKey('bid')) {
-      context.handle(
-        _bidMeta,
-        bid.isAcceptableOrUnknown(data['bid']!, _bidMeta),
-      );
+      context.handle(_bidMeta, bid.isAcceptableOrUnknown(data['bid']!, _bidMeta));
     } else if (isInserting) {
       context.missing(_bidMeta);
     }
     if (data.containsKey('url')) {
-      context.handle(
-        _urlMeta,
-        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
-      );
+      context.handle(_urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
     } else if (isInserting) {
       context.missing(_urlMeta);
     }
     if (data.containsKey('title')) {
-      context.handle(
-        _titleMeta,
-        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
-      );
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('img')) {
-      context.handle(
-        _imgMeta,
-        img.isAcceptableOrUnknown(data['img']!, _imgMeta),
-      );
+      context.handle(_imgMeta, img.isAcceptableOrUnknown(data['img']!, _imgMeta));
     } else if (isInserting) {
       context.missing(_imgMeta);
     }
     if (data.containsKey('class_id')) {
-      context.handle(
-        _classIdMeta,
-        classId.isAcceptableOrUnknown(data['class_id']!, _classIdMeta),
-      );
+      context.handle(_classIdMeta, classId.isAcceptableOrUnknown(data['class_id']!, _classIdMeta));
     } else if (isInserting) {
       context.missing(_classIdMeta);
     }
@@ -136,30 +76,12 @@ class $BookshelfEntityTable extends BookshelfEntity
   BookshelfEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return BookshelfEntityData(
-      aid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}aid'],
-      )!,
-      bid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}bid'],
-      )!,
-      url: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}url'],
-      )!,
-      title: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}title'],
-      )!,
-      img: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}img'],
-      )!,
-      classId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}class_id'],
-      )!,
+      aid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}aid'])!,
+      bid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}bid'])!,
+      url: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      img: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}img'])!,
+      classId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}class_id'])!,
     );
   }
 
@@ -169,22 +91,14 @@ class $BookshelfEntityTable extends BookshelfEntity
   }
 }
 
-class BookshelfEntityData extends DataClass
-    implements Insertable<BookshelfEntityData> {
+class BookshelfEntityData extends DataClass implements Insertable<BookshelfEntityData> {
   final String aid;
   final String bid;
   final String url;
   final String title;
   final String img;
   final String classId;
-  const BookshelfEntityData({
-    required this.aid,
-    required this.bid,
-    required this.url,
-    required this.title,
-    required this.img,
-    required this.classId,
-  });
+  const BookshelfEntityData({required this.aid, required this.bid, required this.url, required this.title, required this.img, required this.classId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -198,20 +112,10 @@ class BookshelfEntityData extends DataClass
   }
 
   BookshelfEntityCompanion toCompanion(bool nullToAbsent) {
-    return BookshelfEntityCompanion(
-      aid: Value(aid),
-      bid: Value(bid),
-      url: Value(url),
-      title: Value(title),
-      img: Value(img),
-      classId: Value(classId),
-    );
+    return BookshelfEntityCompanion(aid: Value(aid), bid: Value(bid), url: Value(url), title: Value(title), img: Value(img), classId: Value(classId));
   }
 
-  factory BookshelfEntityData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory BookshelfEntityData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return BookshelfEntityData(
       aid: serializer.fromJson<String>(json['aid']),
@@ -235,14 +139,7 @@ class BookshelfEntityData extends DataClass
     };
   }
 
-  BookshelfEntityData copyWith({
-    String? aid,
-    String? bid,
-    String? url,
-    String? title,
-    String? img,
-    String? classId,
-  }) => BookshelfEntityData(
+  BookshelfEntityData copyWith({String? aid, String? bid, String? url, String? title, String? img, String? classId}) => BookshelfEntityData(
     aid: aid ?? this.aid,
     bid: bid ?? this.bid,
     url: url ?? this.url,
@@ -401,48 +298,23 @@ class BookshelfEntityCompanion extends UpdateCompanion<BookshelfEntityData> {
   }
 }
 
-class $BrowsingHistoryEntityTable extends BrowsingHistoryEntity
-    with TableInfo<$BrowsingHistoryEntityTable, BrowsingHistoryEntityData> {
+class $BrowsingHistoryEntityTable extends BrowsingHistoryEntity with TableInfo<$BrowsingHistoryEntityTable, BrowsingHistoryEntityData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $BrowsingHistoryEntityTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _aidMeta = const VerificationMeta('aid');
   @override
-  late final GeneratedColumn<String> aid = GeneratedColumn<String>(
-    'aid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> aid = GeneratedColumn<String>('aid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-    'title',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> title = GeneratedColumn<String>('title', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _imgMeta = const VerificationMeta('img');
   @override
-  late final GeneratedColumn<String> img = GeneratedColumn<String>(
-    'img',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> img = GeneratedColumn<String>('img', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _timeMeta = const VerificationMeta('time');
   @override
-  late final GeneratedColumn<DateTime> time = GeneratedColumn<DateTime>(
-    'time',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<DateTime> time = GeneratedColumn<DateTime>('time', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [aid, title, img, time];
   @override
@@ -451,41 +323,26 @@ class $BrowsingHistoryEntityTable extends BrowsingHistoryEntity
   String get actualTableName => $name;
   static const String $name = 'browsing_history_entity';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<BrowsingHistoryEntityData> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<BrowsingHistoryEntityData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('aid')) {
-      context.handle(
-        _aidMeta,
-        aid.isAcceptableOrUnknown(data['aid']!, _aidMeta),
-      );
+      context.handle(_aidMeta, aid.isAcceptableOrUnknown(data['aid']!, _aidMeta));
     } else if (isInserting) {
       context.missing(_aidMeta);
     }
     if (data.containsKey('title')) {
-      context.handle(
-        _titleMeta,
-        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
-      );
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('img')) {
-      context.handle(
-        _imgMeta,
-        img.isAcceptableOrUnknown(data['img']!, _imgMeta),
-      );
+      context.handle(_imgMeta, img.isAcceptableOrUnknown(data['img']!, _imgMeta));
     } else if (isInserting) {
       context.missing(_imgMeta);
     }
     if (data.containsKey('time')) {
-      context.handle(
-        _timeMeta,
-        time.isAcceptableOrUnknown(data['time']!, _timeMeta),
-      );
+      context.handle(_timeMeta, time.isAcceptableOrUnknown(data['time']!, _timeMeta));
     } else if (isInserting) {
       context.missing(_timeMeta);
     }
@@ -495,28 +352,13 @@ class $BrowsingHistoryEntityTable extends BrowsingHistoryEntity
   @override
   Set<GeneratedColumn> get $primaryKey => {aid};
   @override
-  BrowsingHistoryEntityData map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
+  BrowsingHistoryEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return BrowsingHistoryEntityData(
-      aid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}aid'],
-      )!,
-      title: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}title'],
-      )!,
-      img: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}img'],
-      )!,
-      time: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}time'],
-      )!,
+      aid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}aid'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      img: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}img'])!,
+      time: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}time'])!,
     );
   }
 
@@ -526,18 +368,12 @@ class $BrowsingHistoryEntityTable extends BrowsingHistoryEntity
   }
 }
 
-class BrowsingHistoryEntityData extends DataClass
-    implements Insertable<BrowsingHistoryEntityData> {
+class BrowsingHistoryEntityData extends DataClass implements Insertable<BrowsingHistoryEntityData> {
   final String aid;
   final String title;
   final String img;
   final DateTime time;
-  const BrowsingHistoryEntityData({
-    required this.aid,
-    required this.title,
-    required this.img,
-    required this.time,
-  });
+  const BrowsingHistoryEntityData({required this.aid, required this.title, required this.img, required this.time});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -549,18 +385,10 @@ class BrowsingHistoryEntityData extends DataClass
   }
 
   BrowsingHistoryEntityCompanion toCompanion(bool nullToAbsent) {
-    return BrowsingHistoryEntityCompanion(
-      aid: Value(aid),
-      title: Value(title),
-      img: Value(img),
-      time: Value(time),
-    );
+    return BrowsingHistoryEntityCompanion(aid: Value(aid), title: Value(title), img: Value(img), time: Value(time));
   }
 
-  factory BrowsingHistoryEntityData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory BrowsingHistoryEntityData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return BrowsingHistoryEntityData(
       aid: serializer.fromJson<String>(json['aid']),
@@ -580,20 +408,9 @@ class BrowsingHistoryEntityData extends DataClass
     };
   }
 
-  BrowsingHistoryEntityData copyWith({
-    String? aid,
-    String? title,
-    String? img,
-    DateTime? time,
-  }) => BrowsingHistoryEntityData(
-    aid: aid ?? this.aid,
-    title: title ?? this.title,
-    img: img ?? this.img,
-    time: time ?? this.time,
-  );
-  BrowsingHistoryEntityData copyWithCompanion(
-    BrowsingHistoryEntityCompanion data,
-  ) {
+  BrowsingHistoryEntityData copyWith({String? aid, String? title, String? img, DateTime? time}) =>
+      BrowsingHistoryEntityData(aid: aid ?? this.aid, title: title ?? this.title, img: img ?? this.img, time: time ?? this.time);
+  BrowsingHistoryEntityData copyWithCompanion(BrowsingHistoryEntityCompanion data) {
     return BrowsingHistoryEntityData(
       aid: data.aid.present ? data.aid.value : this.aid,
       title: data.title.present ? data.title.value : this.title,
@@ -618,15 +435,10 @@ class BrowsingHistoryEntityData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is BrowsingHistoryEntityData &&
-          other.aid == this.aid &&
-          other.title == this.title &&
-          other.img == this.img &&
-          other.time == this.time);
+      (other is BrowsingHistoryEntityData && other.aid == this.aid && other.title == this.title && other.img == this.img && other.time == this.time);
 }
 
-class BrowsingHistoryEntityCompanion
-    extends UpdateCompanion<BrowsingHistoryEntityData> {
+class BrowsingHistoryEntityCompanion extends UpdateCompanion<BrowsingHistoryEntityData> {
   final Value<String> aid;
   final Value<String> title;
   final Value<String> img;
@@ -665,13 +477,7 @@ class BrowsingHistoryEntityCompanion
     });
   }
 
-  BrowsingHistoryEntityCompanion copyWith({
-    Value<String>? aid,
-    Value<String>? title,
-    Value<String>? img,
-    Value<DateTime>? time,
-    Value<int>? rowid,
-  }) {
+  BrowsingHistoryEntityCompanion copyWith({Value<String>? aid, Value<String>? title, Value<String>? img, Value<DateTime>? time, Value<int>? rowid}) {
     return BrowsingHistoryEntityCompanion(
       aid: aid ?? this.aid,
       title: title ?? this.title,
@@ -715,23 +521,14 @@ class BrowsingHistoryEntityCompanion
   }
 }
 
-class $SearchHistoryEntityTable extends SearchHistoryEntity
-    with TableInfo<$SearchHistoryEntityTable, SearchHistoryEntityData> {
+class $SearchHistoryEntityTable extends SearchHistoryEntity with TableInfo<$SearchHistoryEntityTable, SearchHistoryEntityData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $SearchHistoryEntityTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _keywordMeta = const VerificationMeta(
-    'keyword',
-  );
+  static const VerificationMeta _keywordMeta = const VerificationMeta('keyword');
   @override
-  late final GeneratedColumn<String> keyword = GeneratedColumn<String>(
-    'keyword',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> keyword = GeneratedColumn<String>('keyword', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [keyword];
   @override
@@ -740,17 +537,11 @@ class $SearchHistoryEntityTable extends SearchHistoryEntity
   String get actualTableName => $name;
   static const String $name = 'search_history_entity';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<SearchHistoryEntityData> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<SearchHistoryEntityData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('keyword')) {
-      context.handle(
-        _keywordMeta,
-        keyword.isAcceptableOrUnknown(data['keyword']!, _keywordMeta),
-      );
+      context.handle(_keywordMeta, keyword.isAcceptableOrUnknown(data['keyword']!, _keywordMeta));
     } else if (isInserting) {
       context.missing(_keywordMeta);
     }
@@ -760,17 +551,9 @@ class $SearchHistoryEntityTable extends SearchHistoryEntity
   @override
   Set<GeneratedColumn> get $primaryKey => {keyword};
   @override
-  SearchHistoryEntityData map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
+  SearchHistoryEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SearchHistoryEntityData(
-      keyword: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}keyword'],
-      )!,
-    );
+    return SearchHistoryEntityData(keyword: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}keyword'])!);
   }
 
   @override
@@ -779,8 +562,7 @@ class $SearchHistoryEntityTable extends SearchHistoryEntity
   }
 }
 
-class SearchHistoryEntityData extends DataClass
-    implements Insertable<SearchHistoryEntityData> {
+class SearchHistoryEntityData extends DataClass implements Insertable<SearchHistoryEntityData> {
   final String keyword;
   const SearchHistoryEntityData({required this.keyword});
   @override
@@ -794,14 +576,9 @@ class SearchHistoryEntityData extends DataClass
     return SearchHistoryEntityCompanion(keyword: Value(keyword));
   }
 
-  factory SearchHistoryEntityData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory SearchHistoryEntityData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SearchHistoryEntityData(
-      keyword: serializer.fromJson<String>(json['keyword']),
-    );
+    return SearchHistoryEntityData(keyword: serializer.fromJson<String>(json['keyword']));
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
@@ -809,12 +586,9 @@ class SearchHistoryEntityData extends DataClass
     return <String, dynamic>{'keyword': serializer.toJson<String>(keyword)};
   }
 
-  SearchHistoryEntityData copyWith({String? keyword}) =>
-      SearchHistoryEntityData(keyword: keyword ?? this.keyword);
+  SearchHistoryEntityData copyWith({String? keyword}) => SearchHistoryEntityData(keyword: keyword ?? this.keyword);
   SearchHistoryEntityData copyWithCompanion(SearchHistoryEntityCompanion data) {
-    return SearchHistoryEntityData(
-      keyword: data.keyword.present ? data.keyword.value : this.keyword,
-    );
+    return SearchHistoryEntityData(keyword: data.keyword.present ? data.keyword.value : this.keyword);
   }
 
   @override
@@ -828,41 +602,20 @@ class SearchHistoryEntityData extends DataClass
   @override
   int get hashCode => keyword.hashCode;
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is SearchHistoryEntityData && other.keyword == this.keyword);
+  bool operator ==(Object other) => identical(this, other) || (other is SearchHistoryEntityData && other.keyword == this.keyword);
 }
 
-class SearchHistoryEntityCompanion
-    extends UpdateCompanion<SearchHistoryEntityData> {
+class SearchHistoryEntityCompanion extends UpdateCompanion<SearchHistoryEntityData> {
   final Value<String> keyword;
   final Value<int> rowid;
-  const SearchHistoryEntityCompanion({
-    this.keyword = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  SearchHistoryEntityCompanion.insert({
-    required String keyword,
-    this.rowid = const Value.absent(),
-  }) : keyword = Value(keyword);
-  static Insertable<SearchHistoryEntityData> custom({
-    Expression<String>? keyword,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (keyword != null) 'keyword': keyword,
-      if (rowid != null) 'rowid': rowid,
-    });
+  const SearchHistoryEntityCompanion({this.keyword = const Value.absent(), this.rowid = const Value.absent()});
+  SearchHistoryEntityCompanion.insert({required String keyword, this.rowid = const Value.absent()}) : keyword = Value(keyword);
+  static Insertable<SearchHistoryEntityData> custom({Expression<String>? keyword, Expression<int>? rowid}) {
+    return RawValuesInsertable({if (keyword != null) 'keyword': keyword, if (rowid != null) 'rowid': rowid});
   }
 
-  SearchHistoryEntityCompanion copyWith({
-    Value<String>? keyword,
-    Value<int>? rowid,
-  }) {
-    return SearchHistoryEntityCompanion(
-      keyword: keyword ?? this.keyword,
-      rowid: rowid ?? this.rowid,
-    );
+  SearchHistoryEntityCompanion copyWith({Value<String>? keyword, Value<int>? rowid}) {
+    return SearchHistoryEntityCompanion(keyword: keyword ?? this.keyword, rowid: rowid ?? this.rowid);
   }
 
   @override
@@ -887,44 +640,21 @@ class SearchHistoryEntityCompanion
   }
 }
 
-class $ReadHistoryEntityTable extends ReadHistoryEntity
-    with TableInfo<$ReadHistoryEntityTable, ReadHistoryEntityData> {
+class $ReadHistoryEntityTable extends ReadHistoryEntity with TableInfo<$ReadHistoryEntityTable, ReadHistoryEntityData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ReadHistoryEntityTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _cidMeta = const VerificationMeta('cid');
   @override
-  late final GeneratedColumn<String> cid = GeneratedColumn<String>(
-    'cid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> cid = GeneratedColumn<String>('cid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _aidMeta = const VerificationMeta('aid');
   @override
-  late final GeneratedColumn<String> aid = GeneratedColumn<String>(
-    'aid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _readerModeMeta = const VerificationMeta(
-    'readerMode',
-  );
+  late final GeneratedColumn<String> aid = GeneratedColumn<String>('aid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _readerModeMeta = const VerificationMeta('readerMode');
   @override
-  late final GeneratedColumn<int> readerMode = GeneratedColumn<int>(
-    'reader_mode',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _isDualPageMeta = const VerificationMeta(
-    'isDualPage',
-  );
+  late final GeneratedColumn<int> readerMode = GeneratedColumn<int>('reader_mode', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _isDualPageMeta = const VerificationMeta('isDualPage');
   @override
   late final GeneratedColumn<bool> isDualPage = GeneratedColumn<bool>(
     'is_dual_page',
@@ -932,35 +662,15 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
     false,
     type: DriftSqlType.bool,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_dual_page" IN (0, 1))',
-    ),
+    defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_dual_page" IN (0, 1))'),
   );
-  static const VerificationMeta _locationMeta = const VerificationMeta(
-    'location',
-  );
+  static const VerificationMeta _locationMeta = const VerificationMeta('location');
   @override
-  late final GeneratedColumn<int> location = GeneratedColumn<int>(
-    'location',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _progressMeta = const VerificationMeta(
-    'progress',
-  );
+  late final GeneratedColumn<int> location = GeneratedColumn<int>('location', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _progressMeta = const VerificationMeta('progress');
   @override
-  late final GeneratedColumn<int> progress = GeneratedColumn<int>(
-    'progress',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _isLatestMeta = const VerificationMeta(
-    'isLatest',
-  );
+  late final GeneratedColumn<int> progress = GeneratedColumn<int>('progress', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _isLatestMeta = const VerificationMeta('isLatest');
   @override
   late final GeneratedColumn<bool> isLatest = GeneratedColumn<bool>(
     'is_latest',
@@ -968,88 +678,51 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
     false,
     type: DriftSqlType.bool,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_latest" IN (0, 1))',
-    ),
+    defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_latest" IN (0, 1))'),
   );
   @override
-  List<GeneratedColumn> get $columns => [
-    cid,
-    aid,
-    readerMode,
-    isDualPage,
-    location,
-    progress,
-    isLatest,
-  ];
+  List<GeneratedColumn> get $columns => [cid, aid, readerMode, isDualPage, location, progress, isLatest];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'read_history_entity';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<ReadHistoryEntityData> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<ReadHistoryEntityData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('cid')) {
-      context.handle(
-        _cidMeta,
-        cid.isAcceptableOrUnknown(data['cid']!, _cidMeta),
-      );
+      context.handle(_cidMeta, cid.isAcceptableOrUnknown(data['cid']!, _cidMeta));
     } else if (isInserting) {
       context.missing(_cidMeta);
     }
     if (data.containsKey('aid')) {
-      context.handle(
-        _aidMeta,
-        aid.isAcceptableOrUnknown(data['aid']!, _aidMeta),
-      );
+      context.handle(_aidMeta, aid.isAcceptableOrUnknown(data['aid']!, _aidMeta));
     } else if (isInserting) {
       context.missing(_aidMeta);
     }
     if (data.containsKey('reader_mode')) {
-      context.handle(
-        _readerModeMeta,
-        readerMode.isAcceptableOrUnknown(data['reader_mode']!, _readerModeMeta),
-      );
+      context.handle(_readerModeMeta, readerMode.isAcceptableOrUnknown(data['reader_mode']!, _readerModeMeta));
     } else if (isInserting) {
       context.missing(_readerModeMeta);
     }
     if (data.containsKey('is_dual_page')) {
-      context.handle(
-        _isDualPageMeta,
-        isDualPage.isAcceptableOrUnknown(
-          data['is_dual_page']!,
-          _isDualPageMeta,
-        ),
-      );
+      context.handle(_isDualPageMeta, isDualPage.isAcceptableOrUnknown(data['is_dual_page']!, _isDualPageMeta));
     } else if (isInserting) {
       context.missing(_isDualPageMeta);
     }
     if (data.containsKey('location')) {
-      context.handle(
-        _locationMeta,
-        location.isAcceptableOrUnknown(data['location']!, _locationMeta),
-      );
+      context.handle(_locationMeta, location.isAcceptableOrUnknown(data['location']!, _locationMeta));
     } else if (isInserting) {
       context.missing(_locationMeta);
     }
     if (data.containsKey('progress')) {
-      context.handle(
-        _progressMeta,
-        progress.isAcceptableOrUnknown(data['progress']!, _progressMeta),
-      );
+      context.handle(_progressMeta, progress.isAcceptableOrUnknown(data['progress']!, _progressMeta));
     } else if (isInserting) {
       context.missing(_progressMeta);
     }
     if (data.containsKey('is_latest')) {
-      context.handle(
-        _isLatestMeta,
-        isLatest.isAcceptableOrUnknown(data['is_latest']!, _isLatestMeta),
-      );
+      context.handle(_isLatestMeta, isLatest.isAcceptableOrUnknown(data['is_latest']!, _isLatestMeta));
     } else if (isInserting) {
       context.missing(_isLatestMeta);
     }
@@ -1062,34 +735,13 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
   ReadHistoryEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ReadHistoryEntityData(
-      cid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}cid'],
-      )!,
-      aid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}aid'],
-      )!,
-      readerMode: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}reader_mode'],
-      )!,
-      isDualPage: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_dual_page'],
-      )!,
-      location: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}location'],
-      )!,
-      progress: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}progress'],
-      )!,
-      isLatest: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_latest'],
-      )!,
+      cid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}cid'])!,
+      aid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}aid'])!,
+      readerMode: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}reader_mode'])!,
+      isDualPage: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_dual_page'])!,
+      location: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}location'])!,
+      progress: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}progress'])!,
+      isLatest: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_latest'])!,
     );
   }
 
@@ -1099,8 +751,7 @@ class $ReadHistoryEntityTable extends ReadHistoryEntity
   }
 }
 
-class ReadHistoryEntityData extends DataClass
-    implements Insertable<ReadHistoryEntityData> {
+class ReadHistoryEntityData extends DataClass implements Insertable<ReadHistoryEntityData> {
   final String cid;
   final String aid;
   final int readerMode;
@@ -1142,10 +793,7 @@ class ReadHistoryEntityData extends DataClass
     );
   }
 
-  factory ReadHistoryEntityData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory ReadHistoryEntityData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ReadHistoryEntityData(
       cid: serializer.fromJson<String>(json['cid']),
@@ -1171,33 +819,22 @@ class ReadHistoryEntityData extends DataClass
     };
   }
 
-  ReadHistoryEntityData copyWith({
-    String? cid,
-    String? aid,
-    int? readerMode,
-    bool? isDualPage,
-    int? location,
-    int? progress,
-    bool? isLatest,
-  }) => ReadHistoryEntityData(
-    cid: cid ?? this.cid,
-    aid: aid ?? this.aid,
-    readerMode: readerMode ?? this.readerMode,
-    isDualPage: isDualPage ?? this.isDualPage,
-    location: location ?? this.location,
-    progress: progress ?? this.progress,
-    isLatest: isLatest ?? this.isLatest,
-  );
+  ReadHistoryEntityData copyWith({String? cid, String? aid, int? readerMode, bool? isDualPage, int? location, int? progress, bool? isLatest}) =>
+      ReadHistoryEntityData(
+        cid: cid ?? this.cid,
+        aid: aid ?? this.aid,
+        readerMode: readerMode ?? this.readerMode,
+        isDualPage: isDualPage ?? this.isDualPage,
+        location: location ?? this.location,
+        progress: progress ?? this.progress,
+        isLatest: isLatest ?? this.isLatest,
+      );
   ReadHistoryEntityData copyWithCompanion(ReadHistoryEntityCompanion data) {
     return ReadHistoryEntityData(
       cid: data.cid.present ? data.cid.value : this.cid,
       aid: data.aid.present ? data.aid.value : this.aid,
-      readerMode: data.readerMode.present
-          ? data.readerMode.value
-          : this.readerMode,
-      isDualPage: data.isDualPage.present
-          ? data.isDualPage.value
-          : this.isDualPage,
+      readerMode: data.readerMode.present ? data.readerMode.value : this.readerMode,
+      isDualPage: data.isDualPage.present ? data.isDualPage.value : this.isDualPage,
       location: data.location.present ? data.location.value : this.location,
       progress: data.progress.present ? data.progress.value : this.progress,
       isLatest: data.isLatest.present ? data.isLatest.value : this.isLatest,
@@ -1219,15 +856,7 @@ class ReadHistoryEntityData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-    cid,
-    aid,
-    readerMode,
-    isDualPage,
-    location,
-    progress,
-    isLatest,
-  );
+  int get hashCode => Object.hash(cid, aid, readerMode, isDualPage, location, progress, isLatest);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1241,8 +870,7 @@ class ReadHistoryEntityData extends DataClass
           other.isLatest == this.isLatest);
 }
 
-class ReadHistoryEntityCompanion
-    extends UpdateCompanion<ReadHistoryEntityData> {
+class ReadHistoryEntityCompanion extends UpdateCompanion<ReadHistoryEntityData> {
   final Value<String> cid;
   final Value<String> aid;
   final Value<int> readerMode;
@@ -1367,30 +995,17 @@ class ReadHistoryEntityCompanion
   }
 }
 
-class $NovelDetailEntityTable extends NovelDetailEntity
-    with TableInfo<$NovelDetailEntityTable, NovelDetailEntityData> {
+class $NovelDetailEntityTable extends NovelDetailEntity with TableInfo<$NovelDetailEntityTable, NovelDetailEntityData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $NovelDetailEntityTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _aidMeta = const VerificationMeta('aid');
   @override
-  late final GeneratedColumn<String> aid = GeneratedColumn<String>(
-    'aid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> aid = GeneratedColumn<String>('aid', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _jsonMeta = const VerificationMeta('json');
   @override
-  late final GeneratedColumn<String> json = GeneratedColumn<String>(
-    'json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumn<String> json = GeneratedColumn<String>('json', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [aid, json];
   @override
@@ -1399,25 +1014,16 @@ class $NovelDetailEntityTable extends NovelDetailEntity
   String get actualTableName => $name;
   static const String $name = 'novel_detail_entity';
   @override
-  VerificationContext validateIntegrity(
-    Insertable<NovelDetailEntityData> instance, {
-    bool isInserting = false,
-  }) {
+  VerificationContext validateIntegrity(Insertable<NovelDetailEntityData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('aid')) {
-      context.handle(
-        _aidMeta,
-        aid.isAcceptableOrUnknown(data['aid']!, _aidMeta),
-      );
+      context.handle(_aidMeta, aid.isAcceptableOrUnknown(data['aid']!, _aidMeta));
     } else if (isInserting) {
       context.missing(_aidMeta);
     }
     if (data.containsKey('json')) {
-      context.handle(
-        _jsonMeta,
-        json.isAcceptableOrUnknown(data['json']!, _jsonMeta),
-      );
+      context.handle(_jsonMeta, json.isAcceptableOrUnknown(data['json']!, _jsonMeta));
     } else if (isInserting) {
       context.missing(_jsonMeta);
     }
@@ -1430,14 +1036,8 @@ class $NovelDetailEntityTable extends NovelDetailEntity
   NovelDetailEntityData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return NovelDetailEntityData(
-      aid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}aid'],
-      )!,
-      json: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}json'],
-      )!,
+      aid: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}aid'])!,
+      json: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}json'])!,
     );
   }
 
@@ -1447,8 +1047,7 @@ class $NovelDetailEntityTable extends NovelDetailEntity
   }
 }
 
-class NovelDetailEntityData extends DataClass
-    implements Insertable<NovelDetailEntityData> {
+class NovelDetailEntityData extends DataClass implements Insertable<NovelDetailEntityData> {
   final String aid;
   final String json;
   const NovelDetailEntityData({required this.aid, required this.json});
@@ -1464,32 +1063,19 @@ class NovelDetailEntityData extends DataClass
     return NovelDetailEntityCompanion(aid: Value(aid), json: Value(json));
   }
 
-  factory NovelDetailEntityData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
+  factory NovelDetailEntityData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return NovelDetailEntityData(
-      aid: serializer.fromJson<String>(json['aid']),
-      json: serializer.fromJson<String>(json['json']),
-    );
+    return NovelDetailEntityData(aid: serializer.fromJson<String>(json['aid']), json: serializer.fromJson<String>(json['json']));
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'aid': serializer.toJson<String>(aid),
-      'json': serializer.toJson<String>(json),
-    };
+    return <String, dynamic>{'aid': serializer.toJson<String>(aid), 'json': serializer.toJson<String>(json)};
   }
 
-  NovelDetailEntityData copyWith({String? aid, String? json}) =>
-      NovelDetailEntityData(aid: aid ?? this.aid, json: json ?? this.json);
+  NovelDetailEntityData copyWith({String? aid, String? json}) => NovelDetailEntityData(aid: aid ?? this.aid, json: json ?? this.json);
   NovelDetailEntityData copyWithCompanion(NovelDetailEntityCompanion data) {
-    return NovelDetailEntityData(
-      aid: data.aid.present ? data.aid.value : this.aid,
-      json: data.json.present ? data.json.value : this.json,
-    );
+    return NovelDetailEntityData(aid: data.aid.present ? data.aid.value : this.aid, json: data.json.present ? data.json.value : this.json);
   }
 
   @override
@@ -1504,51 +1090,21 @@ class NovelDetailEntityData extends DataClass
   @override
   int get hashCode => Object.hash(aid, json);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is NovelDetailEntityData &&
-          other.aid == this.aid &&
-          other.json == this.json);
+  bool operator ==(Object other) => identical(this, other) || (other is NovelDetailEntityData && other.aid == this.aid && other.json == this.json);
 }
 
-class NovelDetailEntityCompanion
-    extends UpdateCompanion<NovelDetailEntityData> {
+class NovelDetailEntityCompanion extends UpdateCompanion<NovelDetailEntityData> {
   final Value<String> aid;
   final Value<String> json;
   final Value<int> rowid;
-  const NovelDetailEntityCompanion({
-    this.aid = const Value.absent(),
-    this.json = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  NovelDetailEntityCompanion.insert({
-    required String aid,
-    required String json,
-    this.rowid = const Value.absent(),
-  }) : aid = Value(aid),
-       json = Value(json);
-  static Insertable<NovelDetailEntityData> custom({
-    Expression<String>? aid,
-    Expression<String>? json,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (aid != null) 'aid': aid,
-      if (json != null) 'json': json,
-      if (rowid != null) 'rowid': rowid,
-    });
+  const NovelDetailEntityCompanion({this.aid = const Value.absent(), this.json = const Value.absent(), this.rowid = const Value.absent()});
+  NovelDetailEntityCompanion.insert({required String aid, required String json, this.rowid = const Value.absent()}) : aid = Value(aid), json = Value(json);
+  static Insertable<NovelDetailEntityData> custom({Expression<String>? aid, Expression<String>? json, Expression<int>? rowid}) {
+    return RawValuesInsertable({if (aid != null) 'aid': aid, if (json != null) 'json': json, if (rowid != null) 'rowid': rowid});
   }
 
-  NovelDetailEntityCompanion copyWith({
-    Value<String>? aid,
-    Value<String>? json,
-    Value<int>? rowid,
-  }) {
-    return NovelDetailEntityCompanion(
-      aid: aid ?? this.aid,
-      json: json ?? this.json,
-      rowid: rowid ?? this.rowid,
-    );
+  NovelDetailEntityCompanion copyWith({Value<String>? aid, Value<String>? json, Value<int>? rowid}) {
+    return NovelDetailEntityCompanion(aid: aid ?? this.aid, json: json ?? this.json, rowid: rowid ?? this.rowid);
   }
 
   @override
@@ -1580,28 +1136,15 @@ class NovelDetailEntityCompanion
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $BookshelfEntityTable bookshelfEntity = $BookshelfEntityTable(
-    this,
-  );
-  late final $BrowsingHistoryEntityTable browsingHistoryEntity =
-      $BrowsingHistoryEntityTable(this);
-  late final $SearchHistoryEntityTable searchHistoryEntity =
-      $SearchHistoryEntityTable(this);
-  late final $ReadHistoryEntityTable readHistoryEntity =
-      $ReadHistoryEntityTable(this);
-  late final $NovelDetailEntityTable novelDetailEntity =
-      $NovelDetailEntityTable(this);
+  late final $BookshelfEntityTable bookshelfEntity = $BookshelfEntityTable(this);
+  late final $BrowsingHistoryEntityTable browsingHistoryEntity = $BrowsingHistoryEntityTable(this);
+  late final $SearchHistoryEntityTable searchHistoryEntity = $SearchHistoryEntityTable(this);
+  late final $ReadHistoryEntityTable readHistoryEntity = $ReadHistoryEntityTable(this);
+  late final $NovelDetailEntityTable novelDetailEntity = $NovelDetailEntityTable(this);
   @override
-  Iterable<TableInfo<Table, Object?>> get allTables =>
-      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [
-    bookshelfEntity,
-    browsingHistoryEntity,
-    searchHistoryEntity,
-    readHistoryEntity,
-    novelDetailEntity,
-  ];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [bookshelfEntity, browsingHistoryEntity, searchHistoryEntity, readHistoryEntity, novelDetailEntity];
 }
 
 typedef $$BookshelfEntityTableCreateCompanionBuilder =
@@ -1625,8 +1168,7 @@ typedef $$BookshelfEntityTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-class $$BookshelfEntityTableFilterComposer
-    extends Composer<_$AppDatabase, $BookshelfEntityTable> {
+class $$BookshelfEntityTableFilterComposer extends Composer<_$AppDatabase, $BookshelfEntityTable> {
   $$BookshelfEntityTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -1634,39 +1176,20 @@ class $$BookshelfEntityTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get bid => $composableBuilder(
-    column: $table.bid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get bid => $composableBuilder(column: $table.bid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get url => $composableBuilder(
-    column: $table.url,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get url => $composableBuilder(column: $table.url, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get title => $composableBuilder(column: $table.title, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get img => $composableBuilder(
-    column: $table.img,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get img => $composableBuilder(column: $table.img, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get classId => $composableBuilder(
-    column: $table.classId,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get classId => $composableBuilder(column: $table.classId, builder: (column) => ColumnFilters(column));
 }
 
-class $$BookshelfEntityTableOrderingComposer
-    extends Composer<_$AppDatabase, $BookshelfEntityTable> {
+class $$BookshelfEntityTableOrderingComposer extends Composer<_$AppDatabase, $BookshelfEntityTable> {
   $$BookshelfEntityTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -1674,39 +1197,20 @@ class $$BookshelfEntityTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get bid => $composableBuilder(
-    column: $table.bid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get bid => $composableBuilder(column: $table.bid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get url => $composableBuilder(
-    column: $table.url,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get url => $composableBuilder(column: $table.url, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get title => $composableBuilder(column: $table.title, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get img => $composableBuilder(
-    column: $table.img,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get img => $composableBuilder(column: $table.img, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get classId => $composableBuilder(
-    column: $table.classId,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get classId => $composableBuilder(column: $table.classId, builder: (column) => ColumnOrderings(column));
 }
 
-class $$BookshelfEntityTableAnnotationComposer
-    extends Composer<_$AppDatabase, $BookshelfEntityTable> {
+class $$BookshelfEntityTableAnnotationComposer extends Composer<_$AppDatabase, $BookshelfEntityTable> {
   $$BookshelfEntityTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -1714,23 +1218,17 @@ class $$BookshelfEntityTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get aid =>
-      $composableBuilder(column: $table.aid, builder: (column) => column);
+  GeneratedColumn<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => column);
 
-  GeneratedColumn<String> get bid =>
-      $composableBuilder(column: $table.bid, builder: (column) => column);
+  GeneratedColumn<String> get bid => $composableBuilder(column: $table.bid, builder: (column) => column);
 
-  GeneratedColumn<String> get url =>
-      $composableBuilder(column: $table.url, builder: (column) => column);
+  GeneratedColumn<String> get url => $composableBuilder(column: $table.url, builder: (column) => column);
 
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
+  GeneratedColumn<String> get title => $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get img =>
-      $composableBuilder(column: $table.img, builder: (column) => column);
+  GeneratedColumn<String> get img => $composableBuilder(column: $table.img, builder: (column) => column);
 
-  GeneratedColumn<String> get classId =>
-      $composableBuilder(column: $table.classId, builder: (column) => column);
+  GeneratedColumn<String> get classId => $composableBuilder(column: $table.classId, builder: (column) => column);
 }
 
 class $$BookshelfEntityTableTableManager
@@ -1744,30 +1242,18 @@ class $$BookshelfEntityTableTableManager
           $$BookshelfEntityTableAnnotationComposer,
           $$BookshelfEntityTableCreateCompanionBuilder,
           $$BookshelfEntityTableUpdateCompanionBuilder,
-          (
-            BookshelfEntityData,
-            BaseReferences<
-              _$AppDatabase,
-              $BookshelfEntityTable,
-              BookshelfEntityData
-            >,
-          ),
+          (BookshelfEntityData, BaseReferences<_$AppDatabase, $BookshelfEntityTable, BookshelfEntityData>),
           BookshelfEntityData,
           PrefetchHooks Function()
         > {
-  $$BookshelfEntityTableTableManager(
-    _$AppDatabase db,
-    $BookshelfEntityTable table,
-  ) : super(
+  $$BookshelfEntityTableTableManager(_$AppDatabase db, $BookshelfEntityTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$BookshelfEntityTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$BookshelfEntityTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$BookshelfEntityTableAnnotationComposer($db: db, $table: table),
+          createFilteringComposer: () => $$BookshelfEntityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$BookshelfEntityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$BookshelfEntityTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> aid = const Value.absent(),
@@ -1777,15 +1263,7 @@ class $$BookshelfEntityTableTableManager
                 Value<String> img = const Value.absent(),
                 Value<String> classId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => BookshelfEntityCompanion(
-                aid: aid,
-                bid: bid,
-                url: url,
-                title: title,
-                img: img,
-                classId: classId,
-                rowid: rowid,
-              ),
+              }) => BookshelfEntityCompanion(aid: aid, bid: bid, url: url, title: title, img: img, classId: classId, rowid: rowid),
           createCompanionCallback:
               ({
                 required String aid,
@@ -1795,18 +1273,8 @@ class $$BookshelfEntityTableTableManager
                 required String img,
                 required String classId,
                 Value<int> rowid = const Value.absent(),
-              }) => BookshelfEntityCompanion.insert(
-                aid: aid,
-                bid: bid,
-                url: url,
-                title: title,
-                img: img,
-                classId: classId,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+              }) => BookshelfEntityCompanion.insert(aid: aid, bid: bid, url: url, title: title, img: img, classId: classId, rowid: rowid),
+          withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -1822,36 +1290,16 @@ typedef $$BookshelfEntityTableProcessedTableManager =
       $$BookshelfEntityTableAnnotationComposer,
       $$BookshelfEntityTableCreateCompanionBuilder,
       $$BookshelfEntityTableUpdateCompanionBuilder,
-      (
-        BookshelfEntityData,
-        BaseReferences<
-          _$AppDatabase,
-          $BookshelfEntityTable,
-          BookshelfEntityData
-        >,
-      ),
+      (BookshelfEntityData, BaseReferences<_$AppDatabase, $BookshelfEntityTable, BookshelfEntityData>),
       BookshelfEntityData,
       PrefetchHooks Function()
     >;
 typedef $$BrowsingHistoryEntityTableCreateCompanionBuilder =
-    BrowsingHistoryEntityCompanion Function({
-      required String aid,
-      required String title,
-      required String img,
-      required DateTime time,
-      Value<int> rowid,
-    });
+    BrowsingHistoryEntityCompanion Function({required String aid, required String title, required String img, required DateTime time, Value<int> rowid});
 typedef $$BrowsingHistoryEntityTableUpdateCompanionBuilder =
-    BrowsingHistoryEntityCompanion Function({
-      Value<String> aid,
-      Value<String> title,
-      Value<String> img,
-      Value<DateTime> time,
-      Value<int> rowid,
-    });
+    BrowsingHistoryEntityCompanion Function({Value<String> aid, Value<String> title, Value<String> img, Value<DateTime> time, Value<int> rowid});
 
-class $$BrowsingHistoryEntityTableFilterComposer
-    extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
+class $$BrowsingHistoryEntityTableFilterComposer extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
   $$BrowsingHistoryEntityTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -1859,29 +1307,16 @@ class $$BrowsingHistoryEntityTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get title => $composableBuilder(column: $table.title, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get img => $composableBuilder(
-    column: $table.img,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get img => $composableBuilder(column: $table.img, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<DateTime> get time => $composableBuilder(
-    column: $table.time,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<DateTime> get time => $composableBuilder(column: $table.time, builder: (column) => ColumnFilters(column));
 }
 
-class $$BrowsingHistoryEntityTableOrderingComposer
-    extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
+class $$BrowsingHistoryEntityTableOrderingComposer extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
   $$BrowsingHistoryEntityTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -1889,29 +1324,16 @@ class $$BrowsingHistoryEntityTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get title => $composableBuilder(column: $table.title, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get img => $composableBuilder(
-    column: $table.img,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get img => $composableBuilder(column: $table.img, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<DateTime> get time => $composableBuilder(
-    column: $table.time,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<DateTime> get time => $composableBuilder(column: $table.time, builder: (column) => ColumnOrderings(column));
 }
 
-class $$BrowsingHistoryEntityTableAnnotationComposer
-    extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
+class $$BrowsingHistoryEntityTableAnnotationComposer extends Composer<_$AppDatabase, $BrowsingHistoryEntityTable> {
   $$BrowsingHistoryEntityTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -1919,17 +1341,13 @@ class $$BrowsingHistoryEntityTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get aid =>
-      $composableBuilder(column: $table.aid, builder: (column) => column);
+  GeneratedColumn<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => column);
 
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
+  GeneratedColumn<String> get title => $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get img =>
-      $composableBuilder(column: $table.img, builder: (column) => column);
+  GeneratedColumn<String> get img => $composableBuilder(column: $table.img, builder: (column) => column);
 
-  GeneratedColumn<DateTime> get time =>
-      $composableBuilder(column: $table.time, builder: (column) => column);
+  GeneratedColumn<DateTime> get time => $composableBuilder(column: $table.time, builder: (column) => column);
 }
 
 class $$BrowsingHistoryEntityTableTableManager
@@ -1943,39 +1361,18 @@ class $$BrowsingHistoryEntityTableTableManager
           $$BrowsingHistoryEntityTableAnnotationComposer,
           $$BrowsingHistoryEntityTableCreateCompanionBuilder,
           $$BrowsingHistoryEntityTableUpdateCompanionBuilder,
-          (
-            BrowsingHistoryEntityData,
-            BaseReferences<
-              _$AppDatabase,
-              $BrowsingHistoryEntityTable,
-              BrowsingHistoryEntityData
-            >,
-          ),
+          (BrowsingHistoryEntityData, BaseReferences<_$AppDatabase, $BrowsingHistoryEntityTable, BrowsingHistoryEntityData>),
           BrowsingHistoryEntityData,
           PrefetchHooks Function()
         > {
-  $$BrowsingHistoryEntityTableTableManager(
-    _$AppDatabase db,
-    $BrowsingHistoryEntityTable table,
-  ) : super(
+  $$BrowsingHistoryEntityTableTableManager(_$AppDatabase db, $BrowsingHistoryEntityTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$BrowsingHistoryEntityTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$BrowsingHistoryEntityTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$BrowsingHistoryEntityTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () => $$BrowsingHistoryEntityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$BrowsingHistoryEntityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$BrowsingHistoryEntityTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> aid = const Value.absent(),
@@ -1983,30 +1380,11 @@ class $$BrowsingHistoryEntityTableTableManager
                 Value<String> img = const Value.absent(),
                 Value<DateTime> time = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => BrowsingHistoryEntityCompanion(
-                aid: aid,
-                title: title,
-                img: img,
-                time: time,
-                rowid: rowid,
-              ),
+              }) => BrowsingHistoryEntityCompanion(aid: aid, title: title, img: img, time: time, rowid: rowid),
           createCompanionCallback:
-              ({
-                required String aid,
-                required String title,
-                required String img,
-                required DateTime time,
-                Value<int> rowid = const Value.absent(),
-              }) => BrowsingHistoryEntityCompanion.insert(
-                aid: aid,
-                title: title,
-                img: img,
-                time: time,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+              ({required String aid, required String title, required String img, required DateTime time, Value<int> rowid = const Value.absent()}) =>
+                  BrowsingHistoryEntityCompanion.insert(aid: aid, title: title, img: img, time: time, rowid: rowid),
+          withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -2022,30 +1400,14 @@ typedef $$BrowsingHistoryEntityTableProcessedTableManager =
       $$BrowsingHistoryEntityTableAnnotationComposer,
       $$BrowsingHistoryEntityTableCreateCompanionBuilder,
       $$BrowsingHistoryEntityTableUpdateCompanionBuilder,
-      (
-        BrowsingHistoryEntityData,
-        BaseReferences<
-          _$AppDatabase,
-          $BrowsingHistoryEntityTable,
-          BrowsingHistoryEntityData
-        >,
-      ),
+      (BrowsingHistoryEntityData, BaseReferences<_$AppDatabase, $BrowsingHistoryEntityTable, BrowsingHistoryEntityData>),
       BrowsingHistoryEntityData,
       PrefetchHooks Function()
     >;
-typedef $$SearchHistoryEntityTableCreateCompanionBuilder =
-    SearchHistoryEntityCompanion Function({
-      required String keyword,
-      Value<int> rowid,
-    });
-typedef $$SearchHistoryEntityTableUpdateCompanionBuilder =
-    SearchHistoryEntityCompanion Function({
-      Value<String> keyword,
-      Value<int> rowid,
-    });
+typedef $$SearchHistoryEntityTableCreateCompanionBuilder = SearchHistoryEntityCompanion Function({required String keyword, Value<int> rowid});
+typedef $$SearchHistoryEntityTableUpdateCompanionBuilder = SearchHistoryEntityCompanion Function({Value<String> keyword, Value<int> rowid});
 
-class $$SearchHistoryEntityTableFilterComposer
-    extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
+class $$SearchHistoryEntityTableFilterComposer extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
   $$SearchHistoryEntityTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2053,14 +1415,10 @@ class $$SearchHistoryEntityTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get keyword => $composableBuilder(
-    column: $table.keyword,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get keyword => $composableBuilder(column: $table.keyword, builder: (column) => ColumnFilters(column));
 }
 
-class $$SearchHistoryEntityTableOrderingComposer
-    extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
+class $$SearchHistoryEntityTableOrderingComposer extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
   $$SearchHistoryEntityTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2068,14 +1426,10 @@ class $$SearchHistoryEntityTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get keyword => $composableBuilder(
-    column: $table.keyword,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get keyword => $composableBuilder(column: $table.keyword, builder: (column) => ColumnOrderings(column));
 }
 
-class $$SearchHistoryEntityTableAnnotationComposer
-    extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
+class $$SearchHistoryEntityTableAnnotationComposer extends Composer<_$AppDatabase, $SearchHistoryEntityTable> {
   $$SearchHistoryEntityTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2083,8 +1437,7 @@ class $$SearchHistoryEntityTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get keyword =>
-      $composableBuilder(column: $table.keyword, builder: (column) => column);
+  GeneratedColumn<String> get keyword => $composableBuilder(column: $table.keyword, builder: (column) => column);
 }
 
 class $$SearchHistoryEntityTableTableManager
@@ -2098,53 +1451,23 @@ class $$SearchHistoryEntityTableTableManager
           $$SearchHistoryEntityTableAnnotationComposer,
           $$SearchHistoryEntityTableCreateCompanionBuilder,
           $$SearchHistoryEntityTableUpdateCompanionBuilder,
-          (
-            SearchHistoryEntityData,
-            BaseReferences<
-              _$AppDatabase,
-              $SearchHistoryEntityTable,
-              SearchHistoryEntityData
-            >,
-          ),
+          (SearchHistoryEntityData, BaseReferences<_$AppDatabase, $SearchHistoryEntityTable, SearchHistoryEntityData>),
           SearchHistoryEntityData,
           PrefetchHooks Function()
         > {
-  $$SearchHistoryEntityTableTableManager(
-    _$AppDatabase db,
-    $SearchHistoryEntityTable table,
-  ) : super(
+  $$SearchHistoryEntityTableTableManager(_$AppDatabase db, $SearchHistoryEntityTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$SearchHistoryEntityTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$SearchHistoryEntityTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$SearchHistoryEntityTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> keyword = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) =>
-                  SearchHistoryEntityCompanion(keyword: keyword, rowid: rowid),
-          createCompanionCallback:
-              ({
-                required String keyword,
-                Value<int> rowid = const Value.absent(),
-              }) => SearchHistoryEntityCompanion.insert(
-                keyword: keyword,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+          createFilteringComposer: () => $$SearchHistoryEntityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$SearchHistoryEntityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$SearchHistoryEntityTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({Value<String> keyword = const Value.absent(), Value<int> rowid = const Value.absent()}) =>
+              SearchHistoryEntityCompanion(keyword: keyword, rowid: rowid),
+          createCompanionCallback: ({required String keyword, Value<int> rowid = const Value.absent()}) =>
+              SearchHistoryEntityCompanion.insert(keyword: keyword, rowid: rowid),
+          withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -2160,14 +1483,7 @@ typedef $$SearchHistoryEntityTableProcessedTableManager =
       $$SearchHistoryEntityTableAnnotationComposer,
       $$SearchHistoryEntityTableCreateCompanionBuilder,
       $$SearchHistoryEntityTableUpdateCompanionBuilder,
-      (
-        SearchHistoryEntityData,
-        BaseReferences<
-          _$AppDatabase,
-          $SearchHistoryEntityTable,
-          SearchHistoryEntityData
-        >,
-      ),
+      (SearchHistoryEntityData, BaseReferences<_$AppDatabase, $SearchHistoryEntityTable, SearchHistoryEntityData>),
       SearchHistoryEntityData,
       PrefetchHooks Function()
     >;
@@ -2194,8 +1510,7 @@ typedef $$ReadHistoryEntityTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-class $$ReadHistoryEntityTableFilterComposer
-    extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
+class $$ReadHistoryEntityTableFilterComposer extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
   $$ReadHistoryEntityTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2203,44 +1518,22 @@ class $$ReadHistoryEntityTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get cid => $composableBuilder(
-    column: $table.cid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get cid => $composableBuilder(column: $table.cid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get readerMode => $composableBuilder(
-    column: $table.readerMode,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get readerMode => $composableBuilder(column: $table.readerMode, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get isDualPage => $composableBuilder(
-    column: $table.isDualPage,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<bool> get isDualPage => $composableBuilder(column: $table.isDualPage, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get location => $composableBuilder(
-    column: $table.location,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get location => $composableBuilder(column: $table.location, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get progress => $composableBuilder(
-    column: $table.progress,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<int> get progress => $composableBuilder(column: $table.progress, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get isLatest => $composableBuilder(
-    column: $table.isLatest,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<bool> get isLatest => $composableBuilder(column: $table.isLatest, builder: (column) => ColumnFilters(column));
 }
 
-class $$ReadHistoryEntityTableOrderingComposer
-    extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
+class $$ReadHistoryEntityTableOrderingComposer extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
   $$ReadHistoryEntityTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2248,44 +1541,22 @@ class $$ReadHistoryEntityTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get cid => $composableBuilder(
-    column: $table.cid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get cid => $composableBuilder(column: $table.cid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get readerMode => $composableBuilder(
-    column: $table.readerMode,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get readerMode => $composableBuilder(column: $table.readerMode, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get isDualPage => $composableBuilder(
-    column: $table.isDualPage,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<bool> get isDualPage => $composableBuilder(column: $table.isDualPage, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get location => $composableBuilder(
-    column: $table.location,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get location => $composableBuilder(column: $table.location, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get progress => $composableBuilder(
-    column: $table.progress,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<int> get progress => $composableBuilder(column: $table.progress, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get isLatest => $composableBuilder(
-    column: $table.isLatest,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<bool> get isLatest => $composableBuilder(column: $table.isLatest, builder: (column) => ColumnOrderings(column));
 }
 
-class $$ReadHistoryEntityTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
+class $$ReadHistoryEntityTableAnnotationComposer extends Composer<_$AppDatabase, $ReadHistoryEntityTable> {
   $$ReadHistoryEntityTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2293,30 +1564,19 @@ class $$ReadHistoryEntityTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get cid =>
-      $composableBuilder(column: $table.cid, builder: (column) => column);
+  GeneratedColumn<String> get cid => $composableBuilder(column: $table.cid, builder: (column) => column);
 
-  GeneratedColumn<String> get aid =>
-      $composableBuilder(column: $table.aid, builder: (column) => column);
+  GeneratedColumn<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => column);
 
-  GeneratedColumn<int> get readerMode => $composableBuilder(
-    column: $table.readerMode,
-    builder: (column) => column,
-  );
+  GeneratedColumn<int> get readerMode => $composableBuilder(column: $table.readerMode, builder: (column) => column);
 
-  GeneratedColumn<bool> get isDualPage => $composableBuilder(
-    column: $table.isDualPage,
-    builder: (column) => column,
-  );
+  GeneratedColumn<bool> get isDualPage => $composableBuilder(column: $table.isDualPage, builder: (column) => column);
 
-  GeneratedColumn<int> get location =>
-      $composableBuilder(column: $table.location, builder: (column) => column);
+  GeneratedColumn<int> get location => $composableBuilder(column: $table.location, builder: (column) => column);
 
-  GeneratedColumn<int> get progress =>
-      $composableBuilder(column: $table.progress, builder: (column) => column);
+  GeneratedColumn<int> get progress => $composableBuilder(column: $table.progress, builder: (column) => column);
 
-  GeneratedColumn<bool> get isLatest =>
-      $composableBuilder(column: $table.isLatest, builder: (column) => column);
+  GeneratedColumn<bool> get isLatest => $composableBuilder(column: $table.isLatest, builder: (column) => column);
 }
 
 class $$ReadHistoryEntityTableTableManager
@@ -2330,33 +1590,18 @@ class $$ReadHistoryEntityTableTableManager
           $$ReadHistoryEntityTableAnnotationComposer,
           $$ReadHistoryEntityTableCreateCompanionBuilder,
           $$ReadHistoryEntityTableUpdateCompanionBuilder,
-          (
-            ReadHistoryEntityData,
-            BaseReferences<
-              _$AppDatabase,
-              $ReadHistoryEntityTable,
-              ReadHistoryEntityData
-            >,
-          ),
+          (ReadHistoryEntityData, BaseReferences<_$AppDatabase, $ReadHistoryEntityTable, ReadHistoryEntityData>),
           ReadHistoryEntityData,
           PrefetchHooks Function()
         > {
-  $$ReadHistoryEntityTableTableManager(
-    _$AppDatabase db,
-    $ReadHistoryEntityTable table,
-  ) : super(
+  $$ReadHistoryEntityTableTableManager(_$AppDatabase db, $ReadHistoryEntityTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$ReadHistoryEntityTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$ReadHistoryEntityTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$ReadHistoryEntityTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () => $$ReadHistoryEntityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$ReadHistoryEntityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$ReadHistoryEntityTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> cid = const Value.absent(),
@@ -2397,9 +1642,7 @@ class $$ReadHistoryEntityTableTableManager
                 isLatest: isLatest,
                 rowid: rowid,
               ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+          withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -2415,32 +1658,14 @@ typedef $$ReadHistoryEntityTableProcessedTableManager =
       $$ReadHistoryEntityTableAnnotationComposer,
       $$ReadHistoryEntityTableCreateCompanionBuilder,
       $$ReadHistoryEntityTableUpdateCompanionBuilder,
-      (
-        ReadHistoryEntityData,
-        BaseReferences<
-          _$AppDatabase,
-          $ReadHistoryEntityTable,
-          ReadHistoryEntityData
-        >,
-      ),
+      (ReadHistoryEntityData, BaseReferences<_$AppDatabase, $ReadHistoryEntityTable, ReadHistoryEntityData>),
       ReadHistoryEntityData,
       PrefetchHooks Function()
     >;
-typedef $$NovelDetailEntityTableCreateCompanionBuilder =
-    NovelDetailEntityCompanion Function({
-      required String aid,
-      required String json,
-      Value<int> rowid,
-    });
-typedef $$NovelDetailEntityTableUpdateCompanionBuilder =
-    NovelDetailEntityCompanion Function({
-      Value<String> aid,
-      Value<String> json,
-      Value<int> rowid,
-    });
+typedef $$NovelDetailEntityTableCreateCompanionBuilder = NovelDetailEntityCompanion Function({required String aid, required String json, Value<int> rowid});
+typedef $$NovelDetailEntityTableUpdateCompanionBuilder = NovelDetailEntityCompanion Function({Value<String> aid, Value<String> json, Value<int> rowid});
 
-class $$NovelDetailEntityTableFilterComposer
-    extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
+class $$NovelDetailEntityTableFilterComposer extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
   $$NovelDetailEntityTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2448,19 +1673,12 @@ class $$NovelDetailEntityTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get json => $composableBuilder(
-    column: $table.json,
-    builder: (column) => ColumnFilters(column),
-  );
+  ColumnFilters<String> get json => $composableBuilder(column: $table.json, builder: (column) => ColumnFilters(column));
 }
 
-class $$NovelDetailEntityTableOrderingComposer
-    extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
+class $$NovelDetailEntityTableOrderingComposer extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
   $$NovelDetailEntityTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2468,19 +1686,12 @@ class $$NovelDetailEntityTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get aid => $composableBuilder(
-    column: $table.aid,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get json => $composableBuilder(
-    column: $table.json,
-    builder: (column) => ColumnOrderings(column),
-  );
+  ColumnOrderings<String> get json => $composableBuilder(column: $table.json, builder: (column) => ColumnOrderings(column));
 }
 
-class $$NovelDetailEntityTableAnnotationComposer
-    extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
+class $$NovelDetailEntityTableAnnotationComposer extends Composer<_$AppDatabase, $NovelDetailEntityTable> {
   $$NovelDetailEntityTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2488,11 +1699,9 @@ class $$NovelDetailEntityTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get aid =>
-      $composableBuilder(column: $table.aid, builder: (column) => column);
+  GeneratedColumn<String> get aid => $composableBuilder(column: $table.aid, builder: (column) => column);
 
-  GeneratedColumn<String> get json =>
-      $composableBuilder(column: $table.json, builder: (column) => column);
+  GeneratedColumn<String> get json => $composableBuilder(column: $table.json, builder: (column) => column);
 }
 
 class $$NovelDetailEntityTableTableManager
@@ -2506,56 +1715,24 @@ class $$NovelDetailEntityTableTableManager
           $$NovelDetailEntityTableAnnotationComposer,
           $$NovelDetailEntityTableCreateCompanionBuilder,
           $$NovelDetailEntityTableUpdateCompanionBuilder,
-          (
-            NovelDetailEntityData,
-            BaseReferences<
-              _$AppDatabase,
-              $NovelDetailEntityTable,
-              NovelDetailEntityData
-            >,
-          ),
+          (NovelDetailEntityData, BaseReferences<_$AppDatabase, $NovelDetailEntityTable, NovelDetailEntityData>),
           NovelDetailEntityData,
           PrefetchHooks Function()
         > {
-  $$NovelDetailEntityTableTableManager(
-    _$AppDatabase db,
-    $NovelDetailEntityTable table,
-  ) : super(
+  $$NovelDetailEntityTableTableManager(_$AppDatabase db, $NovelDetailEntityTable table)
+    : super(
         TableManagerState(
           db: db,
           table: table,
-          createFilteringComposer: () =>
-              $$NovelDetailEntityTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$NovelDetailEntityTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$NovelDetailEntityTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
+          createFilteringComposer: () => $$NovelDetailEntityTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$NovelDetailEntityTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$NovelDetailEntityTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
-              ({
-                Value<String> aid = const Value.absent(),
-                Value<String> json = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => NovelDetailEntityCompanion(
-                aid: aid,
-                json: json,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String aid,
-                required String json,
-                Value<int> rowid = const Value.absent(),
-              }) => NovelDetailEntityCompanion.insert(
-                aid: aid,
-                json: json,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
+              ({Value<String> aid = const Value.absent(), Value<String> json = const Value.absent(), Value<int> rowid = const Value.absent()}) =>
+                  NovelDetailEntityCompanion(aid: aid, json: json, rowid: rowid),
+          createCompanionCallback: ({required String aid, required String json, Value<int> rowid = const Value.absent()}) =>
+              NovelDetailEntityCompanion.insert(aid: aid, json: json, rowid: rowid),
+          withReferenceMapper: (p0) => p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -2571,14 +1748,7 @@ typedef $$NovelDetailEntityTableProcessedTableManager =
       $$NovelDetailEntityTableAnnotationComposer,
       $$NovelDetailEntityTableCreateCompanionBuilder,
       $$NovelDetailEntityTableUpdateCompanionBuilder,
-      (
-        NovelDetailEntityData,
-        BaseReferences<
-          _$AppDatabase,
-          $NovelDetailEntityTable,
-          NovelDetailEntityData
-        >,
-      ),
+      (NovelDetailEntityData, BaseReferences<_$AppDatabase, $NovelDetailEntityTable, NovelDetailEntityData>),
       NovelDetailEntityData,
       PrefetchHooks Function()
     >;
@@ -2586,14 +1756,9 @@ typedef $$NovelDetailEntityTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$BookshelfEntityTableTableManager get bookshelfEntity =>
-      $$BookshelfEntityTableTableManager(_db, _db.bookshelfEntity);
-  $$BrowsingHistoryEntityTableTableManager get browsingHistoryEntity =>
-      $$BrowsingHistoryEntityTableTableManager(_db, _db.browsingHistoryEntity);
-  $$SearchHistoryEntityTableTableManager get searchHistoryEntity =>
-      $$SearchHistoryEntityTableTableManager(_db, _db.searchHistoryEntity);
-  $$ReadHistoryEntityTableTableManager get readHistoryEntity =>
-      $$ReadHistoryEntityTableTableManager(_db, _db.readHistoryEntity);
-  $$NovelDetailEntityTableTableManager get novelDetailEntity =>
-      $$NovelDetailEntityTableTableManager(_db, _db.novelDetailEntity);
+  $$BookshelfEntityTableTableManager get bookshelfEntity => $$BookshelfEntityTableTableManager(_db, _db.bookshelfEntity);
+  $$BrowsingHistoryEntityTableTableManager get browsingHistoryEntity => $$BrowsingHistoryEntityTableTableManager(_db, _db.browsingHistoryEntity);
+  $$SearchHistoryEntityTableTableManager get searchHistoryEntity => $$SearchHistoryEntityTableTableManager(_db, _db.searchHistoryEntity);
+  $$ReadHistoryEntityTableTableManager get readHistoryEntity => $$ReadHistoryEntityTableTableManager(_db, _db.readHistoryEntity);
+  $$NovelDetailEntityTableTableManager get novelDetailEntity => $$NovelDetailEntityTableTableManager(_db, _db.novelDetailEntity);
 }

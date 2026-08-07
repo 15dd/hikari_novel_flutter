@@ -5,7 +5,7 @@ class BottomActionBar extends StatefulWidget {
   final double height;
   final bool edgeToEdge;
 
-  const BottomActionBar({super.key, required this.items, required this.edgeToEdge,this.height = 72}) : assert(items.length >= 2 && items.length <= 3);
+  const BottomActionBar({super.key, required this.items, required this.edgeToEdge, this.height = 72}) : assert(items.length >= 2 && items.length <= 3);
 
   @override
   State<StatefulWidget> createState() => _BottomActionBarState();

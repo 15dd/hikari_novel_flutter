@@ -24,11 +24,7 @@ class AboutPage extends StatelessWidget {
           ),
           const Divider(height: 1),
           Obx(
-            () => NormalTile(
-              title: "version".tr,
-              subtitle: "${controller.version.value}(${controller.buildNumber.value})",
-              leading: const Icon(Icons.commit)
-            ),
+            () => NormalTile(title: "version".tr, subtitle: "${controller.version.value}(${controller.buildNumber.value})", leading: const Icon(Icons.commit)),
           ),
           NormalTile(title: "check_update".tr, leading: const Icon(Icons.update), onTap: () => Util.checkUpdate(true)),
           NormalTile(
@@ -51,7 +47,7 @@ class AboutPage extends StatelessWidget {
             leading: const Icon(Icons.group),
             trailing: const Icon(Icons.open_in_new),
             onTap: () => launchUrl(Uri.parse("https://t.me/+CUSABNkX5U83NGNl")),
-          )
+          ),
         ],
       ),
     );

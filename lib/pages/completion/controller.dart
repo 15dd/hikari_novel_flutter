@@ -8,7 +8,6 @@ import '../../network/api.dart';
 import '../../network/parser.dart';
 
 class CompletionController extends BaseListPageController<NovelCover> {
-
   @override
   Rx<PageState> pageState = Rx(PageState.loading);
 

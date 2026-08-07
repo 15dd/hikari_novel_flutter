@@ -56,7 +56,7 @@ class MyPage extends StatelessWidget {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis,
               ),
-            )
+            ),
           ],
         ),
       ),

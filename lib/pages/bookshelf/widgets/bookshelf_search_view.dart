@@ -53,27 +53,25 @@ class BookshelfSearchView extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.success,
-              child:
-                  controller.data.isEmpty == true
-                      ? Container()
-                      : Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                        child: Obx(
-                          () => ResponsiveGridList(
-                            minItemWidth: 100,
-                            horizontalGridSpacing: 4,
-                            verticalGridSpacing: 4,
-                            children:
-                                controller.data.map((item) {
-                                  return NovelCoverCard(novelCover: NovelCover(item.title, item.img, item.aid));
-                                }).toList(),
-                          ),
+              child: controller.data.isEmpty == true
+                  ? Container()
+                  : Padding(
+                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      child: Obx(
+                        () => ResponsiveGridList(
+                          minItemWidth: 100,
+                          horizontalGridSpacing: 4,
+                          verticalGridSpacing: 4,
+                          children: controller.data.map((item) {
+                            return NovelCoverCard(novelCover: NovelCover(item.title, item.img, item.aid));
+                          }).toList(),
                         ),
                       ),
+                    ),
             ),
           ),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.empty, child: EmptyPage())),
-          Obx(() => Offstage(offstage: controller.pageState.value != PageState.placeholder, child: Container()))
+          Obx(() => Offstage(offstage: controller.pageState.value != PageState.placeholder, child: Container())),
         ],
       ),
     );

@@ -19,7 +19,9 @@ class BrowsingHistoryPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("browsing_history".tr),
         titleSpacing: 0,
-        actions: [IconButton(onPressed: controller.deleteAllBrowsingHistory, icon: Icon(Icons.delete_sweep_outlined), tooltip: "delete_all_browsing_history".tr)],
+        actions: [
+          IconButton(onPressed: controller.deleteAllBrowsingHistory, icon: Icon(Icons.delete_sweep_outlined), tooltip: "delete_all_browsing_history".tr),
+        ],
       ),
       body: Stack(
         children: [
@@ -27,14 +29,13 @@ class BrowsingHistoryPage extends StatelessWidget {
             () => Offstage(
               offstage: controller.pageState.value != PageState.success,
               child: ListView(
-                children:
-                    controller.list.map((item) {
-                      return BrowsingHistoryCard(
-                        vh: item,
-                        onTap: () => AppSubRouter.toNovelDetail(aid: item.aid),
-                        onDelete: () => DBService.instance.deleteBrowsingHistory(item.aid),
-                      );
-                    }).toList(),
+                children: controller.list.map((item) {
+                  return BrowsingHistoryCard(
+                    vh: item,
+                    onTap: () => AppSubRouter.toNovelDetail(aid: item.aid),
+                    onDelete: () => DBService.instance.deleteBrowsingHistory(item.aid),
+                  );
+                }).toList(),
               ),
             ),
           ),

@@ -1,3 +1,1 @@
-enum ReaderDirection {
-  leftToRight, rightToLeft, upToDown
-}
+enum ReaderDirection { leftToRight, rightToLeft, upToDown }

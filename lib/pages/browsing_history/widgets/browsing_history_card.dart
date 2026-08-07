@@ -33,8 +33,7 @@ class BrowsingHistoryCard extends StatelessWidget {
                     imageUrl: vh.img,
                     httpHeaders: Request.userAgent,
                     fit: BoxFit.cover,
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+                    progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),
                   ),
                 ),
@@ -57,11 +56,11 @@ class BrowsingHistoryCard extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Center(
-              child: IconButton(onPressed: onDelete, icon: const Icon(Icons.delete_outline))
-            )
+              child: IconButton(onPressed: onDelete, icon: const Icon(Icons.delete_outline)),
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 }

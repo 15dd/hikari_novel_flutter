@@ -24,16 +24,13 @@ class RecommendBlockView extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         ResponsiveGridList(
-            listViewBuilderOptions: ListViewBuilderOptions(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics()
-            ),
-            minItemWidth: 100,
-            horizontalGridSpacing: 4,
-            verticalGridSpacing: 4,
-            children: block.list.map((item) {
-              return NovelCoverCard(novelCover: item);
-            }).toList()
+          listViewBuilderOptions: ListViewBuilderOptions(shrinkWrap: true, physics: NeverScrollableScrollPhysics()),
+          minItemWidth: 100,
+          horizontalGridSpacing: 4,
+          verticalGridSpacing: 4,
+          children: block.list.map((item) {
+            return NovelCoverCard(novelCover: item);
+          }).toList(),
         ),
       ],
     );

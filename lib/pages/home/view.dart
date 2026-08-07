@@ -25,9 +25,7 @@ class HomePage extends StatelessWidget {
           tabAlignment: TabAlignment.start,
         ),
         titleSpacing: 0,
-        actions: [
-          IconButton(onPressed: () => AppSubRouter.toSearch(author: null), icon: Icon(Icons.search))
-        ]
+        actions: [IconButton(onPressed: () => AppSubRouter.toSearch(author: null), icon: Icon(Icons.search))],
       ),
       body: TabBarView(controller: controller.tabController, children: [RecommendView(), CategoryView(), RankingView(), CompletionView()]),
     );

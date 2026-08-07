@@ -20,7 +20,7 @@ import 'api.dart';
 class Request {
   static const userAgent = {
     io.HttpHeaders.userAgentHeader:
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
   };
 
   static final _dioCookieJar = ckjar.CookieJar();

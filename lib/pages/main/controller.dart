@@ -19,11 +19,7 @@ class MainController extends GetxController {
   void onInit() {
     super.onInit();
 
-    pages = [
-      HomePage(),
-      BookshelfPage(),
-      MyPage()
-    ];
+    pages = [HomePage(), BookshelfPage(), MyPage()];
   }
 
   @override

@@ -112,7 +112,7 @@ Widget _getCommonErrorInfoView(String msg) {
       children: [
         Text(tip),
         const SizedBox(height: 6),
-        WxDivider(pattern: WxDivider.dashed, color: Theme.of(Get.context!).colorScheme.onSurface,child: Text("Raw Message")),
+        WxDivider(pattern: WxDivider.dashed, color: Theme.of(Get.context!).colorScheme.onSurface, child: Text("Raw Message")),
         const SizedBox(height: 6),
         Text(msg),
       ],

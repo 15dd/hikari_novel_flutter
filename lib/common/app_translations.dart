@@ -249,8 +249,7 @@ class AppTranslations extends Translations {
       "no_new_version_available": "已经是最新版本了",
       "mark_as_read": "标为已读",
       "mark_as_unread": "标为未读",
-      "cloudflare_challenge_exception_tip":
-          "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
+      "cloudflare_challenge_exception_tip": "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
       "last_read": "上次阅读",
       "keyword": "关键词",
       "search": "搜索",
@@ -277,8 +276,7 @@ class AppTranslations extends Translations {
       "refresh_tts_setting_tip": "修改语速/音调/音量后，需点击“刷新设置”才会立即生效（部分引擎播放中无法实时更新）",
       "listen_to_books": "听书",
       "unable_to_open_system_setting": "无法打开系统TTS设置",
-      "listen_to_books_failed_tip":
-          "系统TTS没有开始播放。请在<系统TTS设置>里确认已安装引擎/语音，并尝试切换语言/引擎",
+      "listen_to_books_failed_tip": "系统TTS没有开始播放。请在<系统TTS设置>里确认已安装引擎/语音，并尝试切换语言/引擎",
       "system_tts": "系统TTS",
       "pause": "暂停",
       "play": "播放",
@@ -540,8 +538,7 @@ class AppTranslations extends Translations {
       "no_new_version_available": "已是最新版本",
       "mark_as_read": "標為已讀",
       "mark_as_unread": "標為未讀",
-      "cloudflare_challenge_exception_tip":
-          "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
+      "cloudflare_challenge_exception_tip": "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
       "last_read": "上次閱讀",
       "keyword": "關鍵詞",
       "search": "搜尋",
@@ -568,8 +565,7 @@ class AppTranslations extends Translations {
       "refresh_tts_setting_tip": "修改語速／音調／音量後，需點擊<重新整理設定>才會立即生效（部分引擎播放中無法即時更新）",
       "listen_to_books": "聽書",
       "unable_to_open_system_setting": "無法開啟系統TTS設定",
-      "listen_to_books_failed_tip":
-          "系統TTS尚未開始播放。請在<系統TTS設定>中確認已安裝引擎／語音，並嘗試切換語言／引擎",
+      "listen_to_books_failed_tip": "系統TTS尚未開始播放。請在<系統TTS設定>中確認已安裝引擎／語音，並嘗試切換語言／引擎",
       "system_tts": "系統TTS",
       "pause": "暫停",
       "play": "播放",

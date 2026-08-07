@@ -102,9 +102,7 @@ class BookshelfContentController extends GetxController {
 
   Future removeNovelFromList() => Api.removeNovelFromList(list: getSelectedNovel(), classId: int.parse(classId));
 
-  Future moveNovelToOther(int newClassId) =>
-    Api.moveNovelToOther(list: getSelectedNovel(), classId: int.parse(classId), newClassId: newClassId);
-
+  Future moveNovelToOther(int newClassId) => Api.moveNovelToOther(list: getSelectedNovel(), classId: int.parse(classId), newClassId: newClassId);
 
   List<String> getSelectedNovel() => bookshelf.value!.list.where((v) => v.isSelected.value == true).map((i) => i.bid).toList();
 

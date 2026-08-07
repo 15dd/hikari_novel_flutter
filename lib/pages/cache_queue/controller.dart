@@ -123,7 +123,6 @@ class CacheQueueController extends GetxService {
     }
   }
 
-
   Future<void> cancelTask(String uuid) async {
     downloader.cancel(uuid);
     final idx = tasks.indexWhere((t) => t.uuid == uuid);

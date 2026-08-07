@@ -1,12 +1,1 @@
-enum PageState {
-  loading,
-  success,
-  empty,
-  error,
-  pleaseSelect,
-  jumpToOtherPage,
-  inFiveSecond,
-  bookshelfContent,
-  bookshelfSearch,
-  placeholder
-}
+enum PageState { loading, success, empty, error, pleaseSelect, jumpToOtherPage, inFiveSecond, bookshelfContent, bookshelfSearch, placeholder }

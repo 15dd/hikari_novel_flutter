@@ -9,7 +9,7 @@ class CommentCard extends StatelessWidget {
   final String aid;
   final CommentItem item;
 
-  const CommentCard({super.key,required this.aid, required this.item});
+  const CommentCard({super.key, required this.aid, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +28,18 @@ class CommentCard extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: GestureDetector(
                         onTap: () => AppSubRouter.toUserBookshelf(uid: item.uid),
-                        child: Text(
-                          item.userName,
-                          style: kCommentAndReplyUsernameTextStyle,
-                        ),
+                        child: Text(item.userName, style: kCommentAndReplyUsernameTextStyle),
                       ),
                     ),
                     const Expanded(child: SizedBox()),
-                    const Icon(Icons.keyboard_arrow_right_outlined)
+                    const Icon(Icons.keyboard_arrow_right_outlined),
                   ],
                 ),
                 const SizedBox(height: 18),
-                Align(alignment: Alignment.centerLeft, child: Text(item.content, style: const TextStyle(fontSize: 15))),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(item.content, style: const TextStyle(fontSize: 15)),
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [

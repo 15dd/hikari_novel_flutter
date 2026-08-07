@@ -98,25 +98,25 @@ class _SliderTileState extends State<SliderTile> {
         ],
       ),
       subtitle: Slider(
-          min: widget.min.toDouble(),
-          max: widget.max.toDouble(),
-          divisions: widget.divisions,
-          value: interValue.toDouble(),
-          onChanged: (v) => setState(() => interValue = v),
-          onChangeEnd: (v) => widget.onChangeEnd!.call(v)
+        min: widget.min.toDouble(),
+        max: widget.max.toDouble(),
+        divisions: widget.divisions,
+        value: interValue.toDouble(),
+        onChanged: (v) => setState(() => interValue = v),
+        onChangeEnd: (v) => widget.onChangeEnd!.call(v),
       ),
     );
   }
 }
 
 Future<T?> showRadioListSheet<T>(
-    BuildContext context, {
-      required T value,
-      required List<(T, String)> values,
-      required String title,
-      Widget Function(BuildContext, int)? subtitleBuilder,
-      bool toggleable = false,
-    }) {
+  BuildContext context, {
+  required T value,
+  required List<(T, String)> values,
+  required String title,
+  Widget Function(BuildContext, int)? subtitleBuilder,
+  bool toggleable = false,
+}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -150,11 +150,11 @@ Future<T?> showRadioListSheet<T>(
 }
 
 Future<T?> showNormalListSheet<T>(
-    BuildContext context, {
-      required String title,
-      required List<(T, String)> values,
-      Widget Function(BuildContext, int)? subtitleBuilder,
-    }) {
+  BuildContext context, {
+  required String title,
+  required List<(T, String)> values,
+  Widget Function(BuildContext, int)? subtitleBuilder,
+}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
