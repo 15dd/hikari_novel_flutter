@@ -30,6 +30,7 @@ import '../../service/local_storage_service.dart';
 import 'widgets/paper_curl_pager.dart';
 
 class ReaderController extends GetxController {
+  static const MethodChannel _volumeKeyChannel = MethodChannel('hikari/reader_volume_keys');
   final _novelDetailController = Get.find<NovelDetailController>();
 
   late List<CatVolume> catalogue;
@@ -160,6 +161,7 @@ class ReaderController extends GetxController {
     TtsService.instance.stop();
     if (readerSettingsState.value.wakeLock) WakelockPlus.toggle(enable: false);
     _applyReaderSystemUi(false);
+    _setVolumeKeyHandlingEnabled(false);
     super.onClose();
   }
 
@@ -343,11 +345,29 @@ class ReaderController extends GetxController {
   void changeReaderDirection(ReaderDirection d) {
     readerSettingsState.value = readerSettingsState.value.copyWith(direction: d);
     LocalStorageService.instance.setReaderDirection(d);
+    _setVolumeKeyHandlingEnabled(_volumeKeyPageTurningEnabled);
   }
 
   void changeReaderPageTurningAnimation(bool enabled) {
     readerSettingsState.value = readerSettingsState.value.copyWith(pageTurningAnimation: enabled);
     LocalStorageService.instance.setReaderPageTurningAnimation(enabled);
+  }
+
+  void changeReaderVolumeKeyPageTurning(bool enabled) {
+    readerSettingsState.value = readerSettingsState.value.copyWith(volumeKeyPageTurning: enabled);
+    LocalStorageService.instance.setReaderVolumeKeyPageTurning(enabled);
+    _setVolumeKeyHandlingEnabled(_volumeKeyPageTurningEnabled);
+  }
+
+  bool get _volumeKeyPageTurningEnabled => readerSettingsState.value.volumeKeyPageTurning && readerSettingsState.value.direction != ReaderDirection.upToDown;
+
+  Future<void> _setVolumeKeyHandlingEnabled(bool enabled) async {
+    if (!Platform.isAndroid) return;
+    try {
+      await _volumeKeyChannel.invokeMethod('setEnabled', {'enabled': enabled});
+    } on PlatformException {
+      // Native volume-key support is optional on non-Android targets.
+    }
   }
 
   void changeReaderWakeLock(bool enabled) {
@@ -663,6 +683,7 @@ List<int>? _findIndexPositionInCatalogue(Map<String, dynamic> args) {
 class ReaderSettingsState {
   final ReaderDirection direction;
   final bool pageTurningAnimation;
+  final bool volumeKeyPageTurning;
   final bool wakeLock;
   final DualPageMode dualPageMode;
   final double dualPageSpacing;
@@ -692,6 +713,7 @@ class ReaderSettingsState {
   ReaderSettingsState({
     required this.direction,
     required this.pageTurningAnimation,
+    required this.volumeKeyPageTurning,
     required this.wakeLock,
     required this.dualPageMode,
     required this.dualPageSpacing,
@@ -722,6 +744,7 @@ class ReaderSettingsState {
   ReaderSettingsState copyWith({
     ReaderDirection? direction,
     bool? pageTurningAnimation,
+    bool? volumeKeyPageTurning,
     bool? wakeLock,
     DualPageMode? dualPageMode,
     double? dualPageSpacing,
@@ -750,6 +773,7 @@ class ReaderSettingsState {
   }) => ReaderSettingsState(
     direction: direction ?? this.direction,
     pageTurningAnimation: pageTurningAnimation ?? this.pageTurningAnimation,
+    volumeKeyPageTurning: volumeKeyPageTurning ?? this.volumeKeyPageTurning,
     wakeLock: wakeLock ?? this.wakeLock,
     dualPageMode: dualPageMode ?? this.dualPageMode,
     dualPageSpacing: dualPageSpacing ?? this.dualPageSpacing,
@@ -780,6 +804,7 @@ class ReaderSettingsState {
   ReaderSettingsState.init()
     : direction = LocalStorageService.instance.getReaderDirection(),
       pageTurningAnimation = LocalStorageService.instance.getReaderPageTurningAnimation(),
+      volumeKeyPageTurning = LocalStorageService.instance.getReaderVolumeKeyPageTurning(),
       wakeLock = LocalStorageService.instance.getReaderWakeLock(),
       dualPageMode = LocalStorageService.instance.getReaderDualPageMode(),
       dualPageSpacing = LocalStorageService.instance.getReaderDualPageSpacing(),
