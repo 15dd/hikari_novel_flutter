@@ -31,8 +31,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.7'  # 严格对齐作者的 Flutter 版本
-          channel: 'stable'          # 对应作者的 stable 分支
+          channel: 'stable' # 不指定具体版本，默认使用最新稳定版
 
       - name: 获取依赖包 (Pub Get)
         run: flutter pub get
