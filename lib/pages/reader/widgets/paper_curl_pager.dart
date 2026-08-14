@@ -78,6 +78,8 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
   double _progress = 0;
   double _dragDelta = 0;
   Curve _releaseCurve = Curves.easeInOutCubic;
+  static const Curve _completeReleaseCurve = Cubic(0.20, 0.55, 0.28, 1.0);
+  static const Curve _cancelReleaseCurve = Cubic(0.18, 0.52, 0.28, 1.0);
 
   int get _lastIndex => widget.pageCount <= 0 ? 0 : widget.pageCount - 1;
 
@@ -206,7 +208,8 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
   void _startGesture({required bool forward, required Offset localPos}) {
     _turningForward = forward;
     _targetIndex = _targetForDirection(forward);
-    _fromSide = localPos.dy > _size.height / 3 && localPos.dy < _size.height * 2 / 3;
+    final edgeInset = _size.width * 0.14;
+    _fromSide = (localPos.dx <= edgeInset || localPos.dx >= _size.width - edgeInset) || (localPos.dy > _size.height / 3 && localPos.dy < _size.height * 2 / 3);
     _fromTop = !_fromSide && localPos.dy <= (_size.height / 2);
     _isDragging = true;
     _isAnimating = false;
@@ -222,7 +225,9 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
   }
 
   void _updateDrag(Offset localPos) {
-    _dragPos = Offset(localPos.dx.clamp(0.0, _size.width), localPos.dy.clamp(0.0, _size.height));
+    final minX = _turningForward ? -_size.width : _downPos.dx;
+    final maxX = _turningForward ? _downPos.dx : _size.width * 2;
+    _dragPos = Offset(localPos.dx.clamp(minX, maxX), localPos.dy.clamp(0.0, _size.height));
     _dragDelta = _dragPos.dx - _downPos.dx;
     _progress = _progressForCurrentDrag();
   }
@@ -237,12 +242,21 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
     return Offset(targetX, targetY);
   }
 
-  void _animateRelease({required bool complete, required Curve curve}) {
+  Duration _releaseDuration({required bool complete, required double velocity}) {
+    final diagonal = math.max(1.0, _size.longestSide);
+    final remaining = (_animEndPos - _animStartPos).distance / diagonal;
+    final velocityFactor = (1000 / math.max(650.0, velocity.abs())).clamp(0.78, 1.15);
+    final millis = ((complete ? 520 : 300) + remaining.clamp(0.0, 1.0) * (complete ? 320 : 220)) * velocityFactor;
+    return Duration(milliseconds: millis.round().clamp(240, complete ? 760 : 500));
+  }
+
+  void _animateRelease({required bool complete, required Curve curve, double velocity = 0}) {
     _isDragging = false;
     _isAnimating = true;
     _releaseCurve = curve;
     _animStartPos = _dragPos;
     _animEndPos = _releaseTarget(complete);
+    _controller.duration = _releaseDuration(complete: complete, velocity: velocity);
     _controller.forward(from: 0);
   }
 
@@ -256,7 +270,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
     _dragPos = Offset(forward ? _size.width * 0.76 : _size.width * 0.24, startY);
     _dragDelta = _dragPos.dx - _downPos.dx;
     _progress = _progressForCurrentDrag();
-    _animateRelease(complete: true, curve: Curves.easeInOutCubic);
+    _animateRelease(complete: true, curve: _completeReleaseCurve);
   }
 
   void _handleTap(TapUpDetails details) {
@@ -293,8 +307,21 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
 
   void _handlePanDown(DragDownDetails details) {
     if (_size.width <= 0 || _size.height <= 0) return;
-    _controller.stop();
-    _isAnimating = false;
+    if (_isAnimating) {
+      _controller.stop();
+      final interruptedTarget = _targetIndex;
+      final shouldCommit = interruptedTarget != null && _progress >= 0.30;
+      _isAnimating = false;
+      if (shouldCommit) {
+        _index = interruptedTarget;
+        widget.onIndexChanged?.call(_index);
+      }
+      _targetIndex = null;
+      _progress = 0;
+      _dragDelta = 0;
+    } else {
+      _controller.stop();
+    }
     final localPos = _logicalOffset(details.localPosition);
     _downPos = localPos;
     _dragPos = localPos;
@@ -333,12 +360,35 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
   }
 
   void _handlePanEnd(DragEndDetails details) {
-    if (!_isDragging) return;
     final velocity = details.velocity.pixelsPerSecond.dx;
     final flingForward = velocity < -500;
     final flingBackward = velocity > 500;
-    final shouldComplete = _turningForward ? (_progress > 0.2 || (_progress > 0.05 && flingForward)) : (_progress > 0.2 || (_progress > 0.05 && flingBackward));
-    _animateRelease(complete: shouldComplete, curve: shouldComplete ? Curves.easeInOutCubic : Curves.easeOutQuart);
+
+    if (!_isDragging) {
+      if (widget.pageCount <= 0 || _size.width <= 0 || _size.height <= 0 || (!flingForward && !flingBackward)) {
+        return;
+      }
+      final forward = flingForward;
+      final canTurn = forward ? _canGoForward : _canGoBackward;
+      if (!canTurn) {
+        _notifyReachedBoundary(forward);
+        return;
+      }
+      final projected = (_downPos.dx + velocity * 0.08).clamp(-_size.width, _size.width * 2).toDouble();
+      setState(() {
+        _startGesture(forward: forward, localPos: _downPos);
+        _updateDrag(Offset(projected, _downPos.dy));
+      });
+    }
+
+    final flingInTurnDirection = _turningForward ? flingForward : flingBackward;
+    final shouldComplete = _progress > 0.22 || (_progress > 0.035 && flingInTurnDirection);
+    _animateRelease(complete: shouldComplete, curve: shouldComplete ? _completeReleaseCurve : _cancelReleaseCurve, velocity: velocity);
+  }
+
+  void _handlePanCancel() {
+    if (!_isDragging) return;
+    _animateRelease(complete: false, curve: _cancelReleaseCurve);
   }
 
   Widget _pageAt(int index, Map<int, Widget> pageCache) {
@@ -381,6 +431,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProvid
               onPanDown: _handlePanDown,
               onPanUpdate: _handlePanUpdate,
               onPanEnd: _handlePanEnd,
+              onPanCancel: _handlePanCancel,
               child: Stack(
                 fit: StackFit.expand,
                 children: [

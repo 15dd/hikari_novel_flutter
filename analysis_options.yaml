@@ -28,4 +28,5 @@ linter:
 # https://dart.dev/guides/language/analysis-options
 
 formatter:
+  # 设置格式化列宽为160个单位
   page_width: 160
