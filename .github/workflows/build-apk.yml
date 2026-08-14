@@ -65,3 +65,8 @@ jobs:
           files: |
             build/app/outputs/flutter-apk/Hikari_Novel_arm64_*.apk
             debug-symbols.zip
+      - name: 导出可下载APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HikariNovel安装包
+          path: build/app/outputs/flutter-apk/*.apk
