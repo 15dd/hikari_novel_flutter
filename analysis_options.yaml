@@ -30,3 +30,12 @@ linter:
 formatter:
   # 设置格式化列宽为160个单位
   page_width: 160
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**

@@ -61,11 +61,11 @@ class _TtsFloatingControllerState extends State<TtsFloatingController> {
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: theme.dividerColor.withOpacity(0.4)),
+          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
-            Icon(Icons.record_voice_over_outlined, color: fg.withOpacity(0.75), size: 20),
+            Icon(Icons.record_voice_over_outlined, color: fg.withValues(alpha: 0.75), size: 20),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
