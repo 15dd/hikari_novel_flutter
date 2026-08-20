@@ -12,7 +12,7 @@ import 'package:hikari_novel_flutter/models/custom_exception.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 
 import '../common/log.dart';
-import '../models/common/charsets_type.dart';
+import '../models/common/charset_type.dart';
 import '../service/local_storage_service.dart';
 import 'api.dart';
 
@@ -66,18 +66,18 @@ class Request {
 
   ///获取wenku8数据
   /// - [url] 对应的url
-  /// - [charsetsType] response解码的方式
-  static Future<Resource> get(String url, {required CharsetsType charsetsType}) async {
+  /// - [charsetType] response解码的方式
+  static Future<Resource> get(String url, {required CharsetType charsetType}) async {
     try {
       if (!url.contains("?")) url += "?";
-      switch (charsetsType) {
-        case CharsetsType.gbk:
+      switch (charsetType) {
+        case CharsetType.gbk:
           url += "&charset=gbk";
-        case CharsetsType.big5Hkscs:
+        case CharsetType.big5Hkscs:
           url += "&charset=big5";
       }
 
-      Log.d("$url ${charsetsType.name}");
+      Log.d("$url ${charsetType.name}");
 
       final response = await dio.get(url);
 
@@ -86,10 +86,10 @@ class Request {
 
       final raw = result as Uint8List;
       late String decodedHtml;
-      switch (charsetsType) {
-        case CharsetsType.gbk:
+      switch (charsetType) {
+        case CharsetType.gbk:
           decodedHtml = GbkDecoder().convert(raw);
-        case CharsetsType.big5Hkscs:
+        case CharsetType.big5Hkscs:
           decodedHtml = Big5Decoder().convert(raw);
       }
 
@@ -117,8 +117,8 @@ class Request {
   /// body以Content-Type: application/x-www-form-urlencoded的形式进行发送
   /// - [url] 要请求的url
   /// - [data] 此post请求的body，当body中含有url编码的内容时，需要使用String类型而非Map类型！目前不知道是什么原因，可能是因为dio的二次编码？
-  /// - [charsetsType] response解码的方式
-  static Future<Resource> postForm(String url, {required Object? data, required CharsetsType charsetsType}) async {
+  /// - [charsetType] response解码的方式
+  static Future<Resource> postForm(String url, {required Object? data, required CharsetType charsetType}) async {
     try {
       final response = await dio.post(
         url,
@@ -126,12 +126,12 @@ class Request {
         options: Options(contentType: Headers.formUrlEncodedContentType), //设置为application/x-www-form-urlencoded
       );
       String decodedHtml;
-      switch (charsetsType) {
-        case CharsetsType.gbk:
+      switch (charsetType) {
+        case CharsetType.gbk:
           {
             decodedHtml = GbkCodec().decode(response.data as Uint8List);
           }
-        case CharsetsType.big5Hkscs:
+        case CharsetType.big5Hkscs:
           {
             decodedHtml = Big5Codec().decode(response.data as Uint8List);
           }
