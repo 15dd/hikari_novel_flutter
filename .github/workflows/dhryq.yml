@@ -1,63 +1,67 @@
 name: Build Signed APK
+
 on:
-  workflow_dispatch:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
-    env:
-      KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
-      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      # 清华TUNA镜像
-      PUB_HOSTED_URL: https://mirrors.tuna.tsinghua.edu.cn/dart-pub
-      FLUTTER_STORAGE_BASE_URL: https://mirrors.tuna.tsinghua.edu.cn/flutter
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Set up job
+        uses: actions/checkout@v4
 
       - name: Setup Java17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Decode JKS keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
-          echo "$KEYSTORE_B64" | base64 --decode > android/app/wyyq.jks
+          echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
 
-      # 和上游原版CI保持一致：只用channel stable
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Download Flutter SDK stable
+        run: |
+          git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
+          echo "$HOME/flutter/bin" >> $GITHUB_PATH
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Cache pub dependencies
+        uses: actions/cache@v5
         with:
-          channel: stable
-          cache: true
+          path: ~/.pub-cache
+          key: flutter-pub-${{ hashFiles('**/pubspec.yaml') }}
 
       - name: Flutter pub get
         run: flutter pub get
 
       - name: Build Signed Release APK
         env:
-          STORE_PWD: $KEYSTORE_PASSWORD
-          KEY_ALIAS: $KEY_ALIAS
-          KEY_PWD: $KEY_PASSWORD
-        run: flutter build apk --release --target-platform android-arm64
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          flutter build apk --release \
+            --keystore android/app/upload-keystore.jks \
+            --keystore-password "$KEYSTORE_PASSWORD" \
+            --key-alias "$KEY_ALIAS" \
+            --key-password "$KEY_PASSWORD"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: signed-apk
+          name: 编译输出‑APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Publish to GitHub Releases
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: Release ${{ github.ref_name }}
           files: build/app/outputs/flutter-apk/app-release.apk
