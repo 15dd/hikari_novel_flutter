@@ -14,8 +14,6 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      PUB_HOSTED_URL: https://pub.flutter-io.cn
-      FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
     steps:
       - uses: actions/checkout@v4
 
@@ -29,12 +27,13 @@ jobs:
         run: |
           echo "$KEYSTORE_B64" | base64 --decode > android/app/wyyq.jks
 
-      - name: Install Flutter SDK
-        run: |
-          FLUTTER_VER=$(curl -s https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json | jq -r '.current_release.stable')
-          wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VER}.tar.xz
-          tar -xf flutter_linux_${FLUTTER_VER}.tar.xz
-          echo "$GITHUB_WORKSPACE/flutter/bin" >> $GITHUB_PATH
+      # 自动读取pubspec.yaml内定义的Flutter版本
+      - name: Setup Flutter（跟随源码版本）
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: from-pubspec
+          channel: stable
+          cache: true
 
       - name: Flutter pub get
         run: flutter pub get
