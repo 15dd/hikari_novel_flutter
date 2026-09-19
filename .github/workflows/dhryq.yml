@@ -23,7 +23,7 @@ jobs:
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
-          echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
+          echo -n "$KEYSTORE_B64" | tr -d '\n\r' | base64 -d > android/app/upload-keystore.jks
 
       - name: Download Flutter SDK stable
         run: |
