@@ -31,32 +31,19 @@ jobs:
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
           echo "Parsed version: $SEM_VER"
 
-      - name: Check remote tag exists
-        id: check_tag
-        env:
-          NEW_TAG: ${{ steps.get_version.outputs.NEW_TAG }}
-        run: |
-          if git ls-remote --tags origin "${NEW_TAG}" | grep -q "${NEW_TAG}$"; then
-            echo "EXISTS=true" >> $GITHUB_OUTPUT
-            echo "Remote tag ${NEW_TAG} already exists, skip release creation."
-          else
-            echo "EXISTS=false" >> $GITHUB_OUTPUT
-            echo "Remote tag ${NEW_TAG} not found, will create release."
-          fi
-
       - name: Setup Java 17
         uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Decode JKS keystore secret
+      - name: Decode JKS keystore
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
           echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
 
-      - name: Install Flutter stable
+      - name: Install Flutter
         run: |
           git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
           echo "$HOME/flutter/bin" >> $GITHUB_PATH
@@ -75,18 +62,32 @@ jobs:
 
       - name: Build signed release APK
         env:
-          STORE_PWD: ${{ secrets.KEYSTORE_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: flutter build apk --release
+        run: flutter build apk --release --android-skip-build-dependency-validation
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: build-apk-output
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Create Tag & Publish Release
+      - name: Check remote tag exists
+        id: check_tag
+        env:
+          NEW_TAG: ${{ steps.get_version.outputs.NEW_TAG }}
+        run: |
+          if git ls-remote --tags origin "${NEW_TAG}" | grep -q "${NEW_TAG}$"; then
+            echo "EXISTS=true" >> $GITHUB_OUTPUT
+            echo "Remote tag ${NEW_TAG} already exists, skip release creation."
+          else
+            echo "EXISTS=false" >> $GITHUB_OUTPUT
+            echo "Remote tag ${NEW_TAG} not found, will create release with APK."
+          fi
+
+      - name: Create Tag & Publish Release (with APK)
         if: steps.check_tag.outputs.EXISTS == 'false'
         uses: softprops/action-gh-release@v2
         env:
