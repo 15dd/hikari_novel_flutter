@@ -25,19 +25,6 @@ jobs:
         run: |
           echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
 
-      - name: Generate key.properties
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          cat > android/key.properties <<EOF
-storePassword=$KEYSTORE_PASSWORD
-keyPassword=$KEY_PASSWORD
-keyAlias=$KEY_ALIAS
-storeFile=android/app/upload-keystore.jks
-EOF
-
       - name: Download Flutter SDK stable
         run: |
           git clone https://github.com/flutter/flutter.git -b stable $HOME/flutter
@@ -56,6 +43,10 @@ EOF
         run: flutter pub get
 
       - name: Build Signed Release APK
+        env:
+          STORE_PWD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PWD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build apk --release
 
       - name: Upload build artifact
