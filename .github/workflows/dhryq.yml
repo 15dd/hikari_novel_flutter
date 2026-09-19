@@ -27,7 +27,6 @@ jobs:
       - name: Detect trigger source & get version
         id: get_version
         run: |
-          # 如果由tag触发，直接拿GITHUB_REF标签版本
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             NEW_TAG=${GITHUB_REF#refs/tags/}
             echo "TRIGGER_BY_TAG=true" >> $GITHUB_OUTPUT
@@ -42,8 +41,8 @@ jobs:
             echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
           fi
 
-      - name: Skip tag create when trigger by tag
-        if: steps.get_version.outputs.TRIGGER_BY_TAG == 'false'
+      - name: Create & push new tag
+        if: ${{ steps.get_version.outputs.TRIGGER_BY_TAG == 'false' }}
         env:
           NEW_TAG: ${{ steps.get_version.outputs.NEW_TAG }}
         run: |
@@ -90,11 +89,18 @@ jobs:
           KEY_PWD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build apk --release
 
-      - name: Upload build artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-apk-output
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Publish GitHub Release
-        if: steps.get
+        if: ${{ steps.get_version.outputs.TRIGGER_BY_TAG == 'true' }}
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.NEW_TAG }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
