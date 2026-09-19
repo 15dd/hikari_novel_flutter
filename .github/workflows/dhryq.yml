@@ -14,6 +14,9 @@ jobs:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      # 清华TUNA镜像
+      PUB_HOSTED_URL: https://mirrors.tuna.tsinghua.edu.cn/dart-pub
+      FLUTTER_STORAGE_BASE_URL: https://mirrors.tuna.tsinghua.edu.cn/flutter
     steps:
       - uses: actions/checkout@v4
 
@@ -27,7 +30,7 @@ jobs:
         run: |
           echo "$KEYSTORE_B64" | base64 --decode > android/app/wyyq.jks
 
-      # 和上游原版CI保持一致：只用channel stable，不使用from‑pubspec
+      # 和上游原版CI保持一致：只用channel stable
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
