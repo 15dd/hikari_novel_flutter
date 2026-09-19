@@ -1,4 +1,4 @@
-name: 编译Flutter APK
+name: JDK版本和Flutter SDK设置
 on:
   workflow_dispatch:
   push:
@@ -6,20 +6,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: 设置JDK17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 设置Flutter SDK（最新稳定版）
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
+      - name: 手动安装 Flutter stable
+        run: |
+          FLUTTER_VERSION=$(curl -s https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/releases_linux.json | jq -r '.[0].version')
+          wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+          tar -xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+          echo "$GITHUB_WORKSPACE/flutter/bin" >> $GITHUB_PATH
 
       - name: 拉取项目依赖
         env:
