@@ -13,7 +13,7 @@ jobs:
       - name: 设置Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.0"
+          flutter-version: "3.18.0"
 
       - name: 拉取项目依赖
         env:
@@ -27,5 +27,5 @@ jobs:
       - name: 上传编译产物APK
         uses: actions/upload-artifact@v4
         with:
-          name: 编译输出-APK
+          name: 编译输出‑APK
           path: build/app/outputs/flutter-apk/app-release.apk
