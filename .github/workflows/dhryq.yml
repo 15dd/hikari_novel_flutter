@@ -3,6 +3,8 @@ name: Build Signed APK Follow Upstream Version
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -15,24 +17,33 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v5
         with:
-          fetch-tags: true
+          fetch-tags: "true"
 
       - name: Setup Git bot identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Read version from pubspec.yaml
+      - name: Detect trigger source & get version
         id: get_version
         run: |
-          VERSION_RAW=$(grep '^version:' pubspec.yaml | awk '{print $2}')
-          SEM_VER=${VERSION_RAW%+*}
-          NEW_TAG="v$SEM_VER"
-          echo "RAW_VERSION=$VERSION_RAW"
-          echo "SEM_VERSION=$SEM_VER"
-          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+          # 如果由tag触发，直接拿GITHUB_REF标签版本
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            NEW_TAG=${GITHUB_REF#refs/tags/}
+            echo "TRIGGER_BY_TAG=true" >> $GITHUB_OUTPUT
+            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+          else
+            VERSION_RAW=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+            SEM_VER=${VERSION_RAW%+*}
+            NEW_TAG="v$SEM_VER"
+            echo "TRIGGER_BY_TAG=false" >> $GITHUB_OUTPUT
+            echo "RAW_VERSION=$VERSION_RAW"
+            echo "SEM_VERSION=$SEM_VER"
+            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Skip if tag already exists
+      - name: Skip tag create when trigger by tag
+        if: steps.get_version.outputs.TRIGGER_BY_TAG == 'false'
         env:
           NEW_TAG: ${{ steps.get_version.outputs.NEW_TAG }}
         run: |
@@ -40,11 +51,6 @@ jobs:
             echo "Tag $NEW_TAG already exists, skip release, only build artifact."
             exit 0
           fi
-
-      - name: Create & push new tag
-        env:
-          NEW_TAG: ${{ steps.get_version.outputs.NEW_TAG }}
-        run: |
           git tag "$NEW_TAG"
           git push origin "$NEW_TAG"
 
@@ -66,7 +72,7 @@ jobs:
           echo "$HOME/flutter/bin" >> $GITHUB_PATH
 
       - name: Flutter Doctor
-        run: flutter doctor -v
+        run: flutter doctor
 
       - name: Cache pub packages
         uses: actions/cache@v4
@@ -81,20 +87,14 @@ jobs:
         env:
           STORE_PWD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PWD:   ${{ secrets.KEY_PASSWORD }}
+          KEY_PWD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build apk --release
 
-      - name: Upload APK Artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-apk-output
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Publish Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.NEW_TAG }}
-          files: build/app/outputs/flutter-apk/app-release.apk
-          generate_release_notes: true
+      - name: Publish GitHub Release
+        if: steps.get
