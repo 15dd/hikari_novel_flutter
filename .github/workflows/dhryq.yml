@@ -27,11 +27,10 @@ jobs:
         run: |
           echo "$KEYSTORE_B64" | base64 --decode > android/app/wyyq.jks
 
-      # 自动读取pubspec.yaml内定义的Flutter版本
-      - name: Setup Flutter（跟随源码版本）
+      # 和上游原版CI保持一致：只用channel stable，不使用from‑pubspec
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: from-pubspec
           channel: stable
           cache: true
 
