@@ -62,9 +62,9 @@ jobs:
 
       - name: Build signed release APK
         env:
-          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          STORE_PWD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_PWD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build apk --release --android-skip-build-dependency-validation
 
       - name: Upload build artifact
