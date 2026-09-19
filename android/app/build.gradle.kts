@@ -30,21 +30,21 @@ android {
         versionName = flutter.versionName
     }
     signingConfigs {
-    create("release") {
-        storeFile = file("wyyq.jks")
-        storePassword = System.getenv("STORE_PWD")
-        keyAlias = System.getenv("KEY_ALIAS")
-        keyPassword = System.getenv("KEY_PWD")
+        create("release") {
+            // 这里改成读取环境变量，文件路径改成我们CI输出的jks
+            storeFile = file("android/app/upload-keystore.jks")
+            storePassword = System.getenv("STORE_PWD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PWD")
+        }
     }
-}
 
     buildTypes {
         release {
-    signingConfig = signingConfigs.getByName("release")
-    isMinifyEnabled = true
-    isShrinkResources = true
-}
-
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+        }
     }
 }
 
