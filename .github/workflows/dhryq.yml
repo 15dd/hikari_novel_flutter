@@ -1,0 +1,31 @@
+name: 编译Flutter APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0"
+
+      - name: 拉取项目依赖
+        env:
+          PUB_HOSTED_URL: https://pub.flutter-io.cn
+          FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+        run: flutter pub get
+
+      - name: 编译Release安卓包
+        run: flutter build apk --release --target-platform android-arm64
+
+      - name: 上传编译产物APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 编译输出-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
