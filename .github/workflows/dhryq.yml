@@ -10,10 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: 设置JDK11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
       - name: 设置Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.18.0"
+          flutter-version: "3.12.0-stable"
 
       - name: 拉取项目依赖
         env:
