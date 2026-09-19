@@ -1,39 +1,60 @@
-name: JDK版本和Flutter SDK设置
+name: Build Signed APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
     runs-on: ubuntu-24.04
+    env:
+      KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: 设置JDK17
-        uses: actions/setup-java@v5
+      - name: Setup Java17
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 手动安装 Flutter stable
+      - name: Decode JKS keystore
         run: |
-          FLUTTER_VERSION=$(curl -s https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/releases_linux.json | jq -r '.[0].version')
-          wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
-          tar -xf flutter_linux_${FLUTTER_VERSION}-stable.tar.xz
+          echo "$KEYSTORE_B64" | base64 --decode > android/app/wyyq.jks
+
+      - name: Install Flutter SDK
+        run: |
+          FLUTTER_VER=$(curl -s https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json | jq -r '.current_release.stable')
+          wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VER}.tar.xz
+          tar -xf flutter_linux_${FLUTTER_VER}.tar.xz
           echo "$GITHUB_WORKSPACE/flutter/bin" >> $GITHUB_PATH
 
-      - name: 拉取项目依赖
-        env:
-          PUB_HOSTED_URL: https://pub.flutter-io.cn
-          FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+      - name: Flutter pub get
         run: flutter pub get
 
-      - name: 编译Release安卓包
+      - name: Build Signed Release APK
+        env:
+          STORE_PWD: $KEYSTORE_PASSWORD
+          KEY_ALIAS: $KEY_ALIAS
+          KEY_PWD: $KEY_PASSWORD
         run: flutter build apk --release --target-platform android-arm64
 
-      - name: 上传编译产物APK
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 编译输出-APK
+          name: signed-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publish to GitHub Releases
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ github.ref_name }}
+          files: build/app/outputs/flutter-apk/app-release.apk
