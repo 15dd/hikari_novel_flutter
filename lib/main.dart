@@ -20,11 +20,9 @@ import 'package:jiffy/jiffy.dart';
 final localhostServer = InAppLocalhostServer(documentRoot: 'assets');
 WebViewEnvironment? webViewEnvironment;
 
-bool get _isAndroid =>
-    !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+bool get _isAndroid => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
-bool get _isWindows =>
-    !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+bool get _isWindows => !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -36,13 +34,8 @@ void main() async {
 
   if (_isWindows) {
     final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    assert(
-      availableVersion != null,
-      'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.',
-    );
-    webViewEnvironment = await WebViewEnvironment.create(
-      settings: WebViewEnvironmentSettings(userDataFolder: 'custom_path'),
-    );
+    assert(availableVersion != null, 'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
+    webViewEnvironment = await WebViewEnvironment.create(settings: WebViewEnvironmentSettings(userDataFolder: 'custom_path'));
   } else if (_isAndroid) {
     await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
   }
@@ -69,27 +62,15 @@ class MyApp extends StatelessWidget {
     bool isDynamicColor = LocalStorageService.instance.getIsDynamicColor();
 
     if (_isAndroid) {
-      return AndroidApp(
-        brandColor: brandColor,
-        isDynamicColor: isDynamicColor,
-        currentThemeValue: currentThemeValue,
-      );
+      return AndroidApp(brandColor: brandColor, isDynamicColor: isDynamicColor, currentThemeValue: currentThemeValue);
     } else {
-      return OtherApp(
-        brandColor: brandColor,
-        currentThemeValue: currentThemeValue,
-      );
+      return OtherApp(brandColor: brandColor, currentThemeValue: currentThemeValue);
     }
   }
 }
 
 class AndroidApp extends StatelessWidget {
-  const AndroidApp({
-    super.key,
-    required this.brandColor,
-    required this.isDynamicColor,
-    required this.currentThemeValue,
-  });
+  const AndroidApp({super.key, required this.brandColor, required this.isDynamicColor, required this.currentThemeValue});
 
   final Color brandColor;
   final bool isDynamicColor;
@@ -107,31 +88,17 @@ class AndroidApp extends StatelessWidget {
           darkColorScheme = darkDynamic.harmonized();
         } else {
           // dynamic取色失败，采用品牌色
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: brandColor,
-            brightness: Brightness.light,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: brandColor,
-            brightness: Brightness.dark,
-          );
+          lightColorScheme = ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.light);
+          darkColorScheme = ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.dark);
         }
-        return BuildMainApp(
-          lightColorScheme: lightColorScheme,
-          darkColorScheme: darkColorScheme,
-          currentThemeValue: currentThemeValue,
-        );
+        return BuildMainApp(lightColorScheme: lightColorScheme, darkColorScheme: darkColorScheme, currentThemeValue: currentThemeValue);
       }),
     );
   }
 }
 
 class OtherApp extends StatelessWidget {
-  const OtherApp({
-    super.key,
-    required this.brandColor,
-    required this.currentThemeValue,
-  });
+  const OtherApp({super.key, required this.brandColor, required this.currentThemeValue});
 
   final Color brandColor;
   final ThemeMode currentThemeValue;
@@ -139,26 +106,15 @@ class OtherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BuildMainApp(
-      lightColorScheme: ColorScheme.fromSeed(
-        seedColor: brandColor,
-        brightness: Brightness.light,
-      ),
-      darkColorScheme: ColorScheme.fromSeed(
-        seedColor: brandColor,
-        brightness: Brightness.dark,
-      ),
+      lightColorScheme: ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.light),
+      darkColorScheme: ColorScheme.fromSeed(seedColor: brandColor, brightness: Brightness.dark),
       currentThemeValue: currentThemeValue,
     );
   }
 }
 
 class BuildMainApp extends StatelessWidget {
-  const BuildMainApp({
-    super.key,
-    required this.lightColorScheme,
-    required this.darkColorScheme,
-    required this.currentThemeValue,
-  });
+  const BuildMainApp({super.key, required this.lightColorScheme, required this.darkColorScheme, required this.currentThemeValue});
 
   final ColorScheme lightColorScheme;
   final ColorScheme darkColorScheme;
@@ -183,11 +139,7 @@ class BuildMainApp extends StatelessWidget {
         colorScheme: lightColorScheme,
         snackBarTheme: snackBarTheme,
         pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.android: ZoomPageTransitionsBuilder(
-              allowEnterRouteSnapshotting: false,
-            ),
-          },
+          builders: <TargetPlatform, PageTransitionsBuilder>{TargetPlatform.android: ZoomPageTransitionsBuilder(allowEnterRouteSnapshotting: false)},
         ),
         //页面切换动画
         fontFamily: _isWindows ? "Microsoft YaHei" : null,
@@ -198,9 +150,7 @@ class BuildMainApp extends StatelessWidget {
       locale: Util.getCurrentLocale(),
       fallbackLocale: Locale("zh", "CN"),
       getPages: AppRoutes.mainRoutePages,
-      initialRoute: LocalStorageService.instance.getCookie() != null
-          ? RoutePath.main
-          : RoutePath.welcome, //初始页面
+      initialRoute: LocalStorageService.instance.getCookie() != null ? RoutePath.main : RoutePath.welcome, //初始页面
     );
   }
 }

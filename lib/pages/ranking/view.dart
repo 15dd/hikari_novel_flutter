@@ -49,10 +49,9 @@ class RankingView extends StatelessWidget {
                           minItemWidth: 100,
                           horizontalGridSpacing: 4,
                           verticalGridSpacing: 4,
-                          children:
-                              controller.data.map((item) {
-                                return NovelCoverCard(novelCover: item);
-                              }).toList(),
+                          children: controller.data.map((item) {
+                            return NovelCoverCard(novelCover: item);
+                          }).toList(),
                         ),
                       ),
                     ),

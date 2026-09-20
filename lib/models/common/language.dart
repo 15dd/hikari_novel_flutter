@@ -1,5 +1,1 @@
-enum Language {
-  simplifiedChinese,
-  traditionalChinese,
-  followSystem;
-}
+enum Language { simplifiedChinese, traditionalChinese, followSystem }

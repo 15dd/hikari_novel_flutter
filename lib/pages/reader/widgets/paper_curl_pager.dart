@@ -60,8 +60,7 @@ class PaperCurlPager extends StatefulWidget {
   State<PaperCurlPager> createState() => _PaperCurlPagerState();
 }
 
-class _PaperCurlPagerState extends State<PaperCurlPager>
-    with SingleTickerProviderStateMixin {
+class _PaperCurlPagerState extends State<PaperCurlPager> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   Size _size = Size.zero;
@@ -79,17 +78,16 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
   double _progress = 0;
   double _dragDelta = 0;
   Curve _releaseCurve = Curves.easeInOutCubic;
+  static const Curve _completeReleaseCurve = Cubic(0.20, 0.55, 0.28, 1.0);
+  static const Curve _cancelReleaseCurve = Cubic(0.18, 0.52, 0.28, 1.0);
 
   int get _lastIndex => widget.pageCount <= 0 ? 0 : widget.pageCount - 1;
 
-  bool get _currentPageInteractive =>
-      widget.isPageInteractive?.call(_index) ?? false;
+  bool get _currentPageInteractive => widget.isPageInteractive?.call(_index) ?? false;
 
-  bool get _canGoForward =>
-      widget.pageCount > 0 && _targetForDirection(true) != _index;
+  bool get _canGoForward => widget.pageCount > 0 && _targetForDirection(true) != _index;
 
-  bool get _canGoBackward =>
-      widget.pageCount > 0 && _targetForDirection(false) != _index;
+  bool get _canGoBackward => widget.pageCount > 0 && _targetForDirection(false) != _index;
 
   @override
   void initState() {
@@ -113,8 +111,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
       _controller.duration = newDuration;
     }
     final safeInitial = _safeIndex(widget.initialIndex);
-    final shouldReset =
-        widget.pageCount != oldWidget.pageCount || safeInitial != _index;
+    final shouldReset = widget.pageCount != oldWidget.pageCount || safeInitial != _index;
     if (!_isDragging && !_isAnimating && shouldReset) {
       _index = safeInitial;
       _resetGestureState(notify: false);
@@ -128,9 +125,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     super.dispose();
   }
 
-  Duration get _effectiveDuration => widget.animationEnabled
-      ? widget.duration
-      : const Duration(milliseconds: 1);
+  Duration get _effectiveDuration => widget.animationEnabled ? widget.duration : const Duration(milliseconds: 1);
 
   int _safeIndex(int raw) {
     if (widget.pageCount <= 0) return 0;
@@ -151,8 +146,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     }
   }
 
-  bool _nextForOpening(bool opensFromRight) =>
-      widget.reverse ? !opensFromRight : opensFromRight;
+  bool _nextForOpening(bool opensFromRight) => widget.reverse ? !opensFromRight : opensFromRight;
 
   void _jumpToExternal(int target) {
     final safeTarget = _safeIndex(target);
@@ -186,10 +180,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     if (!_isAnimating) return;
     final t = _releaseCurve.transform(_controller.value);
     setState(() {
-      _dragPos = Offset(
-        _lerp(_animStartPos.dx, _animEndPos.dx, t),
-        _lerp(_animStartPos.dy, _animEndPos.dy, t),
-      );
+      _dragPos = Offset(_lerp(_animStartPos.dx, _animEndPos.dx, t), _lerp(_animStartPos.dy, _animEndPos.dy, t));
       _dragDelta = _dragPos.dx - _downPos.dx;
       _progress = _progressForCurrentDrag();
     });
@@ -197,11 +188,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
 
   void _handleStatus(AnimationStatus status) {
     if (status != AnimationStatus.completed) return;
-    final didComplete =
-        _targetIndex != null &&
-        (_turningForward
-            ? _dragPos.dx <= 0.5
-            : _dragPos.dx >= _size.width - 0.5);
+    final didComplete = _targetIndex != null && (_turningForward ? _dragPos.dx <= 0.5 : _dragPos.dx >= _size.width - 0.5);
     if (didComplete) {
       _index = _targetIndex!;
       widget.onIndexChanged?.call(_index);
@@ -221,8 +208,8 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
   void _startGesture({required bool forward, required Offset localPos}) {
     _turningForward = forward;
     _targetIndex = _targetForDirection(forward);
-    _fromSide =
-        localPos.dy > _size.height / 3 && localPos.dy < _size.height * 2 / 3;
+    final edgeInset = _size.width * 0.14;
+    _fromSide = (localPos.dx <= edgeInset || localPos.dx >= _size.width - edgeInset) || (localPos.dy > _size.height / 3 && localPos.dy < _size.height * 2 / 3);
     _fromTop = !_fromSide && localPos.dy <= (_size.height / 2);
     _isDragging = true;
     _isAnimating = false;
@@ -238,36 +225,38 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
   }
 
   void _updateDrag(Offset localPos) {
-    _dragPos = Offset(
-      localPos.dx.clamp(0.0, _size.width),
-      localPos.dy.clamp(0.0, _size.height),
-    );
+    final minX = _turningForward ? -_size.width : _downPos.dx;
+    final maxX = _turningForward ? _downPos.dx : _size.width * 2;
+    _dragPos = Offset(localPos.dx.clamp(minX, maxX), localPos.dy.clamp(0.0, _size.height));
     _dragDelta = _dragPos.dx - _downPos.dx;
     _progress = _progressForCurrentDrag();
   }
 
   Offset _releaseTarget(bool complete) {
     final targetX = complete
-        ? (_fromSide
-              ? (_turningForward ? -_size.width : _size.width * 2)
-              : (_turningForward ? -_size.width * 0.16 : _size.width * 1.16))
+        ? (_fromSide ? (_turningForward ? -_size.width : _size.width * 2) : (_turningForward ? -_size.width * 0.16 : _size.width * 1.16))
         : _downPos.dx;
     final targetY = complete
-        ? (_fromSide
-              ? _downPos.dy
-                    .clamp(0.1, math.max(0.1, _size.height - 0.1))
-                    .toDouble()
-              : (_fromTop ? 0.1 : math.max(0.1, _size.height - 0.1)))
+        ? (_fromSide ? _downPos.dy.clamp(0.1, math.max(0.1, _size.height - 0.1)).toDouble() : (_fromTop ? 0.1 : math.max(0.1, _size.height - 0.1)))
         : _downPos.dy;
     return Offset(targetX, targetY);
   }
 
-  void _animateRelease({required bool complete, required Curve curve}) {
+  Duration _releaseDuration({required bool complete, required double velocity}) {
+    final diagonal = math.max(1.0, _size.longestSide);
+    final remaining = (_animEndPos - _animStartPos).distance / diagonal;
+    final velocityFactor = (1000 / math.max(650.0, velocity.abs())).clamp(0.78, 1.15);
+    final millis = ((complete ? 520 : 300) + remaining.clamp(0.0, 1.0) * (complete ? 320 : 220)) * velocityFactor;
+    return Duration(milliseconds: millis.round().clamp(240, complete ? 760 : 500));
+  }
+
+  void _animateRelease({required bool complete, required Curve curve, double velocity = 0}) {
     _isDragging = false;
     _isAnimating = true;
     _releaseCurve = curve;
     _animStartPos = _dragPos;
     _animEndPos = _releaseTarget(complete);
+    _controller.duration = _releaseDuration(complete: complete, velocity: velocity);
     _controller.forward(from: 0);
   }
 
@@ -278,13 +267,10 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     final startX = forward ? _size.width * 0.92 : _size.width * 0.08;
     final startY = fromTop ? _size.height * 0.18 : _size.height * 0.82;
     _startGesture(forward: forward, localPos: Offset(startX, startY));
-    _dragPos = Offset(
-      forward ? _size.width * 0.76 : _size.width * 0.24,
-      startY,
-    );
+    _dragPos = Offset(forward ? _size.width * 0.76 : _size.width * 0.24, startY);
     _dragDelta = _dragPos.dx - _downPos.dx;
     _progress = _progressForCurrentDrag();
-    _animateRelease(complete: true, curve: Curves.easeInOutCubic);
+    _animateRelease(complete: true, curve: _completeReleaseCurve);
   }
 
   void _handleTap(TapUpDetails details) {
@@ -296,8 +282,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     final fromTop = pos.dy <= (_size.height / 2);
     if (pos.dx <= left) {
       final opensFromRight = widget.reverse;
-      if ((opensFromRight && !_canGoForward) ||
-          (!opensFromRight && !_canGoBackward)) {
+      if ((opensFromRight && !_canGoForward) || (!opensFromRight && !_canGoBackward)) {
         _notifyReachedBoundary(opensFromRight);
       } else {
         setState(() {
@@ -308,8 +293,7 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     }
     if (pos.dx >= right) {
       final opensFromRight = !widget.reverse;
-      if ((opensFromRight && !_canGoForward) ||
-          (!opensFromRight && !_canGoBackward)) {
+      if ((opensFromRight && !_canGoForward) || (!opensFromRight && !_canGoBackward)) {
         _notifyReachedBoundary(opensFromRight);
       } else {
         setState(() {
@@ -323,8 +307,21 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
 
   void _handlePanDown(DragDownDetails details) {
     if (_size.width <= 0 || _size.height <= 0) return;
-    _controller.stop();
-    _isAnimating = false;
+    if (_isAnimating) {
+      _controller.stop();
+      final interruptedTarget = _targetIndex;
+      final shouldCommit = interruptedTarget != null && _progress >= 0.30;
+      _isAnimating = false;
+      if (shouldCommit) {
+        _index = interruptedTarget;
+        widget.onIndexChanged?.call(_index);
+      }
+      _targetIndex = null;
+      _progress = 0;
+      _dragDelta = 0;
+    } else {
+      _controller.stop();
+    }
     final localPos = _logicalOffset(details.localPosition);
     _downPos = localPos;
     _dragPos = localPos;
@@ -363,29 +360,43 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
   }
 
   void _handlePanEnd(DragEndDetails details) {
-    if (!_isDragging) return;
     final velocity = details.velocity.pixelsPerSecond.dx;
     final flingForward = velocity < -500;
     final flingBackward = velocity > 500;
-    final shouldComplete = _turningForward
-        ? (_progress > 0.2 || (_progress > 0.05 && flingForward))
-        : (_progress > 0.2 || (_progress > 0.05 && flingBackward));
-    _animateRelease(
-      complete: shouldComplete,
-      curve: shouldComplete ? Curves.easeInOutCubic : Curves.easeOutQuart,
-    );
+
+    if (!_isDragging) {
+      if (widget.pageCount <= 0 || _size.width <= 0 || _size.height <= 0 || (!flingForward && !flingBackward)) {
+        return;
+      }
+      final forward = flingForward;
+      final canTurn = forward ? _canGoForward : _canGoBackward;
+      if (!canTurn) {
+        _notifyReachedBoundary(forward);
+        return;
+      }
+      final projected = (_downPos.dx + velocity * 0.08).clamp(-_size.width, _size.width * 2).toDouble();
+      setState(() {
+        _startGesture(forward: forward, localPos: _downPos);
+        _updateDrag(Offset(projected, _downPos.dy));
+      });
+    }
+
+    final flingInTurnDirection = _turningForward ? flingForward : flingBackward;
+    final shouldComplete = _progress > 0.22 || (_progress > 0.035 && flingInTurnDirection);
+    _animateRelease(complete: shouldComplete, curve: shouldComplete ? _completeReleaseCurve : _cancelReleaseCurve, velocity: velocity);
+  }
+
+  void _handlePanCancel() {
+    if (!_isDragging) return;
+    _animateRelease(complete: false, curve: _cancelReleaseCurve);
   }
 
   Widget _pageAt(int index, Map<int, Widget> pageCache) {
     if (widget.pageCount <= 0 || index < 0 || index >= widget.pageCount) {
       return const SizedBox.shrink();
     }
-    final background =
-        widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
-    final page = pageCache.putIfAbsent(
-      index,
-      () => widget.pageBuilder(context, index),
-    );
+    final background = widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
+    final page = pageCache.putIfAbsent(index, () => widget.pageBuilder(context, index));
     return ColoredBox(
       color: background,
       child: SizedBox.expand(child: page),
@@ -397,19 +408,9 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
     return LayoutBuilder(
       builder: (context, constraints) {
         _ensureSize(Size(constraints.maxWidth, constraints.maxHeight));
-        final background =
-            widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
-        final backside =
-            widget.backsideColor ??
-            Color.lerp(
-              background,
-              Colors.black,
-              Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.08,
-            )!;
-        final showTurn =
-            (_isDragging || _isAnimating) &&
-            _targetIndex != null &&
-            _progress > 0.0001;
+        final background = widget.backgroundColor ?? Theme.of(context).colorScheme.surface;
+        final backside = widget.backsideColor ?? Color.lerp(background, Colors.black, Theme.of(context).brightness == Brightness.dark ? 0.18 : 0.08)!;
+        final showTurn = (_isDragging || _isAnimating) && _targetIndex != null && _progress > 0.0001;
         final pageCache = <int, Widget>{};
         final underIndex = showTurn ? _targetIndex! : _index;
         final fold = _FoldGeometry.fromDrag(
@@ -430,36 +431,20 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
               onPanDown: _handlePanDown,
               onPanUpdate: _handlePanUpdate,
               onPanEnd: _handlePanEnd,
+              onPanCancel: _handlePanCancel,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   ColoredBox(color: background, child: const SizedBox.expand()),
-                  if (showTurn)
-                    ClipPath(
-                      clipper: _NextPageClipper(fold),
-                      child: _pageAt(underIndex, pageCache),
-                    )
-                  else
-                    _pageAt(underIndex, pageCache),
+                  if (showTurn) ClipPath(clipper: _NextPageClipper(fold), child: _pageAt(underIndex, pageCache)) else _pageAt(underIndex, pageCache),
                   if (showTurn)
                     CustomPaint(
                       painter: _UnderPageShadowPainter(
                         geometry: fold,
-                        shadowColor: _alpha(
-                          Colors.black,
-                          Theme.of(context).brightness == Brightness.dark
-                              ? 0.34
-                              : 0.22,
-                        ),
+                        shadowColor: _alpha(Colors.black, Theme.of(context).brightness == Brightness.dark ? 0.34 : 0.22),
                       ),
                     ),
-                  if (showTurn)
-                    ClipPath(
-                      clipper: _CurrentPageClipper(fold),
-                      child: _pageAt(_index, pageCache),
-                    )
-                  else
-                    _pageAt(_index, pageCache),
+                  if (showTurn) ClipPath(clipper: _CurrentPageClipper(fold), child: _pageAt(_index, pageCache)) else _pageAt(_index, pageCache),
                   if (showTurn)
                     IgnorePointer(
                       child: ClipPath(
@@ -467,44 +452,17 @@ class _PaperCurlPagerState extends State<PaperCurlPager>
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            Transform(
-                              transform: fold.backTransform,
-                              filterQuality: FilterQuality.low,
-                              child: _pageAt(_index, pageCache),
-                            ),
-                            ColoredBox(
-                              color: _alpha(
-                                backside,
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? 0.64
-                                    : 0.52,
-                              ),
-                            ),
+                            Transform(transform: fold.backTransform, filterQuality: FilterQuality.low, child: _pageAt(_index, pageCache)),
+                            ColoredBox(color: _alpha(backside, Theme.of(context).brightness == Brightness.dark ? 0.64 : 0.52)),
                             DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  begin: _turningForward
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  end: _turningForward
-                                      ? Alignment.centerLeft
-                                      : Alignment.centerRight,
+                                  begin: _turningForward ? Alignment.centerRight : Alignment.centerLeft,
+                                  end: _turningForward ? Alignment.centerLeft : Alignment.centerRight,
                                   colors: [
-                                    Color.lerp(
-                                      backside,
-                                      background,
-                                      0.18,
-                                    )!.withValues(alpha: 0.84),
-                                    Color.lerp(
-                                      backside,
-                                      background,
-                                      0.62,
-                                    )!.withValues(alpha: 0.76),
-                                    Color.lerp(
-                                      background,
-                                      Colors.white,
-                                      0.14,
-                                    )!.withValues(alpha: 0.40),
+                                    Color.lerp(backside, background, 0.18)!.withValues(alpha: 0.84),
+                                    Color.lerp(backside, background, 0.62)!.withValues(alpha: 0.76),
+                                    Color.lerp(background, Colors.white, 0.14)!.withValues(alpha: 0.40),
                                   ],
                                   stops: const [0.0, 0.55, 1.0],
                                 ),
@@ -570,33 +528,23 @@ class _FoldGeometry {
   }) {
     final safeWidth = size.width <= 0 ? 1.0 : size.width;
     final safeHeight = size.height <= 0 ? 1.0 : size.height;
-    final safeTouchY = dragPos.dy
-        .clamp(0.1, math.max(0.1, safeHeight - 0.1))
-        .toDouble();
+    final safeTouchY = dragPos.dy.clamp(0.1, math.max(0.1, safeHeight - 0.1)).toDouble();
     return _FoldGeometry(
       size: size,
       progress: progress.clamp(0.0, 1.0),
       forward: forward,
       fromTop: fromTop,
       fromSide: fromSide,
-      touch: Offset(
-        dragPos.dx.clamp(-safeWidth, safeWidth * 2).toDouble(),
-        safeTouchY,
-      ),
-      corner: Offset(
-        forward ? safeWidth : 0.0,
-        fromSide ? safeTouchY : (fromTop ? 0.0 : safeHeight),
-      ),
+      touch: Offset(dragPos.dx.clamp(-safeWidth, safeWidth * 2).toDouble(), safeTouchY),
+      corner: Offset(forward ? safeWidth : 0.0, fromSide ? safeTouchY : (fromTop ? 0.0 : safeHeight)),
     );
   }
 
-  double get maxLength =>
-      math.sqrt(size.width * size.width + size.height * size.height);
+  double get maxLength => math.sqrt(size.width * size.width + size.height * size.height);
 
   double get foldShadowExtent => math.max(18.0, touchToCornerDistance / 4.0);
 
-  double get shadowAngle =>
-      math.atan2(bezierControl1.dx - corner.dx, bezierControl2.dy - corner.dy);
+  double get shadowAngle => math.atan2(bezierControl1.dx - corner.dx, bezierControl2.dy - corner.dy);
 
   Path get turnedPagePath {
     if (fromSide) {
@@ -604,20 +552,10 @@ class _FoldGeometry {
     }
     return Path()
       ..moveTo(bezierStart1.dx, bezierStart1.dy)
-      ..quadraticBezierTo(
-        bezierControl1.dx,
-        bezierControl1.dy,
-        bezierEnd1.dx,
-        bezierEnd1.dy,
-      )
+      ..quadraticBezierTo(bezierControl1.dx, bezierControl1.dy, bezierEnd1.dx, bezierEnd1.dy)
       ..lineTo(adjustedTouch.dx, adjustedTouch.dy)
       ..lineTo(bezierEnd2.dx, bezierEnd2.dy)
-      ..quadraticBezierTo(
-        bezierControl2.dx,
-        bezierControl2.dy,
-        bezierStart2.dx,
-        bezierStart2.dy,
-      )
+      ..quadraticBezierTo(bezierControl2.dx, bezierControl2.dy, bezierStart2.dx, bezierStart2.dy)
       ..lineTo(corner.dx, corner.dy)
       ..close();
   }
@@ -628,23 +566,16 @@ class _FoldGeometry {
       if (forward) {
         return Path()..addRect(Rect.fromLTWH(0, 0, creaseX, size.height));
       }
-      return Path()
-        ..addRect(Rect.fromLTWH(creaseX, 0, size.width - creaseX, size.height));
+      return Path()..addRect(Rect.fromLTWH(creaseX, 0, size.width - creaseX, size.height));
     }
-    return Path.combine(
-      PathOperation.difference,
-      Path()..addRect(Offset.zero & size),
-      turnedPagePath,
-    );
+    return Path.combine(PathOperation.difference, Path()..addRect(Offset.zero & size), turnedPagePath);
   }
 
   Path get nextPagePath {
     if (fromSide) {
       final creaseX = _sideCreaseX;
       if (forward) {
-        return Path()..addRect(
-          Rect.fromLTWH(creaseX, 0, size.width - creaseX, size.height),
-        );
+        return Path()..addRect(Rect.fromLTWH(creaseX, 0, size.width - creaseX, size.height));
       }
       return Path()..addRect(Rect.fromLTWH(0, 0, creaseX, size.height));
     }
@@ -677,10 +608,7 @@ class _FoldGeometry {
     final width = math.max(1.0, size.width);
     final height = math.max(1.0, size.height);
     if (fromSide) {
-      adjustedTouch = Offset(
-        touch.dx.clamp(-width, width * 2),
-        touch.dy.clamp(0.1, math.max(0.1, height - 0.1)),
-      );
+      adjustedTouch = Offset(touch.dx.clamp(-width, width * 2), touch.dy.clamp(0.1, math.max(0.1, height - 0.1)));
       final creaseX = _sideCreaseX;
       final visibleTouchX = _sideVisibleTouchX;
       final edgeX = forward ? width : 0.0;
@@ -697,9 +625,7 @@ class _FoldGeometry {
       isRightTopOrLeftBottom = forward;
       return;
     }
-    isRightTopOrLeftBottom =
-        (corner.dx == 0 && corner.dy == height) ||
-        (corner.dx == width && corner.dy == 0);
+    isRightTopOrLeftBottom = (corner.dx == 0 && corner.dy == height) || (corner.dx == width && corner.dy == 0);
 
     var touchX = _avoidEqual(touch.dx, corner.dx);
     var touchY = _avoidEqual(touch.dy, corner.dy);
@@ -713,8 +639,7 @@ class _FoldGeometry {
         if (f1 > 0.1 && normalizedStartX.abs() > 0.1) {
           final f2 = width * f1 / normalizedStartX;
           touchX = (corner.dx - f2).abs();
-          final f3 =
-              (corner.dx - touchX).abs() * (corner.dy - touchY).abs() / f1;
+          final f3 = (corner.dx - touchX).abs() * (corner.dy - touchY).abs() / f1;
           touchY = (corner.dy - f3).abs();
           points = _calculatePointsForTouch(Offset(touchX, touchY));
         }
@@ -726,26 +651,10 @@ class _FoldGeometry {
     bezierControl2 = points.control2;
     bezierStart1 = points.start1;
     bezierStart2 = points.start2;
-    bezierEnd1 = _cross(
-      adjustedTouch,
-      bezierControl1,
-      bezierStart1,
-      bezierStart2,
-    );
-    bezierEnd2 = _cross(
-      adjustedTouch,
-      bezierControl2,
-      bezierStart1,
-      bezierStart2,
-    );
-    bezierVertex1 = Offset(
-      (bezierStart1.dx + 2 * bezierControl1.dx + bezierEnd1.dx) / 4,
-      (2 * bezierControl1.dy + bezierStart1.dy + bezierEnd1.dy) / 4,
-    );
-    bezierVertex2 = Offset(
-      (bezierStart2.dx + 2 * bezierControl2.dx + bezierEnd2.dx) / 4,
-      (2 * bezierControl2.dy + bezierStart2.dy + bezierEnd2.dy) / 4,
-    );
+    bezierEnd1 = _cross(adjustedTouch, bezierControl1, bezierStart1, bezierStart2);
+    bezierEnd2 = _cross(adjustedTouch, bezierControl2, bezierStart1, bezierStart2);
+    bezierVertex1 = Offset((bezierStart1.dx + 2 * bezierControl1.dx + bezierEnd1.dx) / 4, (2 * bezierControl1.dy + bezierStart1.dy + bezierEnd1.dy) / 4);
+    bezierVertex2 = Offset((bezierStart2.dx + 2 * bezierControl2.dx + bezierEnd2.dx) / 4, (2 * bezierControl2.dy + bezierStart2.dy + bezierEnd2.dy) / 4);
     touchToCornerDistance = (adjustedTouch - corner).distance;
     backTransform = _buildBackTransform();
   }
@@ -755,17 +664,8 @@ class _FoldGeometry {
     final middleY = (point.dy + corner.dy) / 2;
     final cornerToMiddleX = _avoidZero(corner.dx - middleX);
     final cornerToMiddleY = corner.dy - middleY;
-    final control1 = Offset(
-      middleX - cornerToMiddleY * cornerToMiddleY / cornerToMiddleX,
-      corner.dy,
-    );
-    final control2 = Offset(
-      corner.dx,
-      middleY -
-          (corner.dx - middleX) *
-              (corner.dx - middleX) /
-              _avoidZero(corner.dy - middleY),
-    );
+    final control1 = Offset(middleX - cornerToMiddleY * cornerToMiddleY / cornerToMiddleX, corner.dy);
+    final control2 = Offset(corner.dx, middleY - (corner.dx - middleX) * (corner.dx - middleX) / _avoidZero(corner.dy - middleY));
     return _FoldPoints(
       control1: control1,
       control2: control2,
@@ -775,10 +675,7 @@ class _FoldGeometry {
   }
 
   Matrix4 _buildBackTransform() {
-    final dis = math.sqrt(
-      math.pow(corner.dx - bezierControl1.dx, 2) +
-          math.pow(bezierControl2.dy - corner.dy, 2),
-    );
+    final dis = math.sqrt(math.pow(corner.dx - bezierControl1.dx, 2) + math.pow(bezierControl2.dy - corner.dy, 2));
     if (dis <= 0.1) return Matrix4.identity();
     final f8 = (corner.dx - bezierControl1.dx) / dis;
     final f9 = (bezierControl2.dy - corner.dy) / dis;
@@ -788,18 +685,10 @@ class _FoldGeometry {
     return Matrix4.identity()
       ..setEntry(0, 0, a)
       ..setEntry(0, 1, b)
-      ..setEntry(
-        0,
-        3,
-        bezierControl1.dx - a * bezierControl1.dx - b * bezierControl1.dy,
-      )
+      ..setEntry(0, 3, bezierControl1.dx - a * bezierControl1.dx - b * bezierControl1.dy)
       ..setEntry(1, 0, b)
       ..setEntry(1, 1, d)
-      ..setEntry(
-        1,
-        3,
-        bezierControl1.dy - b * bezierControl1.dx - d * bezierControl1.dy,
-      );
+      ..setEntry(1, 3, bezierControl1.dy - b * bezierControl1.dx - d * bezierControl1.dy);
   }
 
   double get _sideCreaseX {
@@ -848,12 +737,7 @@ class _FoldGeometry {
 }
 
 class _FoldPoints {
-  const _FoldPoints({
-    required this.control1,
-    required this.control2,
-    required this.start1,
-    required this.start2,
-  });
+  const _FoldPoints({required this.control1, required this.control2, required this.start1, required this.start2});
 
   final Offset control1;
   final Offset control2;
@@ -870,8 +754,7 @@ class _CurrentPageClipper extends CustomClipper<Path> {
   Path getClip(Size size) => geometry.currentPagePath;
 
   @override
-  bool shouldReclip(covariant _CurrentPageClipper oldClipper) =>
-      oldClipper.geometry != geometry;
+  bool shouldReclip(covariant _CurrentPageClipper oldClipper) => oldClipper.geometry != geometry;
 }
 
 class _NextPageClipper extends CustomClipper<Path> {
@@ -883,8 +766,7 @@ class _NextPageClipper extends CustomClipper<Path> {
   Path getClip(Size size) => geometry.nextPagePath;
 
   @override
-  bool shouldReclip(covariant _NextPageClipper oldClipper) =>
-      oldClipper.geometry != geometry;
+  bool shouldReclip(covariant _NextPageClipper oldClipper) => oldClipper.geometry != geometry;
 }
 
 class _FoldBackClipper extends CustomClipper<Path> {
@@ -896,15 +778,11 @@ class _FoldBackClipper extends CustomClipper<Path> {
   Path getClip(Size size) => geometry.backVisiblePath;
 
   @override
-  bool shouldReclip(covariant _FoldBackClipper oldClipper) =>
-      oldClipper.geometry != geometry;
+  bool shouldReclip(covariant _FoldBackClipper oldClipper) => oldClipper.geometry != geometry;
 }
 
 class _UnderPageShadowPainter extends CustomPainter {
-  const _UnderPageShadowPainter({
-    required this.geometry,
-    required this.shadowColor,
-  });
+  const _UnderPageShadowPainter({required this.geometry, required this.shadowColor});
 
   final _FoldGeometry geometry;
   final Color shadowColor;
@@ -923,31 +801,13 @@ class _UnderPageShadowPainter extends CustomPainter {
     canvas.translate(-geometry.bezierStart1.dx, -geometry.bezierStart1.dy);
     final extent = geometry.foldShadowExtent;
     final rect = geometry.isRightTopOrLeftBottom
-        ? Rect.fromLTWH(
-            geometry.bezierStart1.dx,
-            geometry.bezierStart1.dy,
-            extent,
-            geometry.maxLength,
-          )
-        : Rect.fromLTWH(
-            geometry.bezierStart1.dx - extent,
-            geometry.bezierStart1.dy,
-            extent,
-            geometry.maxLength,
-          );
+        ? Rect.fromLTWH(geometry.bezierStart1.dx, geometry.bezierStart1.dy, extent, geometry.maxLength)
+        : Rect.fromLTWH(geometry.bezierStart1.dx - extent, geometry.bezierStart1.dy, extent, geometry.maxLength);
     final paint = Paint()
       ..shader = LinearGradient(
-        begin: geometry.isRightTopOrLeftBottom
-            ? Alignment.centerLeft
-            : Alignment.centerRight,
-        end: geometry.isRightTopOrLeftBottom
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
-        colors: [
-          _alpha(shadowColor, 0.34 * geometry.progress),
-          _alpha(shadowColor, 0.10 * geometry.progress),
-          _alpha(shadowColor, 0),
-        ],
+        begin: geometry.isRightTopOrLeftBottom ? Alignment.centerLeft : Alignment.centerRight,
+        end: geometry.isRightTopOrLeftBottom ? Alignment.centerRight : Alignment.centerLeft,
+        colors: [_alpha(shadowColor, 0.34 * geometry.progress), _alpha(shadowColor, 0.10 * geometry.progress), _alpha(shadowColor, 0)],
       ).createShader(rect);
     canvas.drawRect(rect, paint);
     canvas.restore();
@@ -958,30 +818,21 @@ class _UnderPageShadowPainter extends CustomPainter {
     canvas.clipPath(geometry.nextPagePath);
     final width = math.max(28.0, math.min(76.0, size.width * 0.12));
     final creaseX = geometry.bezierStart1.dx;
-    final rect = geometry.forward
-        ? Rect.fromLTWH(creaseX, 0, width, size.height)
-        : Rect.fromLTWH(math.max(0.0, creaseX - width), 0, width, size.height);
+    final rect = geometry.forward ? Rect.fromLTWH(creaseX, 0, width, size.height) : Rect.fromLTWH(math.max(0.0, creaseX - width), 0, width, size.height);
     final paint = Paint()
       ..shader = LinearGradient(
         begin: geometry.forward ? Alignment.centerLeft : Alignment.centerRight,
         end: geometry.forward ? Alignment.centerRight : Alignment.centerLeft,
-        colors: [
-          _alpha(shadowColor, 0.30 * geometry.progress),
-          _alpha(shadowColor, 0.11 * geometry.progress),
-          _alpha(shadowColor, 0),
-        ],
+        colors: [_alpha(shadowColor, 0.30 * geometry.progress), _alpha(shadowColor, 0.11 * geometry.progress), _alpha(shadowColor, 0)],
       ).createShader(rect);
     canvas.drawRect(rect, paint);
     canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _UnderPageShadowPainter oldDelegate) =>
-      oldDelegate.geometry != geometry ||
-      oldDelegate.shadowColor != shadowColor;
+  bool shouldRepaint(covariant _UnderPageShadowPainter oldDelegate) => oldDelegate.geometry != geometry || oldDelegate.shadowColor != shadowColor;
 }
 
 double _lerp(num a, num b, double t) => a + (b - a) * t;
 
-Color _alpha(Color color, double alpha) =>
-    color.withValues(alpha: alpha.clamp(0.0, 1.0));
+Color _alpha(Color color, double alpha) => color.withValues(alpha: alpha.clamp(0.0, 1.0));

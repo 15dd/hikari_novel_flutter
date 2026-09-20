@@ -93,7 +93,7 @@ Widget _buildContentNavigator(MainController controller) {
             novelDetailController.exitSelectionMode();
             return;
           }
-        } catch (_, _) {
+        } catch (_) {
           Log.i("novelDetailController is null");
         }
 

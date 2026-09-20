@@ -59,16 +59,37 @@
 
 
 ## 📦 安装
-- 本项目不提供安装包，请参考下方 `编译` 自行编译使用
+- 本项目不提供安装包，请参考下方 `编译` 板块自行编译使用
 
 
 ## 💻 编译
 - ##### 我的开发环境
   ```
-  [√] Flutter (Channel stable, 3.38.7, on Microsoft Windows [版本 10.0.26200.7840], locale zh-CN)
-  [√] Windows Version (Windows 11 or higher, 25H2, 2009)
-  [√] Android toolchain - develop for Android devices (Android SDK version 36.1.0)
-  [√] Visual Studio - develop Windows apps (Visual Studio 生成工具 2026 18.2.0)
+  [√] Flutter (Channel stable, 3.47.4, on Microsoft Windows [版本 10.0.26200.9457], locale zh-CN) [251ms]
+      • Flutter version 3.47.4 on channel stable at C:\SDK\flutter
+      • Upstream repository https://github.com/flutter/flutter.git
+      • Framework revision 9584c6713b (9 days ago), 2026-09-10 15:25:10 -0700
+      • Engine revision 06a2e2a110
+      • Dart version 3.13.3
+      • DevTools version 2.60.0
+      • Pub download mirror https://pub.flutter-io.cn
+      • Flutter download mirror https://storage.flutter-io.cn
+      • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android,
+        enable-ios, cli-animations, enable-native-assets, enable-record-use, enable-swift-package-manager,
+        omit-legacy-version-file, enable-lldb-debugging, enable-uiscene-migration
+  
+  [√] Windows Version (Windows 11 or higher, 25H2, 2009) [959ms]
+  
+  [√] Android toolchain - develop for Android devices (Android SDK version 36.0.0) [1,750ms]
+      • Android SDK at C:\SDK\android
+      • Emulator version unknown
+      • Platform android-36, build-tools 36.0.0
+      • ANDROID_HOME = C:\SDK\android
+      • Java binary at: C:\Program Files\Microsoft\jdk-17.0.20.101-hotspot\bin\java
+        This JDK is specified by the JAVA_HOME environment variable.
+        To manually set the JDK path, use: `flutter config --jdk-dir="path/to/jdk"`.
+      • Java version OpenJDK Runtime Environment Microsoft-14940689 (build 17.0.20.1+1-LTS)
+      • All Android licenses accepted.
   ```
 - ##### 编译
   1. 克隆此仓库
@@ -100,4 +121,4 @@
 
 
 ## ⭐ 星标数趋势
-[![星标数趋势](https://starchart.cc/15dd/hikari_novel_flutter.svg?variant=adaptive)](https://starchart.cc/15dd/hikari_novel_flutter)
+[![RepoStars](https://repostars.dev/api/embed?repo=15dd%2Fhikari_novel_flutter&theme=dark)](https://repostars.dev/?repos=15dd%2Fhikari_novel_flutter&theme=dark)

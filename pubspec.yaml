@@ -3,7 +3,7 @@ description: "An app for reading wenku8, refactor with flutter"
 
 publish_to: 'none'
 
-version: 0.4.2-beta.1+11
+version: 0.4.2-beta.2+12
 
 environment:
   sdk: ^3.12.2
@@ -21,10 +21,10 @@ dependencies:
   dio_cookie_manager: ^3.1.1
 
   # 浏览器
-  flutter_inappwebview: ^6.1.5
+  flutter_inappwebview: ^6.2.0-beta.3
 
   # 设备信息
-  device_info_plus: ^12.3.0
+  device_info_plus: ^13.2.0
 
   # 动态取色
   dynamic_color: ^1.7.0
@@ -72,19 +72,19 @@ dependencies:
   flex_color_picker: ^3.7.1
 
   # 包信息获取
-  package_info_plus: ^9.0.0
+  package_info_plus: ^10.2.1
 
   # 模糊
   blur: ^4.0.0
 
   # 屏幕常亮
-  wakelock_plus: ^1.3.2
+  wakelock_plus: ^1.8.0
 
   # 电量显示
   battery_plus: ^7.0.0
 
   # 文件选择器
-  file_picker: ^11.0.2
+  file_picker: ^13.0.0
 
   # ttf源文件解析
   ttf_metadata: ^0.0.6
@@ -98,7 +98,7 @@ dependencies:
   url_launcher: ^6.3.2
 
   # tts
-  flutter_tts: ^4.2.0
+  flutter_tts: ^4.2.5
 
   # splash
   flutter_native_splash: ^2.4.7

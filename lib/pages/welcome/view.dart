@@ -34,14 +34,14 @@ class WelcomePage extends StatelessWidget {
                   value: Wenku8Node.wwwWenku8Net,
                   child: Text(
                     Wenku8Node.wwwWenku8Net.node,
-                    style: controller.wenku8Node == Wenku8Node.wwwWenku8Net ? TextStyle(color: primaryColor, fontWeight: FontWeight.bold) : null
+                    style: controller.wenku8Node == Wenku8Node.wwwWenku8Net ? TextStyle(color: primaryColor, fontWeight: FontWeight.bold) : null,
                   ),
                 ),
                 PopupMenuItem<Wenku8Node>(
                   value: Wenku8Node.wwwWenku8Cc,
                   child: Text(
                     Wenku8Node.wwwWenku8Cc.node,
-                    style: controller.wenku8Node == Wenku8Node.wwwWenku8Cc ? TextStyle(color: primaryColor, fontWeight: FontWeight.bold) : null
+                    style: controller.wenku8Node == Wenku8Node.wwwWenku8Cc ? TextStyle(color: primaryColor, fontWeight: FontWeight.bold) : null,
                   ),
                 ),
               ],

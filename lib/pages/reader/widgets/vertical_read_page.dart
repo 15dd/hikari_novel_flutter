@@ -129,9 +129,7 @@ class VerticalReadPageState extends State<VerticalReadPage> {
   void didUpdateWidget(covariant VerticalReadPage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final contentChanged =
-        widget.text != oldWidget.text ||
-        !listEquals(widget.images, oldWidget.images);
+    final contentChanged = widget.text != oldWidget.text || !listEquals(widget.images, oldWidget.images);
     final newSig = _layoutSignature();
     if (contentChanged) {
       _lastLayoutSig = newSig;
@@ -188,9 +186,7 @@ class VerticalReadPageState extends State<VerticalReadPage> {
             style: textStyle,
             children: [
               WidgetSpan(
-                child: SizedBox(
-                  width: textStyle.fontSize! * paraIndent,
-                ), //按汉字宽度缩进
+                child: SizedBox(width: textStyle.fontSize! * paraIndent), //按汉字宽度缩进
               ),
               TextSpan(text: content),
             ],
@@ -205,36 +201,15 @@ class VerticalReadPageState extends State<VerticalReadPage> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: GestureDetector(
-          onDoubleTap: () => Get.toNamed(
-            RoutePath.photo,
-            arguments: {
-              "gallery_mode": true,
-              "list": widget.images,
-              "index": index,
-            },
-          ),
-          onLongPress: () => Get.toNamed(
-            RoutePath.photo,
-            arguments: {
-              "gallery_mode": true,
-              "list": widget.images,
-              "index": index,
-            },
-          ),
+          onDoubleTap: () => Get.toNamed(RoutePath.photo, arguments: {"gallery_mode": true, "list": widget.images, "index": index}),
+          onLongPress: () => Get.toNamed(RoutePath.photo, arguments: {"gallery_mode": true, "list": widget.images, "index": index}),
           child: CachedNetworkImage(
             width: double.infinity,
             imageUrl: url,
             httpHeaders: Request.userAgent,
             fit: BoxFit.fitWidth,
-            progressIndicatorBuilder: (context, url, progress) => Center(
-              child: CircularProgressIndicator(value: progress.progress),
-            ),
-            errorWidget: (context, url, error) => Column(
-              children: [
-                const Icon(Icons.error_outline),
-                Text(error.toString()),
-              ],
-            ),
+            progressIndicatorBuilder: (context, url, progress) => Center(child: CircularProgressIndicator(value: progress.progress)),
+            errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),
           ),
         ),
       ),
@@ -242,9 +217,7 @@ class VerticalReadPageState extends State<VerticalReadPage> {
   }
 
   void _splitItems() {
-    final paragraphs = widget.text
-        .split('\n\n')
-        .where((e) => e.trim().isNotEmpty);
+    final paragraphs = widget.text.split('\n\n').where((e) => e.trim().isNotEmpty);
 
     _items = [];
 

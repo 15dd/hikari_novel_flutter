@@ -27,7 +27,7 @@ class AppRoutes {
     CustomGetPage(name: RoutePath.login, page: () => LoginPage()),
     CustomGetPage(name: RoutePath.photo, page: () => PhotoPage()),
     CustomGetPage(name: RoutePath.reader, page: () => ReaderPage()),
-    CustomGetPage(name: RoutePath.welcome, page: () => WelcomePage())
+    CustomGetPage(name: RoutePath.welcome, page: () => WelcomePage()),
   ];
 
   static Route<dynamic>? subRoutePages(RouteSettings settings) {
@@ -37,22 +37,34 @@ class AppRoutes {
       case RoutePath.novelDetail:
         {
           var args = settings.arguments as String;
-          return GetPageRoute(settings: settings, page: () => NovelDetailPage(aid: args));
+          return GetPageRoute(
+            settings: settings,
+            page: () => NovelDetailPage(aid: args),
+          );
         }
       case RoutePath.comment:
         {
           var args = settings.arguments as String;
-          return GetPageRoute(settings: settings, page: () => CommentPage(aid: args));
+          return GetPageRoute(
+            settings: settings,
+            page: () => CommentPage(aid: args),
+          );
         }
       case RoutePath.reply:
         {
           var args = settings.arguments as List<String>;
-          return GetPageRoute(settings: settings, page: () => ReplyPage(aid: args[0], rid: args[1]));
+          return GetPageRoute(
+            settings: settings,
+            page: () => ReplyPage(aid: args[0], rid: args[1]),
+          );
         }
       case RoutePath.userBookshelf:
         {
           var args = settings.arguments as String;
-          return GetPageRoute(settings: settings, page: () => UserBookshelfPage(uid: args));
+          return GetPageRoute(
+            settings: settings,
+            page: () => UserBookshelfPage(uid: args),
+          );
         }
       case RoutePath.browsingHistory:
         return GetPageRoute(settings: settings, page: () => BrowsingHistoryPage());
@@ -65,7 +77,10 @@ class AppRoutes {
       case RoutePath.search:
         {
           var args = settings.arguments as String?;
-          return GetPageRoute(settings: settings, page: () => SearchPage(author: args));
+          return GetPageRoute(
+            settings: settings,
+            page: () => SearchPage(author: args),
+          );
         }
       case RoutePath.cacheQueue:
         return GetPageRoute(settings: settings, page: () => CacheQueuePage());

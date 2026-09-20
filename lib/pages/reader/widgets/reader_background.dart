@@ -18,22 +18,13 @@ class ReaderBackground extends StatelessWidget {
       Decoration decoration;
 
       final bgImage = controller.currentBgImagePath.value;
-      final bgImageFile = bgImage == null || bgImage.isEmpty
-          ? null
-          : File(bgImage);
+      final bgImageFile = bgImage == null || bgImage.isEmpty ? null : File(bgImage);
       if (bgImageFile != null && bgImageFile.existsSync()) {
         decoration = BoxDecoration(
-          image: DecorationImage(
-            image: FileImage(bgImageFile),
-            fit: BoxFit.cover,
-          ),
+          image: DecorationImage(image: FileImage(bgImageFile), fit: BoxFit.cover),
         );
       } else {
-        decoration = BoxDecoration(
-          color:
-              controller.currentBgColor.value ??
-              Theme.of(context).colorScheme.surface,
-        );
+        decoration = BoxDecoration(color: controller.currentBgColor.value ?? Theme.of(context).colorScheme.surface);
       }
 
       return Container(decoration: decoration, child: child);

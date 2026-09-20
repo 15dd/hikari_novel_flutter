@@ -10,7 +10,13 @@ class ItemText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6),
-      child: Row(children: [Text(title), Expanded(child: SizedBox.shrink()), Text(desc)]),
+      child: Row(
+        children: [
+          Text(title),
+          Expanded(child: SizedBox.shrink()),
+          Text(desc),
+        ],
+      ),
     );
   }
 }

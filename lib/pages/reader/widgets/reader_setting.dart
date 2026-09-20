@@ -93,7 +93,11 @@ class ReaderSettingPage extends StatelessWidget {
                 showRadioListSheet(
                   context,
                   value: controller.readerSettingsState.value.direction,
-                  values: [(ReaderDirection.upToDown, "scroll".tr), (ReaderDirection.leftToRight, "left_to_right".tr), (ReaderDirection.rightToLeft, "right_to_left".tr)],
+                  values: [
+                    (ReaderDirection.upToDown, "scroll".tr),
+                    (ReaderDirection.leftToRight, "left_to_right".tr),
+                    (ReaderDirection.rightToLeft, "right_to_left".tr),
+                  ],
                   title: "reading_direction".tr,
                 ).then((value) {
                   if (value != null) controller.changeReaderDirection(value);
@@ -266,22 +270,25 @@ class ReaderSettingPage extends StatelessWidget {
             trailing: controller.currentBgColor.value == null
                 ? const Icon(Icons.keyboard_arrow_down)
                 : ColorIndicator(width: 20, height: 20, borderRadius: 100, color: controller.currentBgColor.value!),
-            onTap: () => showNormalListSheet(context, values: [(0, "change_background_color".tr), (1, "reset_background_color".tr)], title: "background_color".tr).then((value) {
-              if (value == 0) {
-                _buildColorPickerDialog(Get.context!, false);
-              } else if (value == 1) {
-                Get.context!.isDarkMode ? controller.changeReaderNightBgColor(null) : controller.changeReaderDayBgColor(null);
-                showSnackBar(message: "reset_background_color_successfully".tr, context: Get.context!);
-              }
-            }),
+            onTap: () =>
+                showNormalListSheet(context, values: [(0, "change_background_color".tr), (1, "reset_background_color".tr)], title: "background_color".tr).then((
+                  value,
+                ) {
+                  if (value == 0) {
+                    _buildColorPickerDialog(Get.context!, false);
+                  } else if (value == 1) {
+                    Get.context!.isDarkMode ? controller.changeReaderNightBgColor(null) : controller.changeReaderDayBgColor(null);
+                    showSnackBar(message: "reset_background_color_successfully".tr, context: Get.context!);
+                  }
+                }),
           ),
         ),
         NormalTile(
           title: "background_image".tr,
           leading: const Icon(Icons.image_outlined),
           trailing: const Icon(Icons.keyboard_arrow_down),
-          onTap: () =>
-              showNormalListSheet(context, values: [(0, "change_background_image".tr), (1, "reset_background_image".tr)], title: "background_image".tr).then((value) async {
+          onTap: () => showNormalListSheet(context, values: [(0, "change_background_image".tr), (1, "reset_background_image".tr)], title: "background_image".tr)
+              .then((value) async {
                 if (value == 0) {
                   final result = await controller.pickBgImageFile(Get.context!.isDarkMode);
                   switch (result) {
@@ -306,7 +313,14 @@ class ReaderSettingPage extends StatelessWidget {
     final tts = TtsService.instance;
     return ListView(
       children: [
-        Obx(() => SwitchTile(title: "enabled_listening".tr, leading: const Icon(Icons.record_voice_over_outlined), onChanged: (v) => tts.setEnabled(v), value: tts.enabled.value)),
+        Obx(
+          () => SwitchTile(
+            title: "enabled_listening".tr,
+            leading: const Icon(Icons.record_voice_over_outlined),
+            onChanged: (v) => tts.setEnabled(v),
+            value: tts.enabled.value,
+          ),
+        ),
         NormalTile(
           title: "open_tts_system_setting".tr,
           leading: const Icon(Icons.settings_applications_outlined),
@@ -321,7 +335,9 @@ class ReaderSettingPage extends StatelessWidget {
                 Obx(
                   () => NormalTile(
                     title: "tts_engine".tr,
-                    subtitle: tts.engine.value == null ? (Platform.isAndroid ? "auto".tr : "unsupportable_os_tip".tr) : tts.displayEngineName(tts.engine.value!),
+                    subtitle: tts.engine.value == null
+                        ? (Platform.isAndroid ? "auto".tr : "unsupportable_os_tip".tr)
+                        : tts.displayEngineName(tts.engine.value!),
                     leading: const Icon(Icons.settings_outlined),
                     trailing: const Icon(Icons.keyboard_arrow_down),
                     onTap: () async {
@@ -401,7 +417,11 @@ class ReaderSettingPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: SizedBox(
                     width: double.infinity,
-                    child: OutlinedButton.icon(onPressed: () => tts.refreshSettings(restartIfPlaying: true), icon: const Icon(Icons.refresh), label: Text("refresh_setting".tr)),
+                    child: OutlinedButton.icon(
+                      onPressed: () => tts.refreshSettings(restartIfPlaying: true),
+                      icon: const Icon(Icons.refresh),
+                      label: Text("refresh_setting".tr),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),

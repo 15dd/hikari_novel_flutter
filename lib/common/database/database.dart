@@ -54,8 +54,9 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteAllSearchHistory() => delete(searchHistoryEntity).go();
 
   Future<void> upsertReadHistory(ReadHistoryEntityData data) => transaction(() async {
-    await (update(readHistoryEntity)
-      ..where((i) => i.isLatest.equals(true) & i.aid.equals(data.aid))).write(RawValuesInsertable({readHistoryEntity.isLatest.name: Variable<bool>(false)}));
+    await (update(
+      readHistoryEntity,
+    )..where((i) => i.isLatest.equals(true) & i.aid.equals(data.aid))).write(RawValuesInsertable({readHistoryEntity.isLatest.name: Variable<bool>(false)}));
     await into(readHistoryEntity).insertOnConflictUpdate(data);
   });
 
@@ -82,5 +83,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteAllNovelDetail() => delete(novelDetailEntity).go();
 }
 
-QueryExecutor _openConnection() =>
-    driftDatabase(name: "hikari_novel_database", native: const DriftNativeOptions(databaseDirectory: getApplicationSupportDirectory));
+QueryExecutor _openConnection() => driftDatabase(
+  name: "hikari_novel_database",
+  native: const DriftNativeOptions(databaseDirectory: getApplicationSupportDirectory),
+);

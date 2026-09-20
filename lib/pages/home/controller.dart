@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class HomeController extends GetxController with GetTickerProviderStateMixin {
   RxInt tabIndex = 0.obs; //保存tab索引位置
 

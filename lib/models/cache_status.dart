@@ -1,11 +1,4 @@
-enum CacheStatus {
-  pending,
-  downloading,
-  paused,
-  completed,
-  failed,
-  canceled
-}
+enum CacheStatus { pending, downloading, paused, completed, failed, canceled }
 
 String statusToString(CacheStatus s) => s.toString().split('.').last;
 

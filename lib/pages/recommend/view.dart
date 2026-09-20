@@ -25,10 +25,9 @@ class RecommendView extends StatelessWidget {
                 child: EasyRefresh(
                   onRefresh: controller.getRecommend,
                   child: ListView(
-                    children:
-                        controller.data.map((item) {
-                          return RecommendBlockView(block: item);
-                        }).toList(),
+                    children: controller.data.map((item) {
+                      return RecommendBlockView(block: item);
+                    }).toList(),
                   ),
                 ),
               ),

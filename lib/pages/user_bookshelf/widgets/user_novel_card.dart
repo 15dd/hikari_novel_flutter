@@ -18,7 +18,7 @@ class UserNovelCard extends StatelessWidget {
           Padding(padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20), child: Text(novelCover.title)),
           const Divider(height: 1, thickness: 0.3),
         ],
-      )
+      ),
     );
   }
 }

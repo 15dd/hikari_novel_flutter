@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/common/language.dart';
 import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 
 import '../../service/local_storage_service.dart';
-
 
 class SettingController extends GetxController {
   RxBool isAutoCheckUpdate = LocalStorageService.instance.getIsAutoCheckUpdate().obs;
@@ -28,15 +26,18 @@ class SettingController extends GetxController {
 
   void changeLanguage(Language l) async {
     switch (l) {
-      case Language.simplifiedChinese: Get.updateLocale(Locale("zh","CN"));
-      case Language.traditionalChinese: Get.updateLocale(Locale("zh","TW"));
-      case Language.followSystem: {
-        if (Get.deviceLocale! != Locale("zh","CN") && Get.deviceLocale! != Locale("zh","CN")) {
-          Get.updateLocale(Locale("zh","CN"));
-        } else {
-          Get.updateLocale(Get.deviceLocale!);
+      case Language.simplifiedChinese:
+        Get.updateLocale(Locale("zh", "CN"));
+      case Language.traditionalChinese:
+        Get.updateLocale(Locale("zh", "TW"));
+      case Language.followSystem:
+        {
+          if (Get.deviceLocale! != Locale("zh", "CN") && Get.deviceLocale! != Locale("zh", "CN")) {
+            Get.updateLocale(Locale("zh", "CN"));
+          } else {
+            Get.updateLocale(Get.deviceLocale!);
+          }
         }
-      }
     }
     language.value = l;
     LocalStorageService.instance.setLanguage(l);

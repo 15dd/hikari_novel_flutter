@@ -61,8 +61,7 @@ class HorizontalReadPage extends StatefulWidget {
   State<StatefulWidget> createState() => _HorizontalReadPageState();
 }
 
-class _HorizontalReadPageState extends State<HorizontalReadPage>
-    with WidgetsBindingObserver {
+class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBindingObserver {
   List<Page> pages = [];
   String text = "";
   List<String> images = [];
@@ -81,8 +80,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
 
   int get _safePageCount => _pageCount() <= 0 ? 0 : _pageCount() - 1;
 
-  int _clampPageIndex(int value) =>
-      (value.clamp(0, _safePageCount) as num).toInt();
+  int _clampPageIndex(int value) => (value.clamp(0, _safePageCount) as num).toInt();
 
   int _pageCountForLength(int pageLength) {
     if (widget.isDualPage) {
@@ -136,9 +134,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
     padding = widget.padding;
     final size = _currentViewSize();
     pageWidth = (size.width - padding.left - padding.right).floorToDouble();
-    pageWidth = widget.isDualPage
-        ? (pageWidth - widget.dualPageSpacing * 2) / 2
-        : pageWidth;
+    pageWidth = widget.isDualPage ? (pageWidth - widget.dualPageSpacing * 2) / 2 : pageWidth;
     pageHeight = size.height - padding.top - padding.bottom;
     if (text.isEmpty && images.isEmpty) {
       index = 0;
@@ -159,9 +155,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
   void didUpdateWidget(covariant HorizontalReadPage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final contentChanged =
-        widget.text != oldWidget.text ||
-        !listEquals(widget.images, oldWidget.images);
+    final contentChanged = widget.text != oldWidget.text || !listEquals(widget.images, oldWidget.images);
     final newSig = _layoutSignature();
     if (contentChanged) {
       _lastLayoutSig = newSig;
@@ -181,15 +175,8 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
       return;
     }
 
-    if (oldWidget.pageTurningAnimation != widget.pageTurningAnimation ||
-        oldWidget.isDualPage != widget.isDualPage) {
-      final rawTarget = oldWidget.isDualPage == widget.isDualPage
-          ? index
-          : _convertIndexBetweenPageModes(
-              index,
-              oldWidget.isDualPage,
-              widget.isDualPage,
-            );
+    if (oldWidget.pageTurningAnimation != widget.pageTurningAnimation || oldWidget.isDualPage != widget.isDualPage) {
+      final rawTarget = oldWidget.isDualPage == widget.isDualPage ? index : _convertIndexBetweenPageModes(index, oldWidget.isDualPage, widget.isDualPage);
       final target = _clampPageIndex(rawTarget);
       index = target;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -215,8 +202,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
         isPageInteractive: _spreadContainsImage,
         reverse: widget.reverse,
         animationEnabled: true,
-        backgroundColor:
-            widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
+        backgroundColor: widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
         backsideColor:
             widget.backsideColor ??
             Color.lerp(
@@ -237,9 +223,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
       behavior: HitTestBehavior.translucent,
       onTapUp: (details) {
         final width = context.size?.width ?? MediaQuery.of(context).size.width;
-        final logicalX = widget.reverse
-            ? (width - details.localPosition.dx).clamp(0.0, width)
-            : details.localPosition.dx;
+        final logicalX = widget.reverse ? (width - details.localPosition.dx).clamp(0.0, width) : details.localPosition.dx;
         final left = width * 0.28;
         final right = width * 0.72;
         if (logicalX <= left) {
@@ -265,11 +249,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
     );
   }
 
-  int _convertIndexBetweenPageModes(
-    int value,
-    bool fromDualPage,
-    bool toDualPage,
-  ) {
+  int _convertIndexBetweenPageModes(int value, bool fromDualPage, bool toDualPage) {
     if (fromDualPage == toDualPage) return value;
     return toDualPage ? value ~/ 2 : value * 2;
   }
@@ -293,23 +273,13 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
 
     final firstIndex = index * 2;
     final secondIndex = firstIndex + 1;
-    final firstHasImage =
-        firstIndex >= 0 &&
-        firstIndex < pages.length &&
-        pages[firstIndex] is ImagePage;
-    final secondHasImage =
-        secondIndex >= 0 &&
-        secondIndex < pages.length &&
-        pages[secondIndex] is ImagePage;
+    final firstHasImage = firstIndex >= 0 && firstIndex < pages.length && pages[firstIndex] is ImagePage;
+    final secondHasImage = secondIndex >= 0 && secondIndex < pages.length && pages[secondIndex] is ImagePage;
     return firstHasImage || secondHasImage;
   }
 
   Widget _buildPage(int index) {
-    final child = widget.isDualPage
-        ? _buildDualPage(index)
-        : (pages[index] is TextPage
-              ? _buildSingleText(index)
-              : _buildImage(index));
+    final child = widget.isDualPage ? _buildDualPage(index) : (pages[index] is TextPage ? _buildSingleText(index) : _buildImage(index));
 
     if (widget.pageFooter == null) {
       return child;
@@ -357,9 +327,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        left: widget.dualPageSpacing,
-                      ), //模拟书脊间隙
+                      padding: EdgeInsets.only(left: widget.dualPageSpacing), //模拟书脊间隙
                       child: Builder(
                         builder: (_) {
                           if (firstIndex >= pages.length) {
@@ -380,9 +348,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        right: widget.dualPageSpacing,
-                      ), //模拟书脊间隙
+                      padding: EdgeInsets.only(right: widget.dualPageSpacing), //模拟书脊间隙
                       child: Builder(
                         builder: (_) {
                           if (firstIndex >= pages.length) {
@@ -463,14 +429,8 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
           imageUrl: (pages[imageIndex] as ImagePage).url,
           httpHeaders: Request.userAgent,
           fit: BoxFit.contain,
-          progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-            child: CircularProgressIndicator(value: downloadProgress.progress),
-          ),
-          errorWidget: (context, url, error) => Center(
-            child: Column(
-              children: [Icon(Icons.error_outline), Text(error.toString())],
-            ),
-          ),
+          progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+          errorWidget: (context, url, error) => Center(child: Column(children: [Icon(Icons.error_outline), Text(error.toString())])),
         ),
       ),
     );
@@ -482,27 +442,11 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
 
     //计算出各类文字的字体大小
     //至于为什么不固定大小是因为主文字大小和行高会变动，需要重新计算
-    Size chineseCharSize = calcFontSize(
-      "中",
-      fontSize: fontSize,
-      lineHeight: lineHeight,
-    );
+    Size chineseCharSize = calcFontSize("中", fontSize: fontSize, lineHeight: lineHeight);
     fontHeight = chineseCharSize.height; //以中文的高度为准，毕竟是中文阅读器
-    Size englishCharSize = calcFontSize(
-      "e",
-      fontSize: fontSize,
-      lineHeight: lineHeight,
-    );
-    Size symbolCharSize = calcFontSize(
-      ",",
-      fontSize: fontSize,
-      lineHeight: lineHeight,
-    );
-    Size spaceCharSize = calcFontSize(
-      " ",
-      fontSize: fontSize,
-      lineHeight: lineHeight,
-    );
+    Size englishCharSize = calcFontSize("e", fontSize: fontSize, lineHeight: lineHeight);
+    Size symbolCharSize = calcFontSize(",", fontSize: fontSize, lineHeight: lineHeight);
+    Size spaceCharSize = calcFontSize(" ", fontSize: fontSize, lineHeight: lineHeight);
 
     //计算一页中的最大行数
     int maxLine = (pageHeight / chineseCharSize.height).floor(); //去小数
@@ -530,10 +474,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
     if (!mounted || generation != _layoutGeneration) return;
 
     this.pages = pages;
-    index = _clampPageIndexForCount(
-      targetIndex,
-      _pageCountForLength(pages.length),
-    );
+    index = _clampPageIndexForCount(targetIndex, _pageCountForLength(pages.length));
     widget.onPageChanged(index, _pageCount());
 
     setState(() {}); //刷新UI
@@ -541,9 +482,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || generation != _layoutGeneration) return;
       if (_pageCount() <= 0) return;
-      final target =
-          (index.clamp(0, _pageCount() <= 0 ? 0 : _pageCount() - 1) as num)
-              .toInt();
+      final target = (index.clamp(0, _pageCount() <= 0 ? 0 : _pageCount() - 1) as num).toInt();
       if (widget.pageTurningAnimation) {
         widget.paperCurlController?.jumpToPage(target);
       } else {
@@ -565,47 +504,24 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
       final symbolExp = RegExp(r"\p{P}");
       final newLineExp = RegExp(r"\n");
 
-      final paragraphs = str
-          .replaceAll('\r\n', '\n')
-          .split(RegExp(r'\n\s*\n+'))
-          .where((e) => e.trim().isNotEmpty)
-          .toList();
-      final indentPrefix = parameter.paraIndent > 0
-          ? List.filled(parameter.paraIndent, '　').join()
-          : '';
+      final paragraphs = str.replaceAll('\r\n', '\n').split(RegExp(r'\n\s*\n+')).where((e) => e.trim().isNotEmpty).toList();
+      final indentPrefix = parameter.paraIndent > 0 ? List.filled(parameter.paraIndent, '　').join() : '';
       final List<TextRow> allRows = [];
 
-      void flushWrappedLine(
-        String line, {
-        required bool paragraphEnd,
-        required bool isFirstLineOfParagraph,
-      }) {
-        final source = isFirstLineOfParagraph
-            ? '$indentPrefix${line.trimLeft()}'
-            : line;
+      void flushWrappedLine(String line, {required bool paragraphEnd, required bool isFirstLineOfParagraph}) {
+        final source = isFirstLineOfParagraph ? '$indentPrefix${line.trimLeft()}' : line;
         if (source.isEmpty) {
           allRows.add(TextRow('', paragraphEnd: paragraphEnd));
           return;
         }
 
-        final lineMatches = reg
-            .allMatches(source)
-            .map((match) => match.group(0) ?? '')
-            .toList();
+        final lineMatches = reg.allMatches(source).map((match) => match.group(0) ?? '').toList();
         String rowText = '';
         double currentRowWidth = 0;
 
         for (final item in lineMatches) {
-          final charInfo = charsFromToken(
-            item,
-            parameter,
-            chineseExp,
-            wordExp,
-            symbolExp,
-            newLineExp,
-          );
-          if ((currentRowWidth + charInfo.width) > parameter.width &&
-              rowText.isNotEmpty) {
+          final charInfo = charsFromToken(item, parameter, chineseExp, wordExp, symbolExp, newLineExp);
+          if ((currentRowWidth + charInfo.width) > parameter.width && rowText.isNotEmpty) {
             allRows.add(TextRow(rowText, paragraphEnd: false));
             rowText = '';
             currentRowWidth = 0;
@@ -620,26 +536,17 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
       for (final paragraph in paragraphs) {
         final lines = paragraph.split('\n');
         for (int i = 0; i < lines.length; i++) {
-          flushWrappedLine(
-            lines[i],
-            paragraphEnd: i == lines.length - 1,
-            isFirstLineOfParagraph: i == 0,
-          );
+          flushWrappedLine(lines[i], paragraphEnd: i == lines.length - 1, isFirstLineOfParagraph: i == 0);
         }
       }
 
       List<TextRow> currentTextPage = [];
       double currentPageHeight = 0;
-      final pageLimit = parameter.pageHeight > 0
-          ? parameter.pageHeight
-          : (parameter.maxLine * parameter.fontHeight);
+      final pageLimit = parameter.pageHeight > 0 ? parameter.pageHeight : (parameter.maxLine * parameter.fontHeight);
 
       for (final row in allRows) {
-        final rowHeight =
-            parameter.fontHeight +
-            (row.paragraphEnd ? parameter.paraSpacing : 0);
-        if (currentTextPage.isNotEmpty &&
-            (currentPageHeight + rowHeight) > pageLimit) {
+        final rowHeight = parameter.fontHeight + (row.paragraphEnd ? parameter.paraSpacing : 0);
+        if (currentTextPage.isNotEmpty && (currentPageHeight + rowHeight) > pageLimit) {
           pages.add(TextPage(pages.length, currentTextPage));
           currentTextPage = [];
           currentPageHeight = 0;
@@ -669,57 +576,26 @@ class _HorizontalReadPageState extends State<HorizontalReadPage>
     return pages;
   }
 
-  static CharInfo charsFromToken(
-    String item,
-    ComputeParameter parameter,
-    RegExp chineseExp,
-    RegExp wordExp,
-    RegExp symbolExp,
-    RegExp newLineExp,
-  ) {
+  static CharInfo charsFromToken(String item, ComputeParameter parameter, RegExp chineseExp, RegExp wordExp, RegExp symbolExp, RegExp newLineExp) {
     if (chineseExp.hasMatch(item)) {
-      return CharInfo(
-        text: item,
-        width: parameter.chineseWidth,
-        type: CharType.chinese,
-      );
+      return CharInfo(text: item, width: parameter.chineseWidth, type: CharType.chinese);
     }
     if (wordExp.hasMatch(item)) {
-      return CharInfo(
-        text: item,
-        width: parameter.englishWidth * item.length,
-        type: CharType.word,
-      );
+      return CharInfo(text: item, width: parameter.englishWidth * item.length, type: CharType.word);
     }
     if (newLineExp.hasMatch(item)) {
       return CharInfo(text: '', width: 0, type: CharType.newline);
     }
     if (item == ' ') {
-      return CharInfo(
-        text: item,
-        width: parameter.spaceWidth,
-        type: CharType.symbol,
-      );
+      return CharInfo(text: item, width: parameter.spaceWidth, type: CharType.symbol);
     }
     if (symbolExp.hasMatch(item)) {
-      return CharInfo(
-        text: item,
-        width: parameter.symbolWidth,
-        type: CharType.symbol,
-      );
+      return CharInfo(text: item, width: parameter.symbolWidth, type: CharType.symbol);
     }
-    return CharInfo(
-      text: item,
-      width: parameter.symbolWidth,
-      type: CharType.symbol,
-    );
+    return CharInfo(text: item, width: parameter.symbolWidth, type: CharType.symbol);
   }
 
-  Size calcFontSize(
-    String text, {
-    required double fontSize,
-    required double lineHeight,
-  }) {
+  Size calcFontSize(String text, {required double fontSize, required double lineHeight}) {
     TextPainter painter = TextPainter(
       text: TextSpan(
         text: text,
@@ -832,24 +708,14 @@ class NovelTextPainter extends CustomPainter {
   final double paragraphSpacing;
   final List<TextRow> rows;
 
-  NovelTextPainter(
-    this.rows, {
-    required this.style,
-    required this.fontHeight,
-    required this.paragraphSpacing,
-  });
+  NovelTextPainter(this.rows, {required this.style, required this.fontHeight, required this.paragraphSpacing});
 
   @override
   void paint(Canvas canvas, Size size) {
     double y = 0;
     for (final row in rows) {
       final textSpan = TextSpan(text: row.text, style: style);
-      final textPainter = TextPainter(
-        text: textSpan,
-        maxLines: 1,
-        textAlign: TextAlign.justify,
-        textDirection: TextDirection.ltr,
-      );
+      final textPainter = TextPainter(text: textSpan, maxLines: 1, textAlign: TextAlign.justify, textDirection: TextDirection.ltr);
       textPainter.layout(maxWidth: size.width);
       textPainter.paint(canvas, Offset(0, y));
       y += fontHeight;
@@ -861,10 +727,7 @@ class NovelTextPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant NovelTextPainter oldDelegate) {
-    return oldDelegate.style != style ||
-        oldDelegate.rows != rows ||
-        oldDelegate.fontHeight != fontHeight ||
-        oldDelegate.paragraphSpacing != paragraphSpacing;
+    return oldDelegate.style != style || oldDelegate.rows != rows || oldDelegate.fontHeight != fontHeight || oldDelegate.paragraphSpacing != paragraphSpacing;
   }
 }
 

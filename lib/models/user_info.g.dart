@@ -13,9 +13,7 @@ class user_info_adapter extends TypeAdapter<UserInfo> {
   @override
   UserInfo read(BinaryReader reader) {
     final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
+    final fields = <int, dynamic>{for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
     return UserInfo(
       avatar: fields[0] as String,
       uid: fields[1] as String,
@@ -63,9 +61,5 @@ class user_info_adapter extends TypeAdapter<UserInfo> {
   int get hashCode => typeId.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is user_info_adapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+  bool operator ==(Object other) => identical(this, other) || other is user_info_adapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

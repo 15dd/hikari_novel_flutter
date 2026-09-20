@@ -31,17 +31,21 @@ class CompletionView extends StatelessWidget {
                     minItemWidth: 100,
                     horizontalGridSpacing: 4,
                     verticalGridSpacing: 4,
-                    children:
-                        controller.data.map((item) {
-                          return NovelCoverCard(novelCover: item);
-                        }).toList(),
+                    children: controller.data.map((item) {
+                      return NovelCoverCard(novelCover: item);
+                    }).toList(),
                   ),
                 ),
               ),
             ),
           ),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.loading, child: LoadingPage())),
-          Obx(() => Offstage(offstage: controller.pageState.value != PageState.error, child: ErrorMessage(msg: controller.errorMsg, action:() => controller.getPage(false)))),
+          Obx(
+            () => Offstage(
+              offstage: controller.pageState.value != PageState.error,
+              child: ErrorMessage(msg: controller.errorMsg, action: () => controller.getPage(false)),
+            ),
+          ),
         ],
       ),
     );

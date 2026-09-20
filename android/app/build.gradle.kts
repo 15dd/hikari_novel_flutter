@@ -1,6 +1,15 @@
 plugins {
-    id("com.android.application")
+    id("com.android.application") 
+{
+   id("com.android.application")
+
     id("kotlin-android")
+
+    // Flutter Gradle 插件必须在 Android 和 Kotlin Gradle 插件之后应用。
+
+    id("dev.flutter.flutter-gradle-plugin")
+
+}
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -12,10 +21,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -40,6 +45,12 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 

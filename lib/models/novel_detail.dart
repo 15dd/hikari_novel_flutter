@@ -27,6 +27,6 @@ class NovelDetail {
 
   @override
   String toString() => jsonEncode(toJson());
-  
+
   factory NovelDetail.fromString(String json) => NovelDetail.fromJson(jsonDecode(json));
 }

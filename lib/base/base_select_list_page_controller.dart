@@ -35,27 +35,29 @@ abstract class BaseSelectListPageController<T> extends GetxController {
     final result = await getData(_index);
 
     switch (result) {
-      case Success(): {
-        if (!loadMore) {
-          _maxNum = Parser.getMaxNum(result.data);
-        }
-        data.addAll(getParser(result.data));
+      case Success():
+        {
+          if (!loadMore) {
+            _maxNum = Parser.getMaxNum(result.data);
+          }
+          data.addAll(getParser(result.data));
 
-        pageState.value = PageState.success;
-        return IndicatorResult.success;
-      }
-      case Error(): {
-        if (!loadMore) {
-          pageState.value = PageState.error;
-          errorMsg = result.error;
-        } else {
-          showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
+          pageState.value = PageState.success;
+          return IndicatorResult.success;
         }
-        if (_index > 0) {
-          _index -= 1;
+      case Error():
+        {
+          if (!loadMore) {
+            pageState.value = PageState.error;
+            errorMsg = result.error;
+          } else {
+            showErrorDialog(result.error.toString(), [TextButton(onPressed: Get.back, child: Text("confirm".tr))]);
+          }
+          if (_index > 0) {
+            _index -= 1;
+          }
+          return IndicatorResult.fail;
         }
-        return IndicatorResult.fail;
-      }
     }
   }
 }
