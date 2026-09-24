@@ -9,7 +9,7 @@ import battery_plus
 import charset_converter
 import device_info_plus
 import dynamic_color
-import file_picker
+import file_picker_darwin
 import flutter_inappwebview_macos
 import flutter_tts
 import package_info_plus
