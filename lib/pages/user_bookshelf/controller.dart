@@ -4,7 +4,7 @@ import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 
 class UserBookshelfController extends GetxController {
   final String uid;
@@ -21,7 +21,7 @@ class UserBookshelfController extends GetxController {
   }
 
   void getPage() async {
-    final data = await Api.getBookshelfFromUser(uid: uid);
+    final data = await ApiService.instance.getBookshelfFromUser(uid: uid);
     switch (data) {
       case Success():
         {

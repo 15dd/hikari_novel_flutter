@@ -3,7 +3,7 @@ import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 import 'package:hikari_novel_flutter/models/novel_detail.dart';
 import 'package:hikari_novel_flutter/models/recommend_block.dart';
 import 'package:hikari_novel_flutter/models/reply_item.dart';
-import 'package:hikari_novel_flutter/network/api.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
@@ -22,7 +22,7 @@ import '../models/user_info.dart';
 ///此部分的代码基本都是沿用之前的逻辑，然后用AI转化了下
 class Parser {
   static List<NovelCover> parseToList(String htmlContent) {
-    final node = Api.wenku8Node.node.replaceAll("https://", "");
+    final node = ApiService.instance.wenku8Node.node.replaceAll("https://", "");
     final List<NovelCover> result = [];
     final Document document = parse(htmlContent);
 

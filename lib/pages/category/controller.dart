@@ -3,7 +3,7 @@ import 'package:hikari_novel_flutter/models/resource.dart';
 
 import '../../base/base_select_list_page_controller.dart';
 import '../../models/novel_cover.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../network/parser.dart';
 
 class CategoryController extends BaseSelectListPageController<NovelCover> {
@@ -24,7 +24,7 @@ class CategoryController extends BaseSelectListPageController<NovelCover> {
   }
 
   @override
-  Future<Resource> getData(int index) => Api.getNovelByCategory(category: category.value, sort: sortValue, index: index);
+  Future<Resource> getData(int index) => ApiService.instance.getNovelByCategory(category: category.value, sort: sortValue, index: index);
 
   @override
   List<NovelCover> getParser(String html) => Parser.parseToList(html);

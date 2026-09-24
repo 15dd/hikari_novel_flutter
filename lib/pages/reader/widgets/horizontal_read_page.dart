@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../network/request.dart';
+import '../../../common/constants.dart';
 import 'paper_curl_pager.dart';
 
 class HorizontalReadPage extends StatefulWidget {
@@ -427,7 +427,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
         onLongPress: () => widget.onViewImage(imageIndex),
         child: CachedNetworkImage(
           imageUrl: (pages[imageIndex] as ImagePage).url,
-          httpHeaders: Request.userAgent,
+          httpHeaders: kUserAgent,
           fit: BoxFit.contain,
           progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
           errorWidget: (context, url, error) => Center(child: Column(children: [Icon(Icons.error_outline), Text(error.toString())])),

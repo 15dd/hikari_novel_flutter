@@ -19,7 +19,7 @@ import '../../models/cat_chapter.dart';
 import '../../models/dual_page_mode.dart';
 import '../../models/page_state.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 
@@ -216,12 +216,12 @@ class NovelDetailController extends GetxController with GetSingleTickerProviderS
   Future<void> getNovelDetail() async {
     late NovelDetail data;
 
-    final nd = await Api.getNovelDetail(aid: aid);
+    final nd = await ApiService.instance.getNovelDetail(aid: aid);
 
     switch (nd) {
       case Success():
         data = Parser.getNovelDetail(nd.data);
-        final cat = await Api.getCatalogue(aid: aid);
+        final cat = await ApiService.instance.getCatalogue(aid: aid);
         switch (cat) {
           case Success():
             {
@@ -270,7 +270,7 @@ class NovelDetailController extends GetxController with GetSingleTickerProviderS
   void addToBookshelf() async {
     if (_isAdding) return;
     _isAdding = true;
-    final result = await Api.addNovel(aid: aid);
+    final result = await ApiService.instance.addNovel(aid: aid);
     switch (result) {
       case Success():
         {
@@ -303,7 +303,7 @@ class NovelDetailController extends GetxController with GetSingleTickerProviderS
     _isRemoving = true;
     final bs = await DBService.instance.getAllBookshelf();
     final delId = bs.firstWhere((i) => i.aid == aid).bid;
-    final result = await Api.removeNovel(delid: delId);
+    final result = await ApiService.instance.removeNovel(delid: delId);
     switch (result) {
       case Success():
         {
@@ -318,7 +318,7 @@ class NovelDetailController extends GetxController with GetSingleTickerProviderS
   }
 
   void recommendThisNovel() async {
-    final result = await Api.novelVote(aid: aid);
+    final result = await ApiService.instance.novelVote(aid: aid);
     final string = switch (result) {
       Success() => Parser.novelVote(result.data),
       Error() => result.error.toString(),
@@ -327,7 +327,7 @@ class NovelDetailController extends GetxController with GetSingleTickerProviderS
   }
 
   Future<void> openWithBrowser() async {
-    if (!await launchUrl(Uri.parse("${Api.wenku8Node.node}/book/$aid.htm"))) {
+    if (!await launchUrl(Uri.parse("${ApiService.instance.wenku8Node.node}/book/$aid.htm"))) {
       showSnackBar(message: "unable_to_open_external_browser".tr, context: Get.context!);
     }
   }

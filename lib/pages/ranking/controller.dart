@@ -3,7 +3,7 @@ import 'package:hikari_novel_flutter/base/base_select_list_page_controller.dart'
 
 import '../../models/novel_cover.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../network/parser.dart';
 
 class RankingController extends BaseSelectListPageController<NovelCover> {
@@ -20,7 +20,7 @@ class RankingController extends BaseSelectListPageController<NovelCover> {
   }
 
   @override
-  Future<Resource> getData(int index) => Api.getNovelByRanking(ranking: arg.value, index: index);
+  Future<Resource> getData(int index) => ApiService.instance.getNovelByRanking(ranking: arg.value, index: index);
 
   @override
   List<NovelCover> getParser(String html) => Parser.parseToList(html);

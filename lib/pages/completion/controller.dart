@@ -4,7 +4,7 @@ import 'package:hikari_novel_flutter/models/page_state.dart';
 
 import '../../models/novel_cover.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../network/parser.dart';
 
 class CompletionController extends BaseListPageController<NovelCover> {
@@ -13,7 +13,7 @@ class CompletionController extends BaseListPageController<NovelCover> {
 
   @override
   Future<Resource> getData(int index) {
-    return Api.getCompletionNovel(index: index);
+    return ApiService.instance.getCompletionNovel(index: index);
   }
 
   @override

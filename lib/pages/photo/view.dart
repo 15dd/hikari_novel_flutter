@@ -5,7 +5,7 @@ import 'package:hikari_novel_flutter/pages/photo/controller.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-import '../../network/request.dart';
+import '../../common/constants.dart';
 
 class PhotoPage extends StatelessWidget {
   PhotoPage({super.key});
@@ -33,7 +33,7 @@ class PhotoPage extends StatelessWidget {
                   scrollPhysics: const BouncingScrollPhysics(),
                   itemCount: Get.arguments["list"].length,
                   builder: (_, index) {
-                    return PhotoViewGalleryPageOptions(imageProvider: CachedNetworkImageProvider(Get.arguments["list"][index], headers: Request.userAgent));
+                    return PhotoViewGalleryPageOptions(imageProvider: CachedNetworkImageProvider(Get.arguments["list"][index], headers: kUserAgent));
                   },
                   loadingBuilder: (context, progress) => Center(
                     child: Center(
@@ -71,7 +71,7 @@ class PhotoPage extends StatelessWidget {
               ],
             )
           : PhotoView(
-              imageProvider: CachedNetworkImageProvider(Get.arguments["url"], headers: Request.userAgent),
+              imageProvider: CachedNetworkImageProvider(Get.arguments["url"], headers: kUserAgent),
               loadingBuilder: (context, progress) => Center(
                 child: Center(
                   child: CircularProgressIndicator(

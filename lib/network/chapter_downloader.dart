@@ -2,8 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:enough_convert/enough_convert.dart';
-import 'package:hikari_novel_flutter/network/api.dart';
-import 'package:hikari_novel_flutter/network/request.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../common/log.dart';
@@ -11,7 +10,7 @@ import '../models/common/charset_type.dart';
 import '../models/common/wenku8_node.dart';
 
 class ChapterDownloader {
-  final Dio _dio = Request.dio;
+  final Dio _dio = ApiService.instance.dio;
 
   // 存储取消令牌：taskId -> CancelToken
   final Map<String, CancelToken> _cancelTokens = {};
@@ -83,18 +82,18 @@ class ChapterDownloader {
       }
       final savePath = "${cacheDir.path}/${aid}_$cid.txt";
 
-      var url = "${Api.wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid";
+      var url = "${ApiService.instance.wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid";
       url += "?";
 
       // 设置编码格式
-      switch (Api.charsetType) {
+      switch (ApiService.instance.charsetType) {
         case CharsetType.gbk:
           url += "charset=gbk";
         case CharsetType.big5Hkscs:
           url += "charset=big5";
       }
 
-      Log.d("$url ${Api.charsetType.name}");
+      Log.d("$url ${ApiService.instance.charsetType.name}");
 
       // 发起网络请求获取章节内容
       final Response response = await _dio.get(
@@ -115,7 +114,7 @@ class ChapterDownloader {
 
       // 解码
       String content;
-      switch (Api.charsetType) {
+      switch (ApiService.instance.charsetType) {
         case CharsetType.gbk:
           {
             content = GbkCodec().decode(response.data as Uint8List);

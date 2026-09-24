@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:hikari_novel_flutter/network/request.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
 import 'package:hikari_novel_flutter/service/local_storage_service.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -48,7 +48,7 @@ class Migration {
 
   static void fromTwoToThree() {
     LocalStorageService.instance.setCookie(null);
-    Request.deleteCookie();
+    ApiService.instance.deleteCookie();
   }
 
   static void fromThreeToFour(AppDatabase appDatabase) {

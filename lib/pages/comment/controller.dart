@@ -5,7 +5,7 @@ import 'package:hikari_novel_flutter/base/base_list_page_controller.dart';
 import 'package:hikari_novel_flutter/models/comment_item.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/api.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
 import 'package:hikari_novel_flutter/network/parser.dart';
 
 class CommentController extends BaseListPageController<CommentItem> with GetSingleTickerProviderStateMixin {
@@ -23,7 +23,7 @@ class CommentController extends BaseListPageController<CommentItem> with GetSing
   List<CommentItem> getParser(String html) => Parser.getComment(html);
 
   @override
-  Future<Resource> getData(int index) => Api.getComment(aid: aid, index: index);
+  Future<Resource> getData(int index) => ApiService.instance.getComment(aid: aid, index: index);
 
   bool _isFabVisible = true;
   late final AnimationController _fabAnimationCtr;
@@ -65,7 +65,7 @@ class CommentController extends BaseListPageController<CommentItem> with GetSing
       return "send_comment_tip_2".tr;
     }
 
-    final result = await Api.sendComment(aid: aid, title: commentTitleController.text, content: commentContentController.text);
+    final result = await ApiService.instance.sendComment(aid: aid, title: commentTitleController.text, content: commentContentController.text);
     commentContentController.clear();
     switch (result) {
       case Success():

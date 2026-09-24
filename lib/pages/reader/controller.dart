@@ -24,7 +24,7 @@ import '../../common/database/database.dart';
 import '../../common/log.dart';
 import '../../models/cat_volume.dart';
 import '../../models/page_state.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 import 'widgets/paper_curl_pager.dart';
@@ -211,7 +211,7 @@ class ReaderController extends GetxController {
   }
 
   Future<void> _getContentByNetwork() async {
-    final result = await Api.getNovelContent(aid: aid, cid: cid);
+    final result = await ApiService.instance.getNovelContent(aid: aid, cid: cid);
     switch (result) {
       case Success():
         {

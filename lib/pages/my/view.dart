@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/common/constants.dart';
-import 'package:hikari_novel_flutter/network/request.dart';
 import 'package:hikari_novel_flutter/pages/my/controller.dart';
 import 'package:hikari_novel_flutter/router/app_sub_router.dart';
 
@@ -46,7 +45,7 @@ class MyPage extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: controller.userInfo.value == null
                     ? const CircleAvatar()
-                    : CircleAvatar(backgroundImage: CachedNetworkImageProvider(controller.userInfo.value!.avatar, headers: Request.userAgent)),
+                    : CircleAvatar(backgroundImage: CachedNetworkImageProvider(controller.userInfo.value!.avatar, headers: kUserAgent)),
               ),
             ),
             const SizedBox(width: 2),
