@@ -12,8 +12,8 @@ class AppSubRouter {
   //子路由Key
   static final GlobalKey<NavigatorState>? subNavigatorKey = Get.nestedKey(subNavigatorId);
 
-  static void _toContentPage(String name, {dynamic arg, bool replace = false}) {
-    if (currentContentRouteName == name || replace) {
+  static void _toContentPage(String name, {dynamic arg}) {
+    if (currentContentRouteName == name) {
       Get.offAndToNamed(name, arguments: arg, id: subNavigatorId);
     } else {
       Get.toNamed(name, arguments: arg, id: subNavigatorId);

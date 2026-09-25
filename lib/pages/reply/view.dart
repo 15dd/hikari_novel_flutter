@@ -15,7 +15,7 @@ class ReplyPage extends StatelessWidget {
   late final ReplyController controller;
 
   ReplyPage({super.key, required this.aid, required this.rid}) {
-    controller = Get.put(ReplyController(aid: aid, rid: rid));
+    controller = Get.put(ReplyController(aid: aid, rid: rid), tag: rid);
   }
 
   @override

@@ -429,10 +429,10 @@ packages:
     dependency: transitive
     description:
       name: file_picker_darwin
-      sha256: deb3ff69d58656b885c85bc1627f09ecb79860f272a5e7577149582ede4dce5d
+      sha256: "51aef9f4c80449c736e7cc02198675fda73689f0bd45a84da642cfeab0250d46"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.2"
   file_picker_linux:
     dependency: transitive
     description:
@@ -924,10 +924,10 @@ packages:
     dependency: transitive
     description:
       name: octo_image
-      sha256: "34faa6639a78c7e3cbe79be6f9f96535867e879748ade7d17c9b1ae7536293bd"
+      sha256: "66e8f59a538a9f9f53141bc22ec0a12f8e85f2ca3bfcacab6dd30315b2fc256d"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   package_config:
     dependency: transitive
     description:
@@ -1148,10 +1148,10 @@ packages:
     dependency: transitive
     description:
       name: sentry
-      sha256: bf80a571e370aad3f68b5c26d43f31cc230a084c250fb3138a83da6032ba0c01
+      sha256: "40a247686af64e497df29ab0de1303a20ca55a2e3c7c7e39b989fac47dcadf84"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "9.30.0"
+    version: "9.30.1"
   shelf:
     dependency: transitive
     description:
