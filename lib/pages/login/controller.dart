@@ -13,7 +13,7 @@ import 'package:hikari_novel_flutter/service/api_service.dart';
 
 import '../../common/database/database.dart';
 import '../../models/resource.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 

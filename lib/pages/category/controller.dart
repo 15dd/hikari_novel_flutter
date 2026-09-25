@@ -4,7 +4,7 @@ import 'package:hikari_novel_flutter/models/resource.dart';
 import '../../base/base_select_list_page_controller.dart';
 import '../../models/novel_cover.dart';
 import '../../service/api_service.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 
 class CategoryController extends BaseSelectListPageController<NovelCover> {
   RxString category = "please_select".tr.obs;

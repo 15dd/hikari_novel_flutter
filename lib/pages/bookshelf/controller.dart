@@ -4,7 +4,7 @@ import 'package:hikari_novel_flutter/models/bookshelf.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/service/api_service.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 import 'package:hikari_novel_flutter/pages/main/controller.dart';
 
 import '../../common/database/database.dart';

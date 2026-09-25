@@ -5,7 +5,7 @@ import 'package:hikari_novel_flutter/widgets/state_page.dart';
 
 import '../models/page_state.dart';
 import '../models/resource.dart';
-import '../network/parser.dart';
+import '../parser/parser.dart';
 
 abstract class BaseListPageController<T> extends GetxController {
   /// ###### 页面初始状态

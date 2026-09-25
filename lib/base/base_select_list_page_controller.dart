@@ -5,7 +5,7 @@ import 'package:hikari_novel_flutter/widgets/state_page.dart';
 
 import '../models/page_state.dart';
 import '../models/resource.dart';
-import '../network/parser.dart';
+import '../parser/parser.dart';
 
 abstract class BaseSelectListPageController<T> extends GetxController {
   final EasyRefreshController easyRefreshController = EasyRefreshController();

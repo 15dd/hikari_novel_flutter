@@ -12,7 +12,7 @@ import 'package:hikari_novel_flutter/common/extension.dart';
 import 'package:hikari_novel_flutter/models/dual_page_mode.dart';
 import 'package:hikari_novel_flutter/models/reader_direction.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 import 'package:hikari_novel_flutter/pages/novel_detail/controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;

@@ -6,7 +6,7 @@ import 'package:hikari_novel_flutter/models/reply_item.dart';
 import '../../models/page_state.dart';
 import '../../models/resource.dart';
 import '../../service/api_service.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 
 class ReplyController extends BaseListPageController<ReplyItem> with GetSingleTickerProviderStateMixin {
   final String aid;

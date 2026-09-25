@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/novel_cover.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 
 import '../../common/database/database.dart';
 import '../../service/api_service.dart';

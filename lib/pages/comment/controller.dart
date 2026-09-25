@@ -6,7 +6,7 @@ import 'package:hikari_novel_flutter/models/comment_item.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/service/api_service.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 
 class CommentController extends BaseListPageController<CommentItem> with GetSingleTickerProviderStateMixin {
   final String aid;

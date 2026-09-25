@@ -5,7 +5,7 @@ import 'package:hikari_novel_flutter/models/page_state.dart';
 import '../../models/recommend_block.dart';
 import '../../models/resource.dart';
 import '../../service/api_service.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 
 class RecommendController extends GetxController {
   final RxList<RecommendBlock> data = RxList();

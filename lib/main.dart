@@ -10,6 +10,7 @@ import 'package:hikari_novel_flutter/common/app_translations.dart';
 import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/common/util.dart';
 import 'package:hikari_novel_flutter/service/api_service.dart';
+import 'package:hikari_novel_flutter/service/chapter_downloader_service.dart';
 import 'package:hikari_novel_flutter/router/app_pages.dart';
 import 'package:hikari_novel_flutter/router/route_path.dart';
 import 'package:hikari_novel_flutter/service/db_service.dart';
@@ -30,6 +31,7 @@ void main() async {
 
   await Get.put(LocalStorageService()).init();
   Get.put(ApiService());
+  Get.put(ChapterDownloaderService());
   Get.put(DBService()).init();
   await Get.put(TtsService()).init();
 

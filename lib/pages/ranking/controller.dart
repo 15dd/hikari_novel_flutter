@@ -4,7 +4,7 @@ import 'package:hikari_novel_flutter/base/base_select_list_page_controller.dart'
 import '../../models/novel_cover.dart';
 import '../../models/resource.dart';
 import '../../service/api_service.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 
 class RankingController extends BaseSelectListPageController<NovelCover> {
   RxString ranking = "please_select".tr.obs;
