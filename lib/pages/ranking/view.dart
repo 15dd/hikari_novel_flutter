@@ -79,84 +79,84 @@ class RankingView extends StatelessWidget {
         child: Text("last_update".tr),
         onTap: () {
           controller.ranking.value = "last_update".tr;
+          controller.arg.value = "lastupdate";
         },
       ),
       PopupMenuItem(
         child: Text("post_date".tr),
         onTap: () {
           controller.ranking.value = "post_date".tr;
+          controller.arg.value = "postdate";
         },
       ),
       PopupMenuItem(
         child: Text("all_visit".tr),
         onTap: () {
           controller.ranking.value = "all_visit".tr;
+          controller.arg.value = "allvisit";
         },
       ),
       PopupMenuItem(
         child: Text("all_vote".tr),
         onTap: () {
           controller.ranking.value = "all_vote".tr;
+          controller.arg.value = "allvote";
         },
       ),
       PopupMenuItem(
         child: Text("good_num".tr),
         onTap: () {
           controller.ranking.value = "good_num".tr;
+          controller.arg.value = "goodnum";
         },
       ),
       PopupMenuItem(
         child: Text("day_visit".tr),
         onTap: () {
           controller.ranking.value = "day_visit".tr;
+          controller.arg.value = "dayvisit";
         },
       ),
       PopupMenuItem(
         child: Text("day_vote".tr),
         onTap: () {
           controller.ranking.value = "day_vote".tr;
+          controller.arg.value = "dayvote";
         },
       ),
       PopupMenuItem(
         child: Text("month_visit".tr),
         onTap: () {
           controller.ranking.value = "month_visit".tr;
+          controller.arg.value = "monthvisit";
         },
       ),
       PopupMenuItem(
         child: Text("month_vote".tr),
         onTap: () {
           controller.ranking.value = "month_vote".tr;
+          controller.arg.value = "monthvote";
         },
       ),
       PopupMenuItem(
         child: Text("week_visit".tr),
         onTap: () {
           controller.ranking.value = "week_visit".tr;
+          controller.arg.value = "weekvisit";
         },
       ),
       PopupMenuItem(
         child: Text("week_vote".tr),
         onTap: () {
           controller.ranking.value = "week_vote".tr;
+          controller.arg.value = "weekvote";
         },
       ),
       PopupMenuItem(
         child: Text("size".tr),
         onTap: () {
           controller.ranking.value = "size".tr;
-        },
-      ),
-      PopupMenuItem(
-        child: Text("animated".tr),
-        onTap: () {
-          controller.ranking.value = "animated".tr;
-        },
-      ),
-      PopupMenuItem(
-        child: Text("not_animated".tr),
-        onTap: () {
-          controller.ranking.value = "not_animated".tr;
+          controller.arg.value = "size";
         },
       ),
     ];

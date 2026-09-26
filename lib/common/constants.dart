@@ -3,6 +3,12 @@ import 'package:get/get.dart';
 
 const String kAppName = "Hikari Novel";
 
+const String kLatestUrl = "https://api.github.com/repos/15dd/hikari_novel_flutter/releases/latest";
+
+const Map<String, String> kUserAgent = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
+};
+
 const int kStatusBarPadding = 30;
 
 const double kSmallIconSize = 16.0;

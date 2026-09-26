@@ -6,7 +6,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../models/common/language.dart';
-import '../network/api.dart';
+import '../service/api_service.dart';
 
 class Util {
   static String getDateTime(String dateStr) {
@@ -36,7 +36,7 @@ class Util {
   }
 
   static Future<void> checkUpdate(bool mustNotification) async {
-    final response = await Api.fetchLatestRelease();
+    final response = await ApiService.instance.fetchLatestRelease();
     if (response is Success) {
       final data = response.data;
       final remoteVer = data["tag_name"]; // e.g. "1.2.3-beta.2+2"

@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/bookshelf.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/api.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 import 'package:hikari_novel_flutter/pages/main/controller.dart';
 
 import '../../common/database/database.dart';
@@ -43,7 +43,7 @@ class BookshelfController extends GetxController with GetTickerProviderStateMixi
   }
 
   Future<bool> _insertAll(int index) async {
-    final result = await Api.getBookshelf(classId: index);
+    final result = await ApiService.instance.getBookshelf(classId: index);
     switch (result) {
       case Success():
         {
@@ -100,9 +100,9 @@ class BookshelfContentController extends GetxController {
     bookshelf.value!.list.firstWhere((v) => v.aid == aid).isSelected.value = !selected;
   }
 
-  Future removeNovelFromList() => Api.removeNovelFromList(list: getSelectedNovel(), classId: int.parse(classId));
+  Future removeNovelFromList() => ApiService.instance.removeNovelFromList(list: getSelectedNovel(), classId: int.parse(classId));
 
-  Future moveNovelToOther(int newClassId) => Api.moveNovelToOther(list: getSelectedNovel(), classId: int.parse(classId), newClassId: newClassId);
+  Future moveNovelToOther(int newClassId) => ApiService.instance.moveNovelToOther(list: getSelectedNovel(), classId: int.parse(classId), newClassId: newClassId);
 
   List<String> getSelectedNovel() => bookshelf.value!.list.where((v) => v.isSelected.value == true).map((i) => i.bid).toList();
 

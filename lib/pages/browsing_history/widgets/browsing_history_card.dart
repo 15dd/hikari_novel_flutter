@@ -4,7 +4,6 @@ import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/common/util.dart';
 
 import '../../../models/browsing_history.dart';
-import '../../../network/request.dart';
 
 class BrowsingHistoryCard extends StatelessWidget {
   final BrowsingHistory bh;
@@ -31,7 +30,7 @@ class BrowsingHistoryCard extends StatelessWidget {
                   aspectRatio: 9 / 13,
                   child: CachedNetworkImage(
                     imageUrl: bh.img,
-                    httpHeaders: Request.userAgent,
+                    httpHeaders: kUserAgent,
                     fit: BoxFit.cover,
                     progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),

@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/novel_cover.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 
 import '../../common/database/database.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../service/db_service.dart';
 import '../../widgets/state_page.dart';
 
@@ -69,9 +69,9 @@ class SearchController extends GetxController {
 
     Resource result;
     if (searchMode.value == 0) {
-      result = await Api.searchNovelByTitle(title: keywordController.text, index: _index);
+      result = await ApiService.instance.searchNovelByTitle(title: keywordController.text, index: _index);
     } else {
-      result = await Api.searchNovelByAuthor(author: keywordController.text, index: _index);
+      result = await ApiService.instance.searchNovelByAuthor(author: keywordController.text, index: _index);
     }
 
     switch (result) {

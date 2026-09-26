@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/models/bookshelf.dart';
 import 'package:hikari_novel_flutter/models/novel_cover.dart';
-import 'package:hikari_novel_flutter/network/request.dart';
 import 'package:hikari_novel_flutter/router/app_sub_router.dart';
 
 class NovelCoverCard extends StatelessWidget {
@@ -27,7 +26,7 @@ class NovelCoverCard extends StatelessWidget {
               aspectRatio: 9 / 13.5,
               child: CachedNetworkImage(
                 imageUrl: novelCover.imageUrl!,
-                httpHeaders: Request.userAgent,
+                httpHeaders: kUserAgent,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                 errorWidget: (context, url, error) => Column(children: [Icon(Icons.error_outline), Text(error.toString())]),
@@ -91,7 +90,7 @@ class BookshelfCoverCard extends StatelessWidget {
                   aspectRatio: 9 / 13.5,
                   child: CachedNetworkImage(
                     imageUrl: bookshelfNovelInfo.img,
-                    httpHeaders: Request.userAgent,
+                    httpHeaders: kUserAgent,
                     fit: BoxFit.cover,
                     progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Column(children: [Icon(Icons.error_outline), Text(error.toString())]),

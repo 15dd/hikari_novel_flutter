@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +7,13 @@ import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/main.dart';
 import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
-import 'package:hikari_novel_flutter/network/request.dart';
+import 'package:hikari_novel_flutter/common/constants.dart';
 import 'package:hikari_novel_flutter/router/route_path.dart';
+import 'package:hikari_novel_flutter/service/api_service.dart';
 
 import '../../common/database/database.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
-import '../../network/parser.dart';
+import '../../parser/parser.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 
@@ -24,17 +23,13 @@ class LoginController extends GetxController {
   final CookieManager cookieManager = CookieManager.instance(webViewEnvironment: webViewEnvironment);
   InAppWebViewController? inAppWebViewController;
   final GlobalKey webViewKey = GlobalKey();
-  final InAppWebViewSettings settings = InAppWebViewSettings(
-    isInspectable: kDebugMode,
-    userAgent: Request.userAgent[HttpHeaders.userAgentHeader],
-    javaScriptEnabled: true,
-  );
+  final InAppWebViewSettings settings = InAppWebViewSettings(isInspectable: kDebugMode, userAgent: kUserAgent["User-Agent"], javaScriptEnabled: true);
   RxString currentUrl = "".obs;
 
   Rx<PageState> pageState = PageState.success.obs;
   String errorMsg = "";
 
-  String get url => "${Api.wenku8Node.node}/login.php";
+  String get url => "${ApiService.instance.wenku8Node.node}/login.php";
 
   @override
   void onInit() {
@@ -56,14 +51,14 @@ class LoginController extends GetxController {
         String cookie = "jieqiUserInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiUserInfo").value};";
         cookie += "jieqiVisitInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiVisitInfo").value}";
         LocalStorageService.instance.setCookie(cookie);
-        Request.initCookie();
+        ApiService.instance.initCookie();
 
         try {
           await _getUserInfo();
           await _refreshBookshelf();
         } catch (e) {
           LocalStorageService.instance.setCookie(null); //清空cookie
-          Request.deleteCookie();
+          ApiService.instance.deleteCookie();
 
           final controller = inAppWebViewController;
           if (controller != null) {
@@ -83,7 +78,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> _getUserInfo() async {
-    final data = await Api.getUserInfo();
+    final data = await ApiService.instance.getUserInfo();
     switch (data) {
       case Success():
         LocalStorageService.instance.setUserInfo(Parser.getUserInfo(data.data));
@@ -104,7 +99,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> _insertAll(int index) async {
-    final result = await Api.getBookshelf(classId: index);
+    final result = await ApiService.instance.getBookshelf(classId: index);
     switch (result) {
       case Success():
         {

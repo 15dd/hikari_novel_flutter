@@ -4,8 +4,8 @@ import 'package:hikari_novel_flutter/models/page_state.dart';
 
 import '../../models/recommend_block.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
-import '../../network/parser.dart';
+import '../../service/api_service.dart';
+import '../../parser/parser.dart';
 
 class RecommendController extends GetxController {
   final RxList<RecommendBlock> data = RxList();
@@ -22,7 +22,7 @@ class RecommendController extends GetxController {
   Future<IndicatorResult> getRecommend() async {
     pageState.value = PageState.loading;
 
-    final result = await Api.getRecommend();
+    final result = await ApiService.instance.getRecommend();
     switch (result) {
       case Success():
         data.clear();

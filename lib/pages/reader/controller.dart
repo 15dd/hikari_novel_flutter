@@ -12,7 +12,7 @@ import 'package:hikari_novel_flutter/common/extension.dart';
 import 'package:hikari_novel_flutter/models/dual_page_mode.dart';
 import 'package:hikari_novel_flutter/models/reader_direction.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
-import 'package:hikari_novel_flutter/network/parser.dart';
+import 'package:hikari_novel_flutter/parser/parser.dart';
 import 'package:hikari_novel_flutter/pages/novel_detail/controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -24,7 +24,7 @@ import '../../common/database/database.dart';
 import '../../common/log.dart';
 import '../../models/cat_volume.dart';
 import '../../models/page_state.dart';
-import '../../network/api.dart';
+import '../../service/api_service.dart';
 import '../../service/db_service.dart';
 import '../../service/local_storage_service.dart';
 import 'widgets/paper_curl_pager.dart';
@@ -211,7 +211,7 @@ class ReaderController extends GetxController {
   }
 
   Future<void> _getContentByNetwork() async {
-    final result = await Api.getNovelContent(aid: aid, cid: cid);
+    final result = await ApiService.instance.getNovelContent(aid: aid, cid: cid);
     switch (result) {
       case Success():
         {

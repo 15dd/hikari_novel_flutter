@@ -14,7 +14,7 @@ class CommentPage extends StatelessWidget {
   late final CommentController controller;
 
   CommentPage({super.key, required this.aid}) {
-    controller = Get.put(CommentController(aid: aid));
+    controller = Get.put(CommentController(aid: aid), tag: aid);
   }
 
   @override

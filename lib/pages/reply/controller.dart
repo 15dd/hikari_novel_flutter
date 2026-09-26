@@ -5,8 +5,8 @@ import 'package:hikari_novel_flutter/models/reply_item.dart';
 
 import '../../models/page_state.dart';
 import '../../models/resource.dart';
-import '../../network/api.dart';
-import '../../network/parser.dart';
+import '../../service/api_service.dart';
+import '../../parser/parser.dart';
 
 class ReplyController extends BaseListPageController<ReplyItem> with GetSingleTickerProviderStateMixin {
   final String aid;
@@ -20,7 +20,7 @@ class ReplyController extends BaseListPageController<ReplyItem> with GetSingleTi
   Rx<PageState> pageState = Rx(PageState.loading);
 
   @override
-  Future<Resource> getData(int index) => Api.getReply(rid: rid, index: index);
+  Future<Resource> getData(int index) => ApiService.instance.getReply(rid: rid, index: index);
 
   @override
   List<ReplyItem> getParser(String html) => Parser.getReply(html);
@@ -61,7 +61,7 @@ class ReplyController extends BaseListPageController<ReplyItem> with GetSingleTi
       return "word_number_too_low_tip".tr;
     }
 
-    final result = await Api.sendReply(aid: aid, rid: rid, content: replyContentController.text);
+    final result = await ApiService.instance.sendReply(aid: aid, rid: rid, content: replyContentController.text);
     replyContentController.clear();
     switch (result) {
       case Success():
