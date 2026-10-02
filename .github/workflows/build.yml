@@ -3,7 +3,7 @@ name: Build Flutter APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 支持手动点击运行（手机操作重点）
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,8 +15,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          # 这里你后续如果编译报错，可以改成项目要求的flutter版本
-          flutter-version: '3.19.0'
+          flutter-version: '3.44.0'
           channel: 'stable'
 
       - name: Use pub国内镜像加速
