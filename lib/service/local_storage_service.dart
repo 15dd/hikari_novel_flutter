@@ -105,7 +105,7 @@ class LocalStorageService extends GetxService {
 
   void setWenku8Node(Wenku8Node value) => _setting.put(kWenku8Node, value.index);
 
-  Wenku8Node getWenku8Node() => Wenku8Node.values[_setting.get(kWenku8Node, defaultValue: Wenku8Node.wwwWenku8Cc.index)];
+  Wenku8Node getWenku8Node() => Wenku8Node.values[_setting.get(kWenku8Node, defaultValue: Wenku8Node.wwwWenku8Net.index)];
 
   ReaderDirection getReaderDirection() => ReaderDirection.values[_reader.get(kReaderDirection, defaultValue: ReaderDirection.upToDown.index)];
 

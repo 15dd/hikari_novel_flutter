@@ -33,7 +33,7 @@ class PhotoPage extends StatelessWidget {
                   scrollPhysics: const BouncingScrollPhysics(),
                   itemCount: Get.arguments["list"].length,
                   builder: (_, index) {
-                    return PhotoViewGalleryPageOptions(imageProvider: CachedNetworkImageProvider(Get.arguments["list"][index], headers: kHeader));
+                    return PhotoViewGalleryPageOptions(imageProvider: CachedNetworkImageProvider(Get.arguments["list"][index], headers: kUserAgent));
                   },
                   loadingBuilder: (context, progress) => Center(
                     child: Center(
@@ -71,7 +71,7 @@ class PhotoPage extends StatelessWidget {
               ],
             )
           : PhotoView(
-              imageProvider: CachedNetworkImageProvider(Get.arguments["url"], headers: kHeader),
+              imageProvider: CachedNetworkImageProvider(Get.arguments["url"], headers: kUserAgent),
               loadingBuilder: (context, progress) => Center(
                 child: Center(
                   child: CircularProgressIndicator(

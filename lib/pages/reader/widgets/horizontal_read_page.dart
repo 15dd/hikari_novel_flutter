@@ -427,7 +427,7 @@ class _HorizontalReadPageState extends State<HorizontalReadPage> with WidgetsBin
         onLongPress: () => widget.onViewImage(imageIndex),
         child: CachedNetworkImage(
           imageUrl: (pages[imageIndex] as ImagePage).url,
-          httpHeaders: kHeader,
+          httpHeaders: kUserAgent,
           fit: BoxFit.contain,
           progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
           errorWidget: (context, url, error) => Center(child: Column(children: [Icon(Icons.error_outline), Text(error.toString())])),

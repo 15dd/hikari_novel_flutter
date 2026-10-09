@@ -5,11 +5,8 @@ const String kAppName = "Hikari Novel";
 
 const String kLatestUrl = "https://api.github.com/repos/15dd/hikari_novel_flutter/releases/latest";
 
-const Map<String, String> kHeader = {
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-  "Sec-Fetch-Site": "same-origin",
-  "Sec-Fetch-Mode": "navigate",
-  "Sec-Fetch-Dest": "document"
+const Map<String, String> kUserAgent = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0",
 };
 
 const int kStatusBarPadding = 30;

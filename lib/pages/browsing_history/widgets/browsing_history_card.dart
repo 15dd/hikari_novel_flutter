@@ -30,7 +30,7 @@ class BrowsingHistoryCard extends StatelessWidget {
                   aspectRatio: 9 / 13,
                   child: CachedNetworkImage(
                     imageUrl: bh.img,
-                    httpHeaders: kHeader,
+                    httpHeaders: kUserAgent,
                     fit: BoxFit.cover,
                     progressIndicatorBuilder: (context, url, downloadProgress) => Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
                     errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),
