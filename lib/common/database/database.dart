@@ -28,9 +28,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> insertAllBookshelf(Iterable<BookshelfEntityData> data) => batch((b) => b.insertAll(bookshelfEntity, data));
 
-  Future<void> deleteAllBookshelf() => delete(bookshelfEntity).go();
-
-  Future<void> deleteDefaultBookshelf() => (delete(bookshelfEntity)..where((i) => i.classId.equals("0"))).go();
+  Future<void> deleteBookshelfByClassId(String classId) => (delete(bookshelfEntity)..where((i) => i.classId.equals(classId))).go();
 
   Stream<List<BookshelfEntityData>> getBookshelfByClassId(String classId) => (select(bookshelfEntity)..where((i) => i.classId.equals(classId))).watch();
 

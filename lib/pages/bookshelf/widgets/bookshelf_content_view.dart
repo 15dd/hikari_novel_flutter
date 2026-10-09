@@ -58,6 +58,16 @@ class BookshelfContentView extends StatelessWidget {
           ),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.loading, child: const LoadingPage())),
           Obx(() => Offstage(offstage: controller.pageState.value != PageState.empty, child: const EmptyPage())),
+          Obx(
+            () => Offstage(
+              offstage: controller.pageState.value != PageState.error,
+              child: ErrorMessage(
+                msg: controller.loadError.value ?? "",
+                action: controller.retry,
+                buttonText: "refresh",
+              ),
+            ),
+          ),
         ],
       ),
     );
