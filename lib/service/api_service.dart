@@ -60,7 +60,7 @@ class ApiService extends GetxService {
   }) {
     final String url =
         "${wenku8Node.node}/modules/article/toplist.php?sort=$ranking&page=$index";
-    return _client.get(url, charsetType: charsetType);
+    return _client.get(url, charsetType: charsetType, appendCharset: false);
   }
 
   /// 根据分类获取小说列表

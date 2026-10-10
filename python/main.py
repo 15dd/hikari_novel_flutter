@@ -2,7 +2,7 @@
 
 通过 curl_cffi 的 impersonate="chrome150" 模仿 Chrome 的 TLS/JA3 指纹与请求头，
 以通过 Cloudflare 的 Bot 检测。按应用的请求顺序串行访问首页、登录页、验证码、
-登录和用户信息，随后用同一会话拉取默认书架并随机抽一个分类试一次。打印每一步的状态和登录后的 Cookie。
+登录和用户信息，再用同一会话请求排行榜「最近更新」「最新入库」，随后拉取默认书架并随机抽一个分类试一次。打印每一步的状态和登录后的 Cookie。
 """
 
 import os
@@ -117,6 +117,28 @@ def login(session, checkcode):
     return False
 
 
+def load_ranking(session, sort, page=1):
+    url = f"{HOST}/modules/article/toplist.php?sort={sort}&page={page}"
+    response = session.get(url, timeout=30)
+    show(f"排行榜 {sort}", response)
+    mitigated = response.headers.get("cf-mitigated", "")
+    if mitigated:
+        print(f"  cf-mitigated: {mitigated}")
+    html = text_of(response)
+    if "challenge" in mitigated.lower():
+        print("  人机验证：响应头 cf-mitigated 含 challenge")
+        return
+    if looks_like_cloudflare(html):
+        print("  Cloudflare 检查页：榜单请求被拦截")
+        return
+    if 'id="content"' not in html and "id='content'" not in html:
+        print(f"  {hint(html)}")
+        return
+    style = "width:373px;height:136px;float:left;margin:5px 0px 5px 5px;"
+    count = html.count(style)
+    print(f"  书目数量: {count}")
+
+
 def load_bookshelves(session, class_id):
     # 注意：bookcase.php 带 charset=gbk 参数会触发 Cloudflare WAF 403，
     # 因此这里不带 charset (页面本身仍是 GBK 编码)
@@ -163,6 +185,10 @@ def main():
     response = session.get(f"{HOST}/userdetail.php?charset=gbk", timeout=30)
     show("用户信息", response)
     print(f"  {hint(text_of(response))}")
+
+    load_ranking(session, "lastupdate")
+    time.sleep(1.0)
+    load_ranking(session, "postdate")
 
     load_bookshelves(session, 0)
     time.sleep(1.0)
