@@ -8,7 +8,7 @@ Android APK 构建工具及流程的简单说明
 scoop install cmake flutter rustup nasm llvm ninja
 ```
 
-- `nasm`: CMake 编译 BoringSSL 汇编。缺少时会报 `No CMAKE_ASM_NASM_COMPILER could be found`
+- `nasm`: CMake 编译 BoringSSL 的 x86 汇编。缺少时会报 `No CMAKE_ASM_NASM_COMPILER could be found`
 - `llvm`: `bindgen` 读取 BoringSSL 头文件时需要 `libclang.dll`。缺少时会报 `Unable to find libclang`
 - `ninja`: Android 构建把 `CMAKE_GENERATOR` 设为 Ninja, 以避免 CMake 走 Visual Studio 并改用其中自带的旧 NDK
 
@@ -89,8 +89,34 @@ flutter build apk
 flutter build apk --target-platform android-arm64
 ```
 
-rust 桥接层引入了不少复杂度.
+libhikari_http.so 编译报错优先查本机环境和工具配置,
 
-报错优先查本机环境和工具配置, 确保环境变量修改后重启 `cmd` 或 `ide`
+确保环境变量修改后重启 `cmd` 或 `ide`
 
 若是构建流程问题, 哪儿报错改哪儿, good luck :D
+
+---
+
+## TODOs
+
+- 体感卡顿
+
+几处通信改成了串行, 且加了预热.
+
+以登录界面为例, login 时有明显卡顿/无响应的感觉.
+
+- 解决 rust 桥接层引入的构建流程复杂度
+
+真正拖慢环境不是 rust-flutter bridge, 而是 `wreq 0.16.1` 依赖的 `btls-sys 0.5.6`:
+
+它用 CMake 现场编 BoringSSL, 所以才需要 `nasm` & `Ninja`, 以及 bindgen 读头文件用的 `libclang`
+
+Android 还要再处理 NDK sysroot 里没有 clang 内置头 (stddef.h)
+
+鉴于本仓库不发布二进制, 要求用户自行编译, **现在 cmake->ninja->llvm->nasm 的构建流程太重了.**
+
+**目标是先收一个稳定版, 再按 ABI 打好 `libhikari_http.so` (以及 Windows 的 dll), 托管到 github release 页面**
+
+Cargokit 走预编译产物, 本机 flutter build apk 只做链接.
+
+把 nasm/llvm/ninja/LIBCLANG_PATH 从用户编译环境中拿掉, 以解决「不发布二进制、又要浏览器指纹、又要用户好编译」的不可能三角.

@@ -94,7 +94,7 @@
 - ##### 编译
   1. 克隆此仓库
   2. 安装flutter，参考 [flutter.dev](https://flutter.dev/docs/get-started/install)
-  3. 准备 Rust 网络层的编译工具，见 [DEVELOPMENT.windows.md](./readme/DEVELOPMENT.windows.md)
+  3. 准备 Rust 网络层的编译工具。Android 见 [DEVELOPMENT.android.md](./readme/DEVELOPMENT.android.md)，iOS 见 [DEVELOPMENT.ios.md](./readme/DEVELOPMENT.ios.md)
   4. 编译出对应平台的安装包，如 `flutter build apk`
 
 - ##### 警告
