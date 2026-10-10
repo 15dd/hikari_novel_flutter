@@ -2,7 +2,7 @@
 
 通过 curl_cffi 的 impersonate="chrome150" 模仿 Chrome 的 TLS/JA3 指纹与请求头，
 以通过 Cloudflare 的 Bot 检测。按应用的请求顺序串行访问首页、登录页、验证码、
-登录和用户信息，再用同一会话请求排行榜「最近更新」「最新入库」，随后拉取默认书架、目录和第一章正文，并随机抽一个分类试一次。打印每一步的状态和登录后的 Cookie。
+登录和用户信息，再用同一会话请求排行榜「最近更新」「最新入库」、分类「欢乐向」按更新，随后拉取默认书架、目录和第一章正文，并随机抽一个书架分类试一次。打印每一步的状态和登录后的 Cookie。
 """
 
 import os
@@ -139,6 +139,30 @@ def load_ranking(session, sort, page=1):
     print(f"  书目数量: {count}")
 
 
+def load_category(session, name, sort, page=1):
+    # 标签名按 GBK 百分号编码放进 t=。应用还会再附加 &charset=gbk，这里先不带。
+    # sort 0 是按更新，与应用「按更新查看」的 v=0 相同。
+    tag = "".join(f"%{byte:02X}" for byte in name.encode("gbk"))
+    url = f"{HOST}/modules/article/tags.php?t={tag}&v={sort}&page={page}"
+    response = session.get(url, timeout=30)
+    show(f"分类 {name}", response)
+    mitigated = response.headers.get("cf-mitigated", "")
+    if mitigated:
+        print(f"  cf-mitigated: {mitigated}")
+    html = text_of(response)
+    if "challenge" in mitigated.lower():
+        print("  人机验证：响应头 cf-mitigated 含 challenge")
+        return
+    if looks_like_cloudflare(html):
+        print("  Cloudflare 检查页：分类请求被拦截")
+        return
+    if 'id="content"' not in html and "id='content'" not in html:
+        print(f"  {hint(html)}")
+        return
+    style = "width:373px;height:136px;float:left;margin:5px 0px 5px 5px;"
+    print(f"  书目数量: {html.count(style)}")
+
+
 def load_bookshelves(session, class_id):
     # 注意：bookcase.php 带 charset=gbk 参数会触发 Cloudflare WAF 403，
     # 因此这里不带 charset (页面本身仍是 GBK 编码)
@@ -243,6 +267,8 @@ def main():
     load_ranking(session, "lastupdate")
     time.sleep(1.0)
     load_ranking(session, "postdate")
+    time.sleep(1.0)
+    load_category(session, "欢乐向", "0")
 
     load_bookshelves(session, 0)
     time.sleep(1.0)

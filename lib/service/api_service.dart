@@ -96,7 +96,7 @@ class ApiService extends GetxService {
     }
     String url =
         "${wenku8Node.node}/modules/article/tags.php?t=$category&v=$sort&page=$index";
-    return _client.get(url, charsetType: charsetType);
+    return _client.get(url, charsetType: charsetType, appendCharset: false);
   }
 
   /// 获取小说信息
