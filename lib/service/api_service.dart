@@ -104,14 +104,20 @@ class ApiService extends GetxService {
   Future<Resource> getNovelDetail({required String aid}) {
     final String url =
         "${wenku8Node.node}/modules/article/articleinfo.php?id=$aid";
-    return _client.get(url, charsetType: charsetType);
+    return _client.get(url, charsetType: charsetType, appendCharset: false);
   }
 
   /// 获取小说的章节目录
   /// - [aid] 小说的id
   Future<Resource> getCatalogue({required String aid}) {
-    final String url = "${wenku8Node.node}/modules/article/reader.php?aid=$aid";
-    return _client.get(url, charsetType: charsetType);
+    final node = wenku8Node.node;
+    final String url = "$node/modules/article/reader.php?aid=$aid";
+    return _client.get(
+      url,
+      charsetType: charsetType,
+      appendCharset: false,
+      headers: [HttpHeader(name: "referer", value: "$node/book/$aid.htm")],
+    );
   }
 
   /// 加入书库
@@ -380,9 +386,19 @@ class ApiService extends GetxService {
   /// - [aid] 小说id
   /// - [cid] 章节id
   Future<Resource> getNovelContent({required String aid, required String cid}) {
-    final String url =
-        "${wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid";
-    return _client.get(url, charsetType: charsetType);
+    final node = wenku8Node.node;
+    final String url = "$node/modules/article/reader.php?aid=$aid&cid=$cid";
+    return _client.get(
+      url,
+      charsetType: charsetType,
+      appendCharset: false,
+      headers: [
+        HttpHeader(
+          name: "referer",
+          value: "$node/modules/article/reader.php?aid=$aid",
+        ),
+      ],
+    );
   }
 
   /// 获取Github上面的最新版本

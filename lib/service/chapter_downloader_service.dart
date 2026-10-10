@@ -5,7 +5,6 @@ import 'package:hikari_novel_flutter/service/api_service.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../common/log.dart';
-import '../models/common/charset_type.dart';
 import '../models/common/wenku8_node.dart';
 import '../models/resource.dart';
 
@@ -82,12 +81,8 @@ class ChapterDownloaderService extends GetxService {
       }
       final savePath = "${cacheDir.path}/${aid}_$cid.txt";
 
-      final charset = switch (ApiService.instance.charsetType) {
-        CharsetType.gbk => "gbk",
-        CharsetType.big5Hkscs => "big5",
-      };
       final url =
-          "${ApiService.instance.wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid&charset=$charset";
+          "${ApiService.instance.wenku8Node.node}/modules/article/reader.php?aid=$aid&cid=$cid";
 
       Log.d("$url ${ApiService.instance.charsetType.name}");
 

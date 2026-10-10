@@ -2,7 +2,7 @@
 
 通过 curl_cffi 的 impersonate="chrome150" 模仿 Chrome 的 TLS/JA3 指纹与请求头，
 以通过 Cloudflare 的 Bot 检测。按应用的请求顺序串行访问首页、登录页、验证码、
-登录和用户信息，再用同一会话请求排行榜「最近更新」「最新入库」，随后拉取默认书架并随机抽一个分类试一次。打印每一步的状态和登录后的 Cookie。
+登录和用户信息，再用同一会话请求排行榜「最近更新」「最新入库」，随后拉取默认书架、目录和第一章正文，并随机抽一个分类试一次。打印每一步的状态和登录后的 Cookie。
 """
 
 import os
@@ -169,6 +169,60 @@ def load_bookshelves(session, class_id):
     print(f"  书名数量: {count}")
 
 
+def _blocked(response, html, label):
+    mitigated = response.headers.get("cf-mitigated", "")
+    if mitigated:
+        print(f"  cf-mitigated: {mitigated}")
+    if "challenge" in mitigated.lower():
+        print(f"  人机验证：{label}")
+        return True
+    if looks_like_cloudflare(html):
+        print(f"  Cloudflare 检查页：{label}")
+        return True
+    return False
+
+
+def load_reader(session, aid):
+    # articleinfo.php (详情), reader.php (目录) 带上书籍页 Referer, 接近从 /book/{aid}.htm 点进来
+    detail_url = f"{HOST}/modules/article/articleinfo.php?id={aid}"
+    response = session.get(detail_url, timeout=30)
+    show(f"详情 {aid}", response)
+    html = text_of(response)
+    if _blocked(response, html, "详情被拦截"):
+        return
+    if 'id="content"' in html or "id='content'" in html:
+        print('  含 id="content"')
+    else:
+        print(f"  {hint(html)}")
+
+    time.sleep(1.0)
+    book_url = f"{HOST}/book/{aid}.htm"
+    catalogue_url = f"{HOST}/modules/article/reader.php?aid={aid}"
+    response = session.get(catalogue_url, headers={"Referer": book_url}, timeout=30)
+    show(f"目录 {aid}", response)
+    html = text_of(response)
+    if _blocked(response, html, "目录被拦截"):
+        return
+    cids = re.findall(r"&cid=(\d+)", html)
+    if not cids:
+        print(f"  {hint(html)}")
+        return
+    print(f"  章节数量: {len(cids)}")
+
+    time.sleep(1.0)
+    cid = cids[0]
+    content_url = f"{HOST}/modules/article/reader.php?aid={aid}&cid={cid}"
+    response = session.get(content_url, headers={"Referer": catalogue_url}, timeout=30)
+    show(f"正文 {aid}/{cid}", response)
+    html = text_of(response)
+    if _blocked(response, html, "正文被拦截"):
+        return
+    if 'id="content"' not in html and "id='content'" not in html:
+        print(f"  {hint(html)}")
+        return
+    print('  含 id="content"')
+
+
 def main():
     if not USERNAME.strip() or not PASSWORD.strip():
         print("请先在 account.py 里填写 USERNAME 和 PASSWORD")
@@ -191,6 +245,8 @@ def main():
     load_ranking(session, "postdate")
 
     load_bookshelves(session, 0)
+    time.sleep(1.0)
+    load_reader(session, 3354)
     time.sleep(1.0)
     load_bookshelves(session, random.choice(range(1, 6)))
 
