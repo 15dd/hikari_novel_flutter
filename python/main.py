@@ -140,7 +140,7 @@ def load_ranking(session, sort, page=1):
 
 
 def load_category(session, name, sort, page=1):
-    # 标签名按 GBK 百分号编码放进 t=。应用还会再附加 &charset=gbk，这里先不带。
+    # 标签名按 GBK 百分号编码放进 t=，不附加 charset。
     # sort 0 是按更新，与应用「按更新查看」的 v=0 相同。
     tag = "".join(f"%{byte:02X}" for byte in name.encode("gbk"))
     url = f"{HOST}/modules/article/tags.php?t={tag}&v={sort}&page={page}"

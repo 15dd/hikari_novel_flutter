@@ -60,7 +60,7 @@ class ApiService extends GetxService {
   }) {
     final String url =
         "${wenku8Node.node}/modules/article/toplist.php?sort=$ranking&page=$index";
-    return _client.get(url, charsetType: charsetType, appendCharset: false);
+    return _client.get(url, charsetType: charsetType);
   }
 
   /// 根据分类获取小说列表
@@ -96,7 +96,7 @@ class ApiService extends GetxService {
     }
     String url =
         "${wenku8Node.node}/modules/article/tags.php?t=$category&v=$sort&page=$index";
-    return _client.get(url, charsetType: charsetType, appendCharset: false);
+    return _client.get(url, charsetType: charsetType);
   }
 
   /// 获取小说信息
@@ -104,7 +104,7 @@ class ApiService extends GetxService {
   Future<Resource> getNovelDetail({required String aid}) {
     final String url =
         "${wenku8Node.node}/modules/article/articleinfo.php?id=$aid";
-    return _client.get(url, charsetType: charsetType, appendCharset: false);
+    return _client.get(url, charsetType: charsetType);
   }
 
   /// 获取小说的章节目录
@@ -115,7 +115,6 @@ class ApiService extends GetxService {
     return _client.get(
       url,
       charsetType: charsetType,
-      appendCharset: false,
       headers: [HttpHeader(name: "referer", value: "$node/book/$aid.htm")],
     );
   }
@@ -205,7 +204,7 @@ class ApiService extends GetxService {
   Future<Resource> getBookshelf({required int classId}) {
     final String url =
         "${wenku8Node.node}/modules/article/bookcase.php?classid=$classId";
-    return _client.get(url, charsetType: charsetType, appendCharset: false);
+    return _client.get(url, charsetType: charsetType);
   }
 
   /// 获取其它用户收藏的书籍
@@ -391,7 +390,6 @@ class ApiService extends GetxService {
     return _client.get(
       url,
       charsetType: charsetType,
-      appendCharset: false,
       headers: [
         HttpHeader(
           name: "referer",
@@ -504,16 +502,8 @@ class _Wenku8Http {
     bool followRedirects = true,
     List<HttpHeader> headers = const [],
     bool successOn302 = false,
-    bool appendCharset = true,
   }) async {
     try {
-      if (appendCharset) {
-        final param = switch (charsetType) {
-          CharsetType.gbk => "charset=gbk",
-          CharsetType.big5Hkscs => "charset=big5",
-        };
-        url += url.contains("?") ? "&$param" : "?$param";
-      }
       Log.d("$url ${charsetType.name}");
       await _prepare();
       final response = await httpGet(
