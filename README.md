@@ -1,3 +1,8 @@
+### 📣自0.2.0版本开始，本软件开始转为使用网页源，放弃了mewx源📣
+### ⚠️我还要说明一点，如果你编译出来了，就自己用，不要发到其他地方。分享欲再旺盛也别发，你这是在害我们，老版的Hikari Novel就是一个例子。不要让我把这个项目也关停了，大家到时候都别用！⚠️
+
+<hr>
+
 <div align="center">
 
   <div align="center">
@@ -89,7 +94,8 @@
 - ##### 编译
   1. 克隆此仓库
   2. 安装flutter，参考 [flutter.dev](https://flutter.dev/docs/get-started/install)
-  3. 编译出对应平台的安装包，如 `flutter build apk`
+  3. 准备 Rust 网络层的编译工具。Android 见 [DEVELOPMENT.android.md](./readme/DEVELOPMENT.android.md)，iOS 见 [DEVELOPMENT.ios.md](./readme/DEVELOPMENT.ios.md)
+  4. 编译出对应平台的安装包，如 `flutter build apk`
 
 - ##### 警告
   ⚠️我要说明一点，如果你编译出来了，就自己用，不要发到其他地方。分享欲再旺盛也别发，你这是在害我们，老版的Hikari Novel就是一个例子。不要让我把这个项目也关停了，大家到时候都别用！⚠️

@@ -206,7 +206,7 @@ class VerticalReadPageState extends State<VerticalReadPage> {
           child: CachedNetworkImage(
             width: double.infinity,
             imageUrl: url,
-            httpHeaders: kHeader,
+            httpHeaders: kUserAgent,
             fit: BoxFit.fitWidth,
             progressIndicatorBuilder: (context, url, progress) => Center(child: CircularProgressIndicator(value: progress.progress)),
             errorWidget: (context, url, error) => Column(children: [const Icon(Icons.error_outline), Text(error.toString())]),

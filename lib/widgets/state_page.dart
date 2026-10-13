@@ -105,6 +105,10 @@ Widget _getCommonErrorInfoView(String msg) {
     tip = "cloudflare_challenge_exception_tip".tr;
   } else if (msg.contains(cloudflare403ExceptionMessage)) {
     tip = "cloudflare_403_exception_tip".tr;
+  } else if (msg.contains(cloudflare429ExceptionMessage)) {
+    tip = "cloudflare_429_exception_tip".tr;
+  } else {
+    tip = msg;
   }
 
   return SingleChildScrollView(
@@ -155,4 +159,7 @@ void showSnackBar({
   ScaffoldMessenger.of(context).showSnackBar(snack);
 }
 
-bool isSpecificMessage(String msg) => msg.contains(cloudflareChallengeExceptionMessage) || msg.contains(cloudflare403ExceptionMessage);
+bool isSpecificMessage(String msg) =>
+    msg.contains(cloudflareChallengeExceptionMessage) ||
+    msg.contains(cloudflare403ExceptionMessage) ||
+    msg.contains(cloudflare429ExceptionMessage);

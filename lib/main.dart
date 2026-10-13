@@ -3,7 +3,6 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/common/app_translations.dart';
@@ -16,10 +15,8 @@ import 'package:hikari_novel_flutter/router/route_path.dart';
 import 'package:hikari_novel_flutter/service/db_service.dart';
 import 'package:hikari_novel_flutter/service/local_storage_service.dart';
 import 'package:hikari_novel_flutter/service/tts_service.dart';
+import 'package:hikari_novel_flutter/src/rust/frb_generated.dart';
 import 'package:jiffy/jiffy.dart';
-
-final localhostServer = InAppLocalhostServer(documentRoot: 'assets');
-WebViewEnvironment? webViewEnvironment;
 
 bool get _isAndroid => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -35,17 +32,10 @@ void main() async {
   Get.put(DBService()).init();
   await Get.put(TtsService()).init();
 
-  if (_isWindows) {
-    final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    assert(availableVersion != null, 'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
-    webViewEnvironment = await WebViewEnvironment.create(settings: WebViewEnvironmentSettings(userDataFolder: 'custom_path'));
-  } else if (_isAndroid) {
-    await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
-  }
-
   _init();
   await Jiffy.setLocale(Util.getCurrentLocale().toString());
-  ApiService.instance.initCookie(); //初始化cookie
+  await RustLib.init();
+  await ApiService.instance.initCookie();
 
   FlutterNativeSplash.remove();
 

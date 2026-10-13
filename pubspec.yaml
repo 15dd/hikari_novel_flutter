@@ -17,11 +17,9 @@ dependencies:
 
   # 网络
   dio: ^5.3.3
-  cookie_jar: ^4.0.8
-  dio_cookie_manager: ^3.1.1
-
-  # 浏览器
-  flutter_inappwebview: ^6.2.0-beta.3
+  hikari_http:
+    path: rust_builder
+  flutter_rust_bridge: 2.11.1
 
   # 设备信息
   device_info_plus: ^13.2.0

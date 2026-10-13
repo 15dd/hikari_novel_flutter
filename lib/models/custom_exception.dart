@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 const cloudflareChallengeExceptionMessage = "Cloudflare Challenge Detected";
 const cloudflare403ExceptionMessage = "You have been blocked by Cloudflare";
+const cloudflare429ExceptionMessage = "Too Many Requests";
 
 class CloudflareChallengeException extends DioException {
   CloudflareChallengeException({required super.requestOptions, super.message = cloudflareChallengeExceptionMessage});

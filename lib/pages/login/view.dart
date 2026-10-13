@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
-import 'package:hikari_novel_flutter/main.dart';
+import 'package:hikari_novel_flutter/models/custom_exception.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/widgets/state_page.dart';
 
@@ -15,97 +14,83 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          leading: CloseButton(onPressed: Get.back),
-          title: Obx(() => Text(controller.currentUrl.value)),
-          actions: controller.pageState.value == PageState.success
-              ? [
-                  IconButton(
-                    onPressed: () async {
-                      if (await controller.inAppWebViewController?.canGoBack() == true) {
-                        controller.inAppWebViewController?.goBack();
-                      }
-                    },
-                    icon: Icon(Icons.arrow_upward),
-                    tooltip: "back_to_previous_web_page".tr,
-                  ),
-                  IconButton(onPressed: () => controller.inAppWebViewController?.reload(), icon: Icon(Icons.refresh), tooltip: "refresh_web_page".tr),
-                ]
-              : [],
-        ),
-        body: Stack(
-          children: [
-            Obx(
-              () => Offstage(
-                offstage: controller.pageState.value != PageState.success,
-                child: Column(
-                  children: [
-                    Obx(
-                      () => AnimatedContainer(
-                        curve: Curves.easeInOut,
-                        duration: const Duration(milliseconds: 350),
-                        height: controller.showLoading.value ? 4 : 0,
-                        child: LinearProgressIndicator(key: ValueKey(controller.loadingProgress), value: controller.loadingProgress / 100),
-                      ),
-                    ),
-                    Expanded(
-                      child: SafeArea(
-                        child: InAppWebView(
-                          key: controller.webViewKey,
-                          webViewEnvironment: webViewEnvironment,
-                          initialUrlRequest: URLRequest(url: WebUri(controller.url)),
-                          initialSettings: controller.settings,
-                          onWebViewCreated: (webController) {
-                            controller.inAppWebViewController = webController;
-                          },
-                          onLoadStart: (webController, webUri) {
-                            controller.currentUrl.value = webUri.toString();
-                          },
-                          onLoadStop: (webController, webUri) async {
-                            if (webUri != null) {
-                              controller.saveCookie(webUri);
-                            }
-
-                            if (webUri.toString() == controller.url) {
-                              await webController.evaluateJavascript(
-                                //去掉<浏览器进程>选项，防止获取到临时cookie
-                                source: """
-                                  var select = document.querySelector('select[name="usecookie"]');
-                                  if (select) {
-                                    for (var i = 0; i < select.options.length; i++) {
-                                      if (select.options[i].value === "0") {
-                                        select.remove(i);
-                                        break;
-                                      }
-                                    }
-                                  }
-                                """,
-                              );
-                            }
-                          },
-                          onProgressChanged: (webController, progress) {
-                            controller.showLoading.value = progress != 100;
-                            controller.loadingProgress.value = progress;
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+    return Obx(() {
+      if (controller.pageState.value == PageState.error) {
+        return Scaffold(
+          body: ErrorMessage(
+            msg: controller.errorMsg.value,
+            action: () => Get.offAllNamed(RoutePath.welcome),
+            buttonText: "re_login",
+          ),
+        );
+      }
+      final image = controller.captcha.value;
+      return Scaffold(
+        appBar: AppBar(title: Text("login".tr)),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              TextField(
+                controller: controller.usernameController,
+                decoration: InputDecoration(labelText: "username".tr),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: controller.passwordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: "password".tr),
+              ),
+              if (controller.needCheckcode.value) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: controller.checkcodeController,
+                  decoration: InputDecoration(labelText: "checkcode".tr),
                 ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: InkWell(
+                    onTap: controller.refreshCaptcha,
+                    child: image == null
+                        ? const SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Image.memory(image, height: 40),
+                  ),
+                ),
+              ],
+              if (controller.errorMsg.value.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _loginMessage(controller.errorMsg.value),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: controller.submitting.value ? null : controller.submit,
+                child: Text("login".tr),
               ),
-            ),
-            Obx(
-              () => Offstage(
-                offstage: controller.pageState.value != PageState.error,
-                child: ErrorMessage(msg: controller.errorMsg, action: () => Get.offAllNamed(RoutePath.welcome), buttonText: "re_login".tr),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
+  }
+
+  String _loginMessage(String msg) {
+    if (msg.contains(cloudflare403ExceptionMessage)) {
+      return "cloudflare_403_exception_tip".tr;
+    }
+    if (msg.contains(cloudflareChallengeExceptionMessage)) {
+      return "cloudflare_challenge_exception_tip".tr;
+    }
+    if (msg.contains(cloudflare429ExceptionMessage)) {
+      return "cloudflare_429_exception_tip".tr;
+    }
+    return msg;
   }
 }

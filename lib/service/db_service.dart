@@ -13,9 +13,7 @@ class DBService extends GetxService {
 
   Future<void> insertAllBookshelf(Iterable<BookshelfEntityData> data) => _db.insertAllBookshelf(data);
 
-  Future<void> deleteAllBookshelf() => _db.deleteAllBookshelf();
-
-  Future<void> deleteDefaultBookshelf() => _db.deleteDefaultBookshelf();
+  Future<void> deleteBookshelfByClassId(String classId) => _db.deleteBookshelfByClassId(classId);
 
   Stream<List<BookshelfEntityData>> getBookshelfByClassId(String classId) => _db.getBookshelfByClassId(classId);
 

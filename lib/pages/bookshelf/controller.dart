@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/bookshelf.dart';
+import 'package:hikari_novel_flutter/models/custom_exception.dart';
 import 'package:hikari_novel_flutter/models/page_state.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/service/api_service.dart';
@@ -20,33 +21,75 @@ class BookshelfController extends GetxController with GetTickerProviderStateMixi
 
   RxBool isSelectionMode = false.obs;
 
+  final Set<int> _loadedClassIds = {};
+  final Set<int> _loadingClassIds = {};
+  String? _lastLoadError;
+
   @override
   void onInit() {
     tabController = TabController(length: tabs.length, vsync: this, initialIndex: tabIndex.value);
+    tabController.addListener(_onTabChanged);
     super.onInit();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    loadClass(tabController.index);
+  }
+
+  @override
+  void onClose() {
+    tabController.removeListener(_onTabChanged);
+    tabController.dispose();
+    super.onClose();
+  }
+
+  void _onTabChanged() {
+    if (tabController.indexIsChanging) return;
+    tabIndex.value = tabController.index;
+    loadClass(tabController.index);
+  }
+
   Future<void> refreshDefaultBookshelf() async {
-    await DBService.instance.deleteDefaultBookshelf();
-    await _insertAll(0);
+    await loadClass(0, force: true);
   }
 
   Future<String> refreshBookshelf() async {
-    await DBService.instance.deleteAllBookshelf();
+    final ok = await loadClass(tabController.index, force: true);
+    if (ok) return "update_successfully".tr;
+    final err = _lastLoadError ?? "";
+    if (err.contains(cloudflare429ExceptionMessage)) return "cloudflare_429_exception_tip".tr;
+    return "update_failed".tr;
+  }
 
-    final futures = Iterable.generate(6, (index) async {
-      final result = await _insertAll(index);
-      if (!result) return "update_failed".tr;
-    });
-    await Future.wait(futures);
-    return "update_successfully".tr;
+  /// 只拉当前分类。force 为 true 时忽略已加载标记再拉一次。成功后才替换本地缓存。
+  Future<bool> loadClass(int index, {bool force = false}) async {
+    if (force) {
+      _loadedClassIds.remove(index);
+    } else if (_loadedClassIds.contains(index)) {
+      return true;
+    }
+    if (_loadingClassIds.contains(index)) return !force;
+    _loadingClassIds.add(index);
+    try {
+      final ok = await _insertAll(index);
+      if (ok) _loadedClassIds.add(index);
+      return ok;
+    } finally {
+      _loadingClassIds.remove(index);
+    }
   }
 
   Future<bool> _insertAll(int index) async {
-    final result = await ApiService.instance.getBookshelf(classId: index);
-    switch (result) {
-      case Success():
-        {
+    _setFetching(index, true);
+    try {
+      final result = await ApiService.instance.getBookshelf(classId: index);
+      switch (result) {
+        case Success():
+          _setFetching(index, false);
+          _publishError(index, null);
+          await DBService.instance.deleteBookshelfByClassId(index.toString());
           final bookshelf = Parser.getBookshelf(result.data, index);
           if (bookshelf.list.isNotEmpty) {
             final insertData = bookshelf.list.map((e) {
@@ -55,11 +98,39 @@ class BookshelfController extends GetxController with GetTickerProviderStateMixi
             await DBService.instance.insertAllBookshelf(insertData);
           }
           return true;
-        }
-      case Error():
-        {
+        case Error():
+          _setFetching(index, false);
+          _publishError(index, "${result.error}");
           return false;
-        }
+      }
+    } finally {
+      _setFetching(index, false);
+    }
+  }
+
+  void _setFetching(int index, bool fetching) {
+    final content = _content(index);
+    if (content == null) return;
+    content.fetching.value = fetching;
+    if (fetching && (content.bookshelf.value == null || content.bookshelf.value!.list.isEmpty)) {
+      content.pageState.value = PageState.loading;
+    }
+  }
+
+  BookshelfContentController? _content(int index) {
+    final tag = "BookshelfContentController $index";
+    if (!Get.isRegistered<BookshelfContentController>(tag: tag)) return null;
+    return Get.find<BookshelfContentController>(tag: tag);
+  }
+
+  void _publishError(int index, String? error) {
+    _lastLoadError = error;
+    final content = _content(index);
+    if (content == null) return;
+    if (error == null) {
+      content.clearLoadError();
+    } else {
+      content.showLoadError(error);
     }
   }
 }
@@ -76,7 +147,8 @@ class BookshelfContentController extends GetxController {
 
   Rxn<Bookshelf> bookshelf = Rxn();
   Rx<PageState> pageState = Rx(PageState.loading);
-  String errorMsg = "";
+  final loadError = RxnString();
+  final fetching = false.obs;
 
   @override
   void onReady() {
@@ -87,13 +159,30 @@ class BookshelfContentController extends GetxController {
 
       if (list.isEmpty) {
         bookshelf.value = null;
-        pageState.value = PageState.empty;
+        if (loadError.value != null) {
+          pageState.value = PageState.error;
+        } else if (!fetching.value) {
+          pageState.value = PageState.empty;
+        }
       } else {
         bookshelf.value = Bookshelf(list: list, classId: classId);
         pageState.value = PageState.success;
       }
     });
   }
+
+  void showLoadError(String message) {
+    loadError.value = message;
+    if (bookshelf.value == null || bookshelf.value!.list.isEmpty) {
+      pageState.value = PageState.error;
+    }
+  }
+
+  void clearLoadError() {
+    loadError.value = null;
+  }
+
+  Future<void> retry() => _bookshelfController.loadClass(int.parse(classId), force: true);
 
   void toggleCoverSelection(String aid) {
     final selected = bookshelf.value!.list.firstWhere((v) => v.aid == aid).isSelected.value;
