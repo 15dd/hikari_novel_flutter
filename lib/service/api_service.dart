@@ -32,9 +32,10 @@ class ApiService extends GetxService {
 
   void deleteCookie() => _client.deleteCookie();
 
-  /// 保存 WebView 里拿到的 Cloudflare 放行 cookie（登录 cookie 之外的那些），并放进请求用的 cookie jar
+  /// 保存 WebView 里拿到的 Cloudflare 放行 cookie（`cf_clearance`、`__cf_bm` 等），并放进请求用的 cookie jar。
+  /// 只挑 Cloudflare 自己的：站点的统计 cookie 值里有逗号，存进 cookie jar 会抛 FormatException
   void saveCfCookie(Wenku8Node node, Iterable<String> cookies) {
-    final cf = cookies.where((e) => !e.startsWith("jieqi")).join(";");
+    final cf = cookies.where((e) => e.startsWith("cf_") || e.startsWith("__cf") || e.startsWith("_cfuvid=")).join(";");
     if (cf.isEmpty) return;
     LocalStorageService.instance.setCfCookie(node, cf);
     _client.initCookie();
@@ -300,8 +301,13 @@ class _ApiClient {
           .where((e) => e.contains('='))
           .map((e) {
             final kv = e.split('=');
-            return ckjar.Cookie(kv[0], kv.sublist(1).join('='));
+            try {
+              return ckjar.Cookie(kv[0], kv.sublist(1).join('='));
+            } on FormatException {
+              return null; // 值不合法（例如带逗号）的跳过，不让一个 cookie 拖垮整个登录状态
+            }
           })
+          .nonNulls
           .toList();
       if (cookies.isNotEmpty) _cookieJar.saveFromResponse(Uri.parse(node.node), cookies);
     }
