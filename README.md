@@ -89,7 +89,8 @@
 - ##### 编译
   1. 克隆此仓库
   2. 安装flutter，参考 [flutter.dev](https://flutter.dev/docs/get-started/install)
-  3. 编译出对应平台的安装包，如 `flutter build apk`
+  3. 编译出对应平台的安装包，如 `flutter build apk --dart-define=cronetHttpNoPlay=true`
+     （`cronetHttpNoPlay` 让安卓端的请求用 App 内置的 Cronet，不依赖 Google 服务；不加时用 Google 服务里的 Cronet，没有 Google 服务的设备退回 Dart 自己的网络层，容易被 Cloudflare 拦截）
 
 - ##### 警告
   ⚠️我要说明一点，如果你编译出来了，就自己用，不要发到其他地方。分享欲再旺盛也别发，你这是在害我们，老版的Hikari Novel就是一个例子。不要让我把这个项目也关停了，大家到时候都别用！⚠️

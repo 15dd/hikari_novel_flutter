@@ -42,7 +42,9 @@ class LoginController extends GetxController {
 
     //存储cookie
     if (uri.toString().contains("wenku8") == true) {
-      final getCookie = await cookieManager.getCookies(url: uri);
+      // 按 https 取：页面可能停在 http 地址，那样取不到只走 https 的 cf_clearance
+      final node = ApiService.instance.wenku8Node;
+      final getCookie = await cookieManager.getCookies(url: WebUri("${node.node}/"));
 
       bool hasCookie = ["jieqiUserInfo", "jieqiVisitInfo"].every(
         (keyword) => getCookie.any((cookieItem) => cookieItem.name.contains(keyword)),
@@ -51,6 +53,7 @@ class LoginController extends GetxController {
         String cookie = "jieqiUserInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiUserInfo").value};";
         cookie += "jieqiVisitInfo=${getCookie.firstWhere((cookieItem) => cookieItem.name == "jieqiVisitInfo").value}";
         LocalStorageService.instance.setCookie(cookie);
+        ApiService.instance.saveCfCookie(node, getCookie.map((e) => "${e.name}=${e.value}"));
         ApiService.instance.initCookie();
 
         try {

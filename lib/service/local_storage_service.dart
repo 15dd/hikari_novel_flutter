@@ -20,6 +20,7 @@ class LocalStorageService extends GetxService {
   late final Box<dynamic> _reader;
 
   static const String kCookie = "cookie",
+      kCfCookie = "cf_cookie",
       kUserInfo = "user_info",
       kLanguage = "language",
       kIsAutoCheckUpdate = "isAutoCheckUpdate",
@@ -74,6 +75,11 @@ class LocalStorageService extends GetxService {
   void setCookie(String? value) => _loginInfo.put(kCookie, value);
 
   String? getCookie() => _loginInfo.get(kCookie);
+
+  /// Cloudflare 放行 cookie（`cf_clearance` 等）按节点保存，它只对验证时的那个域名有效
+  void setCfCookie(Wenku8Node node, String? value) => _loginInfo.put("$kCfCookie:${node.name}", value);
+
+  String? getCfCookie(Wenku8Node node) => _loginInfo.get("$kCfCookie:${node.name}");
 
   void setUserInfo(UserInfo value) => _setting.put(kUserInfo, value);
 

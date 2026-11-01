@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikari_novel_flutter/models/custom_exception.dart';
+import 'package:hikari_novel_flutter/pages/verify/view.dart';
 import 'package:wx_divider/wx_divider.dart';
 
 class ErrorMessage extends StatelessWidget {
@@ -25,6 +26,15 @@ class ErrorMessage extends StatelessWidget {
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child: _buildErrorInfo()),
           action == null ? Container() : FilledButton.icon(onPressed: action, icon: Icon(iconData), label: Text(buttonText.tr)),
+          // 被人机验证拦住时，去内置浏览器里过一下验证，回来自动重试
+          if (action != null && msg.contains(cloudflareChallengeExceptionMessage))
+            TextButton.icon(
+              onPressed: () async {
+                if (await Get.to(() => const VerifyPage()) == true) action!();
+              },
+              icon: const Icon(Icons.verified_user_outlined),
+              label: Text("go_verify".tr),
+            ),
         ],
       ),
     );

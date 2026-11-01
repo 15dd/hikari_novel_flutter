@@ -19,6 +19,7 @@ dependencies:
   dio: ^5.3.3
   cookie_jar: ^4.0.8
   dio_cookie_manager: ^3.1.1
+  native_dio_adapter: ^1.8.0
 
   # 浏览器
   flutter_inappwebview: ^6.2.0-beta.3

@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cookie_jar/cookie_jar.dart' as ckjar;
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:enough_convert/enough_convert.dart';
 import 'package:get/get.dart' hide Response;
@@ -16,6 +17,7 @@ import 'package:hikari_novel_flutter/models/resource.dart';
 
 import '../common/log.dart';
 import 'local_storage_service.dart';
+import 'native_adapter.dart';
 
 class ApiService extends GetxService {
   static ApiService get instance => Get.find<ApiService>();
@@ -29,6 +31,14 @@ class ApiService extends GetxService {
   void initCookie() => _client.initCookie();
 
   void deleteCookie() => _client.deleteCookie();
+
+  /// 保存 WebView 里拿到的 Cloudflare 放行 cookie（登录 cookie 之外的那些），并放进请求用的 cookie jar
+  void saveCfCookie(Wenku8Node node, Iterable<String> cookies) {
+    final cf = cookies.where((e) => !e.startsWith("jieqi")).join(";");
+    if (cf.isEmpty) return;
+    LocalStorageService.instance.setCfCookie(node, cf);
+    _client.initCookie();
+  }
 
   Language get _language => LocalStorageService.instance.getLanguage();
 
@@ -127,7 +137,7 @@ class ApiService extends GetxService {
   /// - [classId] 要获取的书架编号
   Future<Resource> getBookshelf({required int classId}) {
     final String url = "${wenku8Node.node}/modules/article/bookcase.php?classid=$classId";
-    return _client.get(url, charsetType: charsetType);
+    return _client.get(url, charsetType: charsetType, appendCharset: false);
   }
 
   /// 获取其它用户收藏的书籍
@@ -199,7 +209,7 @@ class ApiService extends GetxService {
   /// 获取用户信息
   Future<Resource> getUserInfo() {
     final String url = "${wenku8Node.node}/userdetail.php";
-    return _client.get(url, charsetType: charsetType);
+    return _client.get(url, charsetType: charsetType, appendCharset: false);
   }
 
   /// 获取已完结小说的列表
@@ -276,20 +286,25 @@ class _ApiClient {
   final ckjar.CookieJar _cookieJar = ckjar.CookieJar();
   late final Dio dio =
       Dio(BaseOptions(headers: {...kHeader, "Referer": "${LocalStorageService.instance.getWenku8Node().node}/index.php"}, responseType: ResponseType.bytes, followRedirects: false, validateStatus: (status) => status != null))
+        ..httpClientAdapter = nativeAdapter(IOHttpClientAdapter.new) ?? IOHttpClientAdapter()
         ..interceptors.add(_CloudflareInterceptor())
         ..interceptors.add(CookieManager(_cookieJar));
 
+  /// 登录 cookie 两个节点通用，Cloudflare 放行 cookie 只放进验证过的那个节点
   void initCookie() {
     final localCookie = LocalStorageService.instance.getCookie();
-    if (localCookie == null) return;
-
-    final cookies = localCookie.split(';').map((e) => e.trim()).where((e) => e.contains('=')).map((e) {
-      final kv = e.split('=');
-      return ckjar.Cookie(kv[0], kv.sublist(1).join('='));
-    }).toList();
-
-    _cookieJar.saveFromResponse(Uri.parse(Wenku8Node.wwwWenku8Cc.node), cookies);
-    _cookieJar.saveFromResponse(Uri.parse(Wenku8Node.wwwWenku8Net.node), cookies);
+    for (final node in Wenku8Node.values) {
+      final cookies = [?localCookie, ?LocalStorageService.instance.getCfCookie(node)]
+          .expand((e) => e.split(';'))
+          .map((e) => e.trim())
+          .where((e) => e.contains('='))
+          .map((e) {
+            final kv = e.split('=');
+            return ckjar.Cookie(kv[0], kv.sublist(1).join('='));
+          })
+          .toList();
+      if (cookies.isNotEmpty) _cookieJar.saveFromResponse(Uri.parse(node.node), cookies);
+    }
   }
 
   void deleteCookie() => _cookieJar.deleteAll();
@@ -303,14 +318,18 @@ class _ApiClient {
     }
   }
 
-  Future<Resource> get(String url, {required CharsetType charsetType}) async {
+  /// [appendCharset] 为 false 时不加 charset 参数，按站点默认的 GBK 解码：书架、用户信息带上它会被 Cloudflare 直接拦截（403）
+  Future<Resource> get(String url, {required CharsetType charsetType, bool appendCharset = true}) async {
     try {
+      if (!appendCharset) charsetType = CharsetType.gbk;
       if (!url.contains("?")) url += "?";
-      switch (charsetType) {
-        case CharsetType.gbk:
-          url += "&charset=gbk";
-        case CharsetType.big5Hkscs:
-          url += "&charset=big5";
+      if (appendCharset) {
+        switch (charsetType) {
+          case CharsetType.gbk:
+            url += "&charset=gbk";
+          case CharsetType.big5Hkscs:
+            url += "&charset=big5";
+        }
       }
 
       Log.d("$url ${charsetType.name}");
@@ -367,17 +386,17 @@ class _ApiClient {
 class _CloudflareInterceptor extends Interceptor {
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) async {
-    final statusCode = response.statusCode;
-    if (statusCode == 403) {
-      handler.reject(Cloudflare403Exception(requestOptions: response.requestOptions));
+    // 人机验证页本身也是 403，先认出来，免得当成被封
+    final cfMitigated = response.headers['cf-mitigated'];
+    if (cfMitigated != null && cfMitigated.contains('challenge')) {
+      handler.reject(CloudflareChallengeException(requestOptions: response.requestOptions));
       return;
     }
 
-    final cfMitigated = response.headers['cf-mitigated'];
-    if (cfMitigated == null || !cfMitigated.contains('challenge')) {
-      handler.next(response);
+    if (response.statusCode == 403) {
+      handler.reject(Cloudflare403Exception(requestOptions: response.requestOptions));
       return;
     }
-    handler.reject(CloudflareChallengeException(requestOptions: response.requestOptions));
+    handler.next(response);
   }
 }
