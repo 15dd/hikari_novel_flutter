@@ -1,4 +1,4 @@
-### 停更通知
+## 📢 停更通知
 由于个人精力有限以及技术力不足导致无法继续维护此项目，但欢迎有能力的人士fork此项目继续维护
 
 <hr>
@@ -98,9 +98,6 @@
 
 - ##### 警告
   ⚠️我要说明一点，如果你编译出来了，就自己用，不要发到其他地方。分享欲再旺盛也别发，你这是在害我们，老版的Hikari Novel就是一个例子。不要让我把这个项目也关停了，大家到时候都别用！⚠️
-
-## 🧑‍💻 交流
-&nbsp;&nbsp;<a href="https://t.me/+CUSABNkX5U83NGNl"><img alt="Static Badge" src="https://img.shields.io/badge/Telegram-加入群组-blue?style=for-the-badge&logo=telegram"></a>
 
 
 ## 📣 声明
